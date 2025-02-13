@@ -1,0 +1,124 @@
+.button_search_type{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: 600;
+    padding: .4rem;
+    border-radius: 1rem;
+    margin: 0rem .8rem;
+    font-size: 1.4rem;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: .3s;
+}
+.button_search_type:hover{
+    background-color: rgb(218, 218, 218);
+}
+
+.button_search_type.selected{
+    color: white;
+    box-shadow: 0px 6px 14px rgba(252, 115, 2, 0.5);
+    transform: scale(1.04);
+    background: rgb(241,180,52);
+    background: -moz-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: -webkit-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#f1b434",endColorstr="#fc7302",GradientType=1);  
+}
+
+.button_search_type ion-icon{
+    font-size: 2rem;
+}
+
+.main_content_search_bar_button:hover {
+    color: rgba(33, 35, 34, 1);
+}
+
+.main_content_search_bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    position: relative;
+}
+  
+.search_bar {
+    position: relative;
+    width: 35rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    background: rgba(238, 238, 238, 0.8);
+    border: 1px solid rgba(180, 180, 180, 0.5);
+    font-family: "Segoe UI", sans-serif;
+    font-size: 1.4rem;
+    outline: none;
+    transition: background 0.3s, border 0.3s;
+}
+  
+.search_bar:focus {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(124, 124, 124, 0.7);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+  
+.main_content_search_bar_button {
+    position: absolute;
+    right: 35%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 2.5rem;
+    color: rgba(33, 35, 34, 0.7);
+    transition: color 0.3s ease;
+}
+
+.search_bar_buttons{
+    display: flex;
+}
+
+@media(max-width: 59.375em){
+    .main_content_search_bar{
+        padding: .5rem;
+    }
+    .search_bar{
+        width: 25rem;
+        padding: 0.4rem 1rem;
+    }
+    .search_bar_buttons{
+        flex-direction: column;
+    }
+    .button_search_type{
+        flex-direction: row;
+        margin: 0 .5rem;
+        font-size: 1.2rem;
+    }
+    .button_search_type ion-icon{
+        font-size: 1.6rem;
+    }
+    .main_content_search_bar_button{
+        right: 30%;
+    }
+}
+
+@media(max-width: 37.5em){
+    .main_content_search_bar{
+        flex-direction: column;
+    }
+    .search_bar_buttons{
+        flex-direction: row;
+        margin: .5rem 1rem 0 .5rem;
+        align-items: left;
+        justify-content: left;
+        width: 100%;
+    }
+    .search_bar{
+        width: 18rem;
+        font-size: 1.1rem;
+        padding: 0.4rem 1rem;
+    }
+    .main_content_search_bar_button{
+        right: 6%;
+        top: 2%;
+    }
+}

@@ -1,0 +1,187 @@
+.allUserData{
+    border-radius: 2rem;
+    -webkit-box-shadow: 0px 0px 13px -7px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 13px -7px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 13px -7px rgba(0,0,0,0.75);
+    background-color: white;
+    height: min-content;
+}
+
+.userDetailsContainer{
+    margin-top: -1rem;
+    height: min-content;
+}
+
+.userData{
+    display: flex;
+    align-items: center;
+    margin: 1rem;
+    padding: 1rem;
+    font-family: "Oswald", sans-serif;
+    & .userProfilePicture{
+        width: 12rem;
+        height: 12rem;
+        border-radius: 50%;
+        margin-right: 1rem;
+    }
+    & h5{
+        font-size: 1.8rem;
+    }
+    & p{
+        font-size: 1.6rem;
+    }
+}
+
+.userStats{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.userSingleStat{
+    border-radius: 1rem;
+    padding: 1rem .5rem;
+    width: 10rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    background: linear-gradient(145deg, #ffffff, #f2f2f2);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    & ion-icon{
+        font-size: 3rem;
+        color: rgb(255, 136, 0);
+    }
+
+    & .userAmountStat{
+        font-size: 2.5rem;
+        color: rgb(255, 136, 0);
+    }
+
+    .userStatDescription{
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+}
+
+.userSecondStat{
+    & ion-icon{
+        font-size: 3rem;
+        color: rgb(255, 77, 0);
+    }
+
+    & .userAmountStat{
+        font-size: 2.5rem;
+        color: rgb(255, 77, 0);
+    }
+}
+
+.userBio{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 1rem;
+    & .userBioSubtitle{
+        font-size: 1.6rem;
+        margin: 1rem 1rem 0 1rem;
+    }
+    & .userBioText{
+        font-size: 1.4rem;
+        margin: 1rem;
+        text-align: justify;
+
+    }
+}
+
+.userSocialMedia{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    border-top: .1rem solid rgb(220, 220, 220);
+    background: linear-gradient(145deg, #ffffff, #f2f2f2);
+    padding: 1.5rem 1rem;
+    border-bottom-left-radius: 2rem;
+    border-bottom-right-radius: 2rem;
+}
+
+.socialMediaLink ion-icon{
+    font-size: 3rem;
+    color: #23130d;
+    transition: .3s;
+}
+
+.socialMediaLink{
+    border-radius: 50%;
+    padding: 1.2rem;
+    background: rgb(241,180,52);
+    background: -moz-linear-gradient(315deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: -webkit-linear-gradient(315deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: linear-gradient(315deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    position: relative;
+}
+
+.socialMediaLink::before{
+    content: "";
+    top: 50%;
+    border-radius: 50%;
+    left: 50%;
+    transition: .3s;
+    width: 85%;
+    position: absolute;
+    height: 85%;
+    transform: translate(-50%, -50%);
+    background-color: transparent;
+}
+
+.socialMediaLink:hover::before{
+    background-color: #23130d;
+}
+
+.socialMediaLink:hover ion-icon{
+    color: orange;
+}
+
+@media(max-width: 71.875em){
+    .allUserData{
+        width: 42rem;
+        align-self: center;
+        justify-self: center;
+        background-color: transparent;
+        box-shadow: none;
+    }
+    .userSocialMedia{
+        background: transparent;
+        border-top: none;
+    }
+    .userDetailsContainer{
+        width: 100%;
+        border-radius: 2rem;
+        -webkit-box-shadow: 0px 0px 13px -7px rgba(0,0,0,0.75);
+        -moz-box-shadow: 0px 0px 13px -7px rgba(0,0,0,0.75);
+        box-shadow: 0px 0px 13px -7px rgba(0,0,0,0.75);
+        background-color: white;
+    }
+}
+
+@media(max-width: 31.125em){
+    .allUserData{
+        width: 100%;
+    }
+    .userStats{
+        flex-direction: column;
+    }
+    .userSingleStat{
+        flex-direction: row;
+        width: 90%;
+        margin: .5rem 0;
+    }
+    .userAmountStat{
+        margin: 0 1rem 0 .5rem;
+    }
+    .userDataText h5{
+        font-size: 1.6rem;
+    }
+    .userDataText p{
+        font-size: 1.4rem;
+    }
+}

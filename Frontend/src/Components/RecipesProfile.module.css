@@ -1,0 +1,47 @@
+.profileSearch{
+    background-color: rgb(255, 255, 255);
+    width: min-content;
+    display: flex;
+    border-radius: 2rem;
+    padding: .5rem 0;
+    -webkit-box-shadow: 0px 0px 13px -7px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 13px -7px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 13px -7px rgba(0,0,0,0.75);
+}
+
+.profileSearchOption{
+    cursor: pointer;
+    width: max-content;
+    font-size: 1.8rem;
+    outline: none;
+    border: none;
+    margin: 0rem 1rem;
+    padding: .3rem 1rem;
+    background-color: white;
+    border-radius: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 700;
+    transition: .3s;
+}
+
+.profileSearchOption:hover{
+    background-color: rgb(218,218,218);   
+}
+
+.activeOption{
+    color: white;
+    background: rgb(241,180,52);
+    background: -moz-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: -webkit-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+}
+
+@media(max-width: 37.5em){
+    .profileSearchOption{
+        font-size: 1.5rem;
+        margin: .5rem 1rem;
+    }
+    .profileSearch{
+        flex-direction: column;
+    }
+}

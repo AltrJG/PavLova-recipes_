@@ -1,0 +1,37 @@
+.title{
+    font-size: 3rem;
+    color: #23130d;
+    font-family: "Oswald", sans-serif;
+}
+
+.description{
+    font-size: 2.2rem;
+    color: #23130d;
+    font-weight: 400;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.helpContainers{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@media(max-width: 50em){
+    .title{
+        font-size: 2rem;
+    }
+    .description{
+        font-size: 1.6rem;
+    }
+}
+
+@media(max-width: 43.75em){
+    .helpContainers{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .help{
+        margin-bottom: 1rem;
+    }
+}

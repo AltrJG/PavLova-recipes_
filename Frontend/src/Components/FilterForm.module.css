@@ -1,0 +1,108 @@
+.filterInputs{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
+    grid-auto-rows: max-content;
+    justify-content: left;
+    grid-gap: 2rem;
+    grid-auto-columns: min-content;
+}
+
+.filterForm{
+    display: grid;
+    grid-template-columns: 1fr 5rem;
+    grid-gap: 2rem;
+}
+
+.formSubmit{
+    width: 5rem;
+}
+
+.filterField{
+    background: white;   
+    border-radius: 1rem;
+    width: 100%;
+    padding: 1rem;
+    transition: .3s ease;
+}
+
+.filterField input,
+.filterField select{
+    width: 100%;
+    border-radius: 0.8rem;
+    padding: 0.8rem 1rem;
+    font-size: 1.6rem;
+    background-color: rgb(240, 240, 240);
+    border: 2px solid #ddd;
+    transition: all 0.3s ease-in-out;
+}
+
+.filterField input:focus,
+.filterField select:focus {
+    background-color: white;
+    border-color: #ff9800;
+    outline: none;
+    box-shadow: 0 0 8px rgba(255, 152, 0, 0.3);
+}
+
+.filterField:focus-within{
+    box-shadow: 0px 6px 14px rgba(252, 115, 2, 0.5);
+    transform: scale(1.03);
+    background: rgb(241,180,52);
+    background: -moz-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: -webkit-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#f1b434",endColorstr="#fc7302",GradientType=1);  
+}
+
+.formSubmit {
+    width: 5rem;
+    height: 6rem;
+    background: linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    border: none;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    & ion-icon{
+        font-size: 2.8rem;
+        color: white;
+    }
+}
+
+.formSubmit:hover {
+    background: linear-gradient(45deg, rgba(252,115,2,1) 27%, rgba(241,180,52,1) 100%);
+    transform: scale(1.05);
+    box-shadow: 0px 6px 14px rgba(252, 115, 2, 0.5);
+}
+
+@media(max-width: 56.25em){
+    .filterField input,
+    .filterField select{
+        padding: 0.4rem 1rem;
+        font-size: 1.2rem;
+    }
+
+    .filterInputs{
+        grid-gap: 1rem;
+    }
+    
+    .formSubmit{
+        height: 4.5rem;
+    }
+}
+
+@media(max-width: 37.5em){
+    .filterField{
+        padding: .5rem;
+    }
+    .filterInputs{
+        grid-gap: .5rem;
+    }
+    .filterField input,
+    .filterField select{
+        width: 100%;
+        padding: 0.2rem .5rem;
+    }
+}
