@@ -86,3 +86,38 @@ body{
   width: 100%; /* Ensures it takes full available space */
   margin: 2rem 0;
 }
+
+.dropzone {
+  border: 2px dashed #ff9800;  /* Orange accent */
+  border-radius: 12px;
+  padding: 25px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
+  color: #ffffff;  /* White text for readability */
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  max-width: 100%;
+  margin: auto;
+}
+
+.dropzone:hover {
+  border-color: #ffcc80; /* Lighter orange on hover */
+  background-color: rgba(255, 255, 255, 0.2); /* Slightly more visible */
+}
+
+.dropzone p {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffcc80; /* Soft yellow text */
+}
+
+.imagenTexto{
+  font-size: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 0rem;
+  color: white;
+}

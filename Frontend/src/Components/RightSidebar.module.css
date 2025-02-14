@@ -8,6 +8,7 @@
     z-index: 13;
     transition: .3s;
     overflow-y: scroll;
+    padding-bottom: 2rem;
 }
 
 .rightSidebarFilter{
@@ -72,5 +73,8 @@
     }
     .rightSidebarClose{
         z-index: 14;
+        width: 4rem;
+        height: 4rem;
+        font-size: 2rem;
     }
 }
