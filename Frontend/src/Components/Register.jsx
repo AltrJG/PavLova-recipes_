@@ -1,10 +1,12 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import MainButton from '../Components/MainButton';
 import styles from './UserAuthFormsSingle.module.css'
+import { authService } from '../api/auth_api';
 import { useState } from 'react';
 
 export default function Register(){
 
+    const navigate = useNavigate();
     const [ registerData, setRegisterData ] = useState({
         nombre: "",
         correo: "",
@@ -12,9 +14,31 @@ export default function Register(){
         confirmPassword: ""
     })
 
+    const [ error, setError ] = useState("");
+
+    const handleSumbit = async (e) => {
+        e.preventDefault();
+
+        if(registerData.password !== registerData.confirmPassword){
+            setError("Las contraseñas no coinciden");
+            return;
+        }
+
+        try {
+            const response = await authService.register(registerData.nombre, registerData.correo, registerData.password);
+            if(response.error){
+                setError(response.error);
+            } else {
+                navigate('/auth/iniciar-sesion');
+            }
+        } catch (error) {
+            setError("Error de conexion");
+        }
+    }
+
     return(
         <>
-            <form className={styles.form_user_information}>
+            <form className={styles.form_user_information} onSubmit={handleSumbit}>
                 <div className={styles.form_input_group}>
                     <label className={styles.form_input_group_icon}><ion-icon name="id-card"></ion-icon></label>
                     <input name='nombre' id='nombre' onChange={e => setRegisterData({...registerData, [e.target.name]: e.target.value})}  type='text' required className={styles.form_input_group_input} placeholder='Nombre Completo' />
