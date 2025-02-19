@@ -5,9 +5,12 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate
 from .models import User
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 
 class RegisterView(APIView):
     def post(self, request):
@@ -26,3 +29,100 @@ class RegisterView(APIView):
             return Response({'message': 'Usuario registrado exitosamente.'}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'error': 'Ocurrió un problema al registrar el usuario.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class LoginView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        user = authenticate(request, username=email, password=password)
+        if user is None:
+            return Response({'error': 'Credenciales inválidas.'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        tokens = OutstandingToken.objects.filter(user=user)
+        for token in tokens:
+            try:
+                BlacklistedToken.objects.get_or_create(token=token)
+            except Exception as e:
+                pass
+
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+
+        response = Response({
+            'message': 'Inicio de sesión exitoso.',
+            'access': access_token
+        })
+        response.set_cookie(
+            key='refresh_token',
+            value=str(refresh),
+            httponly=True,
+            # secure=True,
+            # samesite='Lax'
+        )
+        return response
+    
+class LogoutView(APIView):
+    def post(self, request):
+        refresh_token = request.COOKIES.get('refresh_token')
+        if refresh_token:
+            try:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+            except Exception as e:
+                return Response({'error': 'El token de refresco no es válido'}, status=status.HTTP_400_BAD_REQUEST)
+
+        response = Response({'message': 'Sesión cerrada correctamente'}, status=status.HTTP_200_OK)
+        response.delete_cookie('refresh_token')
+        return response
+
+class CustomTokenRefreshView(TokenRefreshView):
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get('refresh_token')
+
+        if not refresh_token:
+            response = Response({'error': 'No se encontró el refresh token.'}, status=status.HTTP_401_UNAUTHORIZED)
+            response.delete_cookie('refresh_token')
+            return response
+
+        try:
+            refresh = RefreshToken(refresh_token)
+
+            user_id = refresh.payload.get('user_id')
+            user = User.objects.get(id=user_id)
+
+            OutstandingToken.objects.filter(user=user).delete()
+
+            new_refresh = RefreshToken.for_user(user)
+            new_access_token = str(new_refresh.access_token)
+
+            response = Response({'access': new_access_token})
+            response.set_cookie(
+                key='refresh_token',
+                value=str(new_refresh),
+                httponly=True,
+                # secure=True,
+                # samesite='Lax'
+            )
+            return response
+
+        except TokenError:
+            response = Response({'error': 'El refresh token no es válido.'}, status=status.HTTP_401_UNAUTHORIZED)
+            response.delete_cookie('refresh_token')
+            return response
+        except User.DoesNotExist:
+            response = Response({'error': 'Usuario no encontrado.'}, status=status.HTTP_401_UNAUTHORIZED)
+            response.delete_cookie('refresh_token')
+            return response
+
+class UserInfoView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        user = request.user
+
+        user_data = {
+            'username': user.name,
+        }
+    
+        return Response(user_data, status=status.HTTP_200_OK)

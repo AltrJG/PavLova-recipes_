@@ -1,15 +1,46 @@
 import { Link } from "react-router-dom"
 import tempUserPic from "../assets/smile.png"
 import styles from "./UserDetails.module.css"
+import { userService } from "../api/user_api"
+import { useEffect, useState } from "react";
 
 export default function UserDetails(){
+
+    const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+  
+    useEffect(() => {
+      const fetchUserData = async () => {
+        try {
+          const data = await userService.getUserInfo();
+          setUserData(data);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchUserData();
+    }, []);
+  
+    if (loading) {
+      return <p>Cargando...</p>;
+    }
+  
+    if (error) {
+      return <p>Error: {error}</p>;
+    }
+
+
     return(
         <div className={styles.userDetailsContainer}>
             <div className={styles.allUserData}>
                 <div className={styles.userData}>
                     <img className={styles.userProfilePicture} src={tempUserPic}/>
                     <div className={styles.userDataText}>
-                        <h5>Brandon Yahir Castañeda Godinez</h5>
+                        <h5>{userData.username}</h5>
                         <p>Mexico</p>
                     </div>
                 </div>
