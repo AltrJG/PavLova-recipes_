@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, update_session_auth_hash
 from .models import User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenRefreshView
@@ -147,3 +147,61 @@ class UserInfoView(APIView):
         }
     
         return Response(user_data, status=status.HTTP_200_OK)
+    
+class UpdateUserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        data = request.data
+
+        if 'nombre' in data:
+            user.name = data['nombre']
+        if 'pais' in data:
+            user.country = data['pais']
+        if 'facebook_link' in data:
+            user.social_facebook = data['facebook_link']
+        if 'twitter_link' in data:
+            user.social_twitter = data['twitter_link']
+        if 'youtube_link' in data:
+            user.social_youtube = data['youtube_link']
+        if 'about_me' in data:
+            user.about = data['about_me']
+
+        user.save()
+        return Response({"message": "Perfil actualizado correctamente"}, status=status.HTTP_200_OK)
+    
+class UpdateUserPasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        data = request.data
+
+        old_password = data.get('oldPassword')
+        new_password = data.get('newPassword')
+        new_password_confirm = data.get('newPasswordConfirm')
+
+        if not user.check_password(old_password):
+            return Response({"error": "La contraseña actual es incorrecta"}, status=status.HTTP_400_BAD_REQUEST)
+        if new_password != new_password_confirm:
+            return Response({"error": "Las nuevas contraseñas no coinciden"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(new_password)
+        user.save()
+        update_session_auth_hash(request, user)
+        return Response({"message": "Contraseña actualizada correctamente"}, status=status.HTTP_200_OK)
+    
+#El formulario no pide la contraseña actual, por lo que no es necesario validarla
+#Se debería validar la contraseña actual antes de permitir cambiar el correo
+class UpdateUserEmailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        new_email = request.data.get('correo')
+        if not new_email:
+            return Response({"error": "Debe proporcionar un nuevo correo"}, status=status.HTTP_400_BAD_REQUEST)
+        user.email = new_email
+        user.save()
+        return Response({"message": "Correo actualizado correctamente"}, status=status.HTTP_200_OK)
