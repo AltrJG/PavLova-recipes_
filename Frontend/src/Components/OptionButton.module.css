@@ -38,3 +38,16 @@
 .button_search_type.button_search_white:hover{
     background-color: rgb(85, 42, 0);
 }
+
+@media(max-width: 59.375em){
+    .button_search_type{
+        margin: 0 .5rem;
+        font-size: 1.2rem;
+    }
+    .button_row_mobile{
+        flex-direction: row;
+    }
+    .button_search_type ion-icon{
+        font-size: 1.6rem;
+    }
+}

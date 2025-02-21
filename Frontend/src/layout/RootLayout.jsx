@@ -1,20 +1,24 @@
 import React, { useState } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import LinkSidebar from "../Components/LinkSidebar";
-import libreriaLogo from "../assets/6fabc24c3830d75486725cc6d786dfbb-logotipo-de-circulos-de-libro.png"
+import libreriaLogo from "../assets/logo.png"
 import Header from "../Components/Header";
 import styles from './RootLayout.module.css';
 import RightSidebar from "../Components/RightSidebar";
+import { useAuth } from "../context/AuthProvider";
 
 
 export default function RootLayout(){
 
     const location = useLocation();
+    const { isLoading } = useAuth();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
+
+    if (isLoading) return <h1>Cargando...</h1>
 
     return(
         <>

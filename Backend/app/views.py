@@ -57,8 +57,8 @@ class LoginView(APIView):
             key='refresh_token',
             value=str(refresh),
             httponly=True,
-            # secure=True,
-            # samesite='Lax'
+            secure=True,
+            samesite='None'
         )
         return response
     
@@ -101,8 +101,8 @@ class CustomTokenRefreshView(TokenRefreshView):
                 key='refresh_token',
                 value=str(new_refresh),
                 httponly=True,
-                # secure=True,
-                # samesite='Lax'
+                secure=True,
+                samesite='None'
             )
             return response
 
@@ -123,6 +123,15 @@ class UserInfoView(APIView):
 
         user_data = {
             'username': user.name,
+            'email': user.email,
+            'is_staff': user.is_staff,
+            'is_superuser': user.is_superuser,
+            'country': user.country,
+            'about': user.about,
+            'profile_picture': request.build_absolute_uri(user.profile_picture.url) if user.profile_picture else None,
+            'social_youtube': user.social_youtube,
+            'social_facebook': user.social_facebook,
+            'social_twitter': user.social_twitter
         }
     
         return Response(user_data, status=status.HTTP_200_OK)

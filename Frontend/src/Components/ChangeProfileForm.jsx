@@ -83,7 +83,7 @@ export default function ChangeProfileForm(){
         <div className={styles.changeProfileForm}>
             <div className={styles.formOptions}>
                 {options.map(option => (
-                    <OptionButton isBackgroundBlack={true} key={option.label} option={option} active={activeOption} setData={setActiveOption} icon={option.icon}/>
+                    <OptionButton isBackgroundBlack={true} key={option.label} option={option} active={activeOption} setData={setActiveOption} icon={option.icon} makeRowOnMobile={false}/>
                 ))}  
             </div>
             { activeOption == "Informacion" && <> 

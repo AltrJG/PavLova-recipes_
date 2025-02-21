@@ -2,9 +2,11 @@ import { Link } from 'react-router-dom';
 import MainButton from '../Components/MainButton';
 import styles from './UserAuthFormsSingle.module.css'
 import { useState } from 'react';
-import { authService } from '../api/auth_api';
+import { useAuth } from '../context/AuthProvider';
 
 export default function Login(){
+
+    const { login, getUserData } = useAuth();
 
     const [ loginData, setLoginData ] = useState({
         correo: "",
@@ -14,13 +16,8 @@ export default function Login(){
     const handleSubmit = async (e) => {
         e.preventDefault();
     
-        const response = await authService.login(loginData.correo, loginData.password);
-        if (response.access) {
-          localStorage.setItem('token', response.access);
-          window.location.href = '/';
-        } else {
-          alert(response.error || "Hubo un error al iniciar sesión");
-        }
+        await login(loginData.correo, loginData.password);
+        setTimeout(() => getUserData(), 0);
       };
 
     return(

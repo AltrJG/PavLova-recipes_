@@ -22,7 +22,7 @@ export default function SearchContent(){
             <input onChange={e => setSearchTextQuery(e.target.value)} value={searchTextQuery} className={styles.search_bar} type={"text"} placeholder={`Busca ${searchOption}...`} name={"bookName"}/>
             <div className={styles.search_bar_buttons}>
             {searchOptions.map(option => (
-                <OptionButton key={option.label} option={option} active={searchOption} setData={setSearchOption} icon={option.icon}/>
+                <OptionButton key={option.label} option={option} active={searchOption} setData={setSearchOption} icon={option.icon} makeRowOnMobile={true}/>
             ))}  
             </div>          <button aria-label="Iniciar búsqueda" type="submit" className={styles.main_content_search_bar_button}><ion-icon name="search-outline"></ion-icon></button>
         </form>

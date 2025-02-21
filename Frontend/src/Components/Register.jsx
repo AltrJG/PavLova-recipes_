@@ -1,10 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import MainButton from '../Components/MainButton';
 import styles from './UserAuthFormsSingle.module.css'
-import { authService } from '../api/auth_api';
 import { useState } from 'react';
+import { useAuth } from '../context/AuthProvider';
 
 export default function Register(){
+
+    const {register} = useAuth();
 
     const navigate = useNavigate();
     const [ registerData, setRegisterData ] = useState({
@@ -25,12 +27,7 @@ export default function Register(){
         }
 
         try {
-            const response = await authService.register(registerData.nombre, registerData.correo, registerData.password);
-            if(response.error){
-                setError(response.error);
-            } else {
-                navigate('/auth/iniciar-sesion');
-            }
+            await register(registerData.nombre, registerData.correo, registerData.password);
         } catch (error) {
             setError("Error de conexion");
         }

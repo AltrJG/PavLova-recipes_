@@ -55,14 +55,6 @@
     .search_bar_buttons{
         flex-direction: column;
     }
-    .button_search_type{
-        flex-direction: row;
-        margin: 0 .5rem;
-        font-size: 1.2rem;
-    }
-    .button_search_type ion-icon{
-        font-size: 1.6rem;
-    }
     .main_content_search_bar_button{
         right: 30%;
     }

@@ -1,38 +1,12 @@
 import { Link } from "react-router-dom"
 import tempUserPic from "../assets/smile.png"
 import styles from "./UserDetails.module.css"
-import { userService } from "../api/user_api"
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthProvider";
 
 export default function UserDetails(){
 
-    const [userData, setUserData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-  
-    useEffect(() => {
-      const fetchUserData = async () => {
-        try {
-          const data = await userService.getUserInfo();
-          setUserData(data);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
-        }
-      };
-  
-      fetchUserData();
-    }, []);
-  
-    if (loading) {
-      return <p>Cargando...</p>;
-    }
-  
-    if (error) {
-      return <p>Error: {error}</p>;
-    }
-
+    const { user } = useAuth();
 
     return(
         <div className={styles.userDetailsContainer}>
@@ -40,8 +14,8 @@ export default function UserDetails(){
                 <div className={styles.userData}>
                     <img className={styles.userProfilePicture} src={tempUserPic}/>
                     <div className={styles.userDataText}>
-                        <h5>{userData.username}</h5>
-                        <p>Mexico</p>
+                        <h5>{user?.nombre}</h5>
+                        <p>{user?.pais}</p>
                     </div>
                 </div>
                 <div className={styles.userStats}>
@@ -59,14 +33,13 @@ export default function UserDetails(){
                 <div className={styles.userBio}>
                     <div className={styles.userSingleBio}>
                         <h6 className={styles.userBioSubtitle}>Sobre Mi</h6>
-                        <p className={styles.userBioText}>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt quod consequuntur fugit tempore, dolore quasi vitae. Cum ducimus tempore ipsum numquam qui laudantium sapiente delectus minima perferendis ad, pariatur exercitationem.</p>
+                        <p className={styles.userBioText}>{user?.sobreMi == "" ? '- Aun no has agregado una descripcion, puedes agregarla cambiando tu informacion personal - ' : user?.sobreMi}</p>
                     </div>
                 </div>
                 <div className={styles.userSocialMedia}>
-                    <Link className={styles.socialMediaLink} target="_blank" to={"https://www.youtube.com"}><ion-icon name="logo-facebook"></ion-icon></Link>
-                    <Link className={styles.socialMediaLink} target="_blank" to={"https://www.youtube.com"}><ion-icon name="logo-twitter"></ion-icon></Link>
-                    <Link className={styles.socialMediaLink} target="_blank" to={"https://www.youtube.com"}><ion-icon name="logo-youtube"></ion-icon></Link>
-
+                    {user?.redFacebook != "" && <Link className={styles.socialMediaLink} target="_blank" to={user?.redFacebook}><ion-icon name="logo-facebook"></ion-icon></Link> }
+                    {user?.redTwitter != "" && <Link className={styles.socialMediaLink} target="_blank" to={user?.redTwitter}><ion-icon name="logo-twitter"></ion-icon></Link> }
+                    {user?.redYoutube != "" && <Link className={styles.socialMediaLink} target="_blank" to={user?.redYoutube}><ion-icon name="logo-youtube"></ion-icon></Link> }
                 </div>
             </div>
         </div>
