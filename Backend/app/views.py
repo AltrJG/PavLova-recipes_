@@ -68,7 +68,14 @@ class LogoutView(APIView):
         if refresh_token:
             try:
                 token = RefreshToken(refresh_token)
-                token.blacklist()
+                
+                tokens = OutstandingToken.objects.filter(user=token.payload.get('user_id'))
+                for token in tokens:
+                    try:
+                        BlacklistedToken.objects.get_or_create(token=token)
+                    except Exception as e:
+                        pass
+
             except Exception as e:
                 return Response({'error': 'El token de refresco no es válido'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -91,7 +98,12 @@ class CustomTokenRefreshView(TokenRefreshView):
             user_id = refresh.payload.get('user_id')
             user = User.objects.get(id=user_id)
 
-            OutstandingToken.objects.filter(user=user).delete()
+            tokens = OutstandingToken.objects.filter(user=user)
+            for token in tokens:
+                try:
+                    BlacklistedToken.objects.get_or_create(token=token)
+                except Exception as e:
+                    pass
 
             new_refresh = RefreshToken.for_user(user)
             new_access_token = str(new_refresh.access_token)
