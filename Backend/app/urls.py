@@ -2,11 +2,14 @@ from django.urls import path, include
 from rest_framework.documentation import include_docs_urls
 from rest_framework import routers
 from app import views
-from .views import RegisterView, LoginView, LogoutView, UserInfoView, CustomTokenRefreshView, UpdateUserProfileView, UpdateUserPasswordView, UpdateUserEmailView
+from .views import RegisterView, LoginView, LogoutView, UserInfoView, CustomTokenRefreshView, UpdateUserProfileView, UpdateUserPasswordView, UpdateUserEmailView, UserViewSet, UserUpdateViewSet
 
 router = routers.DefaultRouter()
+router.register(r'users', UserViewSet, basename='user') # /users/
+router.register(r'users/update', UserUpdateViewSet, basename='user_update') # /users/update/<id>/
 
 urlpatterns = [
+    path('', include(router.urls)),
     path('auth/register/', RegisterView.as_view(), name='register'),
     path('auth/login/', LoginView.as_view(), name='login'),
     path('auth/logout/', LogoutView.as_view(), name='logout'),

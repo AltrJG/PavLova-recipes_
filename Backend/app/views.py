@@ -4,13 +4,15 @@ from django.shortcuts import render
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate, update_session_auth_hash
 from .models import User
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+from .serializers import UserSerializer, UserUpdateSerializer
+from .permissions import IsModeratorOrAdmin
 
 class RegisterView(APIView):
     def post(self, request):
@@ -127,6 +129,7 @@ class CustomTokenRefreshView(TokenRefreshView):
             response.delete_cookie('refresh_token')
             return response
 
+#Esta es la vista que devuelve la información del perfil del usuario
 class UserInfoView(APIView):
     permission_classes = [IsAuthenticated]
     
@@ -136,8 +139,6 @@ class UserInfoView(APIView):
         user_data = {
             'username': user.name,
             'email': user.email,
-            'is_staff': user.is_staff,
-            'is_superuser': user.is_superuser,
             'country': user.country,
             'about': user.about,
             'profile_picture': request.build_absolute_uri(user.profile_picture.url) if user.profile_picture else None,
@@ -147,6 +148,17 @@ class UserInfoView(APIView):
         }
     
         return Response(user_data, status=status.HTTP_200_OK)
+
+#Esta es la vista que devuelve la información de todos los usuarios (activos)
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.filter(is_active=True).order_by('id')
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+
+class UserUpdateViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all().order_by('id')
+    serializer_class = UserUpdateSerializer
+    permission_classes = [IsAuthenticated, IsModeratorOrAdmin]
     
 class UpdateUserProfileView(APIView):
     permission_classes = [IsAuthenticated]
@@ -194,8 +206,6 @@ class UpdateUserPasswordView(APIView):
         update_session_auth_hash(request, user)
         return Response({"message": "Contraseña actualizada correctamente"}, status=status.HTTP_200_OK)
     
-#El formulario no pide la contraseña actual, por lo que no es necesario validarla
-#Se debería validar la contraseña actual antes de permitir cambiar el correo
 class UpdateUserEmailView(APIView):
     permission_classes = [IsAuthenticated]
 
