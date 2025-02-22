@@ -1,8 +1,8 @@
 import styles from './RightSidebarForms.module.css';
 
-export default function RightSidebarForms({formOptions, setData, data, children}){
+export default function RightSidebarForms({action, formOptions, setData, data, children}){
     return(
-        <form className={styles.rightSidebarForm}>
+        <form onSubmit={e => action(e)} className={styles.rightSidebarForm}>
             <div className={styles.formInputs}>
                 {formOptions.map((formInput) => (
                     <div key={formInput.name} className={styles.inputField}>

@@ -11,7 +11,7 @@ import { useAuth } from "../context/AuthProvider";
 export default function RootLayout(){
 
     const location = useLocation();
-    const { isLoading } = useAuth();
+    const { isLoading, isAuthenticated } = useAuth();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const toggleMenu = () => {
@@ -51,7 +51,7 @@ export default function RootLayout(){
                     </ul>
                 </div>
                 <div className={styles.content_container}>
-                    <Header toggleMenu={toggleMenu} isMenuOpen={isMenuOpen}/>
+                    <Header toggleMenu={toggleMenu} isMenuOpen={isMenuOpen} isAuthenticated={isAuthenticated}/>
                     <div className={styles.dynamic_content}>
                         <Outlet/>
                     </div>

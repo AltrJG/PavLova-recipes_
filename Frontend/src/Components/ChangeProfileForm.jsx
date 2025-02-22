@@ -4,6 +4,11 @@ import RightSidebarForms from "./RightSidebarForms";
 import MainButton from "./MainButton";
 import OptionButton from "./OptionButton";
 import SubidaImagenes from "./SubidaImagenes";
+import { useAuth } from "../context/AuthProvider";
+import { validateMailData, validateUserData, validatePasswordData } from "./utils/validators";
+import backendAPI from "../api/axiosConfig";
+import RightSidebarErrors from "./RightSidebarErrors";
+import Swal from "sweetalert2";
 
 const thumb = {
     display: 'inline-flex',
@@ -30,10 +35,12 @@ const thumbInner = {
 export default function ChangeProfileForm(){
 
     const [ activeOption, setActiveOption ] = useState("Informacion");
+    const [ loading, setLoading ] = useState(false);
+    const [ errorsHandler, setErrorsHandler ] = useState({});
+    const { user, changeUserData, refreshAccessToken } = useAuth();
 
     const mainFormOptions = [
         { type: "text", name: "nombre", label: "Nombre:"},
-        { type: "text", name: "correo", label: "Correo:"},
         { type: "text", name: "pais", label: "Pais:"},
         { type: "text", name: "facebook_link", label: "Enlace a Facebook:"},
         { type: "text", name: "twitter_link", label: "Enlace a Twitter/X:"},
@@ -49,6 +56,7 @@ export default function ChangeProfileForm(){
 
     const emailDataOptions = [
         { type: "email", name: "correo", label: "Nuevo Correo: "},
+        { type: "password", name: "password", label: "Contraseña: " }
     ];
 
     const options = [
@@ -59,12 +67,12 @@ export default function ChangeProfileForm(){
     ];
 
     const [ userData, setUserData ] = useState({
-        nombre: "",
-        pais: "",
-        facebook_link: "",
-        twitter_link: "",
-        youtube_link: "",
-        about_me: ""
+        nombre: user?.nombre,
+        pais: user?.pais,
+        facebook_link: user?.redFacebook,
+        twitter_link: user?.redTwitter,
+        youtube_link: user?.redYoutube,
+        about_me: user?.sobreMi
     });
 
     const [ passwordData, setPasswordData ] = useState({
@@ -74,46 +82,180 @@ export default function ChangeProfileForm(){
     })
 
     const [ mailData, setMailData ] = useState({
-        correo: ""
+        correo: user?.email,
+        password: ""
     });
 
     const [imagen, setImagen] = useState([]);
 
+    const handleChangeInformation = async e => {
+        e.preventDefault();
+        setLoading(true);
+        let errors = validateUserData(userData);
+        setErrorsHandler(errors);
+        if(Object.keys(errors).length === 0){
+            try{
+                const response = await backendAPI.post('user/update_profile/', userData);
+                changeUserData(userData);
+                Swal.fire({
+                    icon: "success",
+                    title: "Informacion Modificada",
+                    text: response.data.message,
+                    showConfirmButton: true,
+                    customClass: {
+                        title: "swal_title",
+                        icon: "swal_icon",
+                        htmlContainer: "swal_text",
+                        confirmButton: "swal_confirm"
+                    }
+                });
+            } catch(error){
+                console.log(error);
+                if(error.response?.status == 401){
+                    await refreshAccessToken(handleChangeInformation, e);
+                }
+            } finally{
+                setLoading(false);
+            }
+        }
+        setLoading(false);
+    }
+
+    const handleChangePassword = async e => {
+        e.preventDefault();
+        setLoading(true);
+        let errors = validatePasswordData(passwordData);
+        setErrorsHandler(errors);
+        if(Object.keys(errors).length === 0){
+            try{
+                const response = await backendAPI.post('user/update_password/', passwordData);
+                Swal.fire({
+                    icon: "success",
+                    title: "Informacion Modificada",
+                    text: response.data.message,
+                    showConfirmButton: true,
+                    customClass: {
+                        title: "swal_title",
+                        icon: "swal_icon",
+                        htmlContainer: "swal_text",
+                        confirmButton: "swal_confirm"
+                    }
+                });
+                setPasswordData({
+                    oldPassword: "",
+                    newPassword: "",
+                    newPasswordConfirm: ""
+                });
+            } catch(error){
+                console.log(error);
+                if(error.response?.status == 401){
+                    await refreshAccessToken(handleChangePassword, e);
+                } else{
+                    setErrorsHandler(error.response.data);
+                }
+            } finally{
+                setLoading(false);
+            }
+        }
+        setLoading(false);
+    }
+
+    const handleChangeEmail = async e => {
+        e.preventDefault();
+        setLoading(true);
+        let errors = validateMailData(mailData);
+        setErrorsHandler(errors);
+        if(Object.keys(errors).length === 0){
+            try{
+                const response = await backendAPI.post('user/update_email/', mailData);
+                Swal.fire({
+                    icon: "success",
+                    title: "Informacion Modificada",
+                    text: response.data.message,
+                    showConfirmButton: true,
+                    customClass: {
+                        title: "swal_title",
+                        icon: "swal_icon",
+                        htmlContainer: "swal_text",
+                        confirmButton: "swal_confirm"
+                    }
+                });
+                setMailData({
+                    oldPassword: "",
+                    newPassword: "",
+                    newPasswordConfirm: ""
+                });
+                setPasswordData({...passwordData, password: ""});
+            } catch(error){
+                console.log(error);
+                if(error.response?.status == 401){
+                    await refreshAccessToken(handleChangeEmail, e);
+                } else{
+                    setErrorsHandler(error.response.data);
+                }
+            } finally{
+                setLoading(false);
+            }
+        }
+        setLoading(false);
+    }
+
+    const changeActiveOption = type => {
+        setActiveOption(type);
+        setErrorsHandler({});
+    }
+
     return(
         <div className={styles.changeProfileForm}>
+
             <div className={styles.formOptions}>
                 {options.map(option => (
-                    <OptionButton isBackgroundBlack={true} key={option.label} option={option} active={activeOption} setData={setActiveOption} icon={option.icon} makeRowOnMobile={false}/>
+                    <OptionButton 
+                        isBackgroundBlack={true} 
+                        key={option.label} 
+                        option={option} 
+                        active={activeOption} 
+                        setData={changeActiveOption} 
+                        icon={option.icon} 
+                        makeRowOnMobile={false} 
+                    />
                 ))}  
             </div>
-            { activeOption == "Informacion" && <> 
-                <h3 className={styles.formDescription}>Cambiar Informacion Personal</h3>
-                <RightSidebarForms formOptions={mainFormOptions} setData={setUserData} data={userData}>
-                    <MainButton disabled={false} type={'submit'} icon={"settings"} iconSize={"3"} fontSize={"2.5"} color={"secondary"} borderRadius={'1.5'} text={"Cambiar Informacion"}/>
+
+            <h3 className={styles.formDescription}>
+                {activeOption === "Informacion" && "Cambiar Información Personal"}
+                {activeOption === "Contrasena" && "Cambiar Contraseña"}
+                {activeOption === "Correo" && "Cambiar Correo"}
+                {activeOption === "ImagenPerfil" && "Cambiar Foto de Perfil"}
+            </h3>
+
+            {/* ✅ Single instance of RightSidebarErrors */}
+            <RightSidebarErrors errors={errorsHandler} />
+
+            {activeOption === "Informacion" && (
+                <RightSidebarForms action={handleChangeInformation} formOptions={mainFormOptions} setData={setUserData} data={userData}>
+                    <MainButton disabled={loading} type="submit" icon="settings" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={loading ? "Cambiando..." : "Cambiar Información"} />
                 </RightSidebarForms> 
-            </>
-            }
-            { activeOption == "Contrasena" && <>
-                <h3 className={styles.formDescription}>Cambiar Contraseña</h3>
-                <RightSidebarForms formOptions={passwordFormOptions} setData={setPasswordData} data={passwordData}>
-                    <MainButton disabled={false} type={'submit'} icon={"lock-open"} iconSize={"3"} fontSize={"2.5"} color={"secondary"} borderRadius={'1.5'} text={"Cambiar Informacion"}/>
+            )}
+
+            {activeOption === "Contrasena" && (
+                <RightSidebarForms action={handleChangePassword} formOptions={passwordFormOptions} setData={setPasswordData} data={passwordData}>
+                    <MainButton disabled={loading} type="submit" icon="lock-open" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={loading ? "Cambiando..." : "Cambiar Contraseña"} />
                 </RightSidebarForms>
-            </>
-            }
-            { activeOption == "Correo" && <>
-                <h3 className={styles.formDescription}>Cambiar Correo</h3>
-                <RightSidebarForms formOptions={emailDataOptions} setData={setMailData} data={mailData}>
-                    <MainButton disabled={false} type={'submit'} icon={"mail"} iconSize={"3"} fontSize={"2.5"} color={"secondary"} borderRadius={'1.5'} text={"Cambiar Correo"}/>
+            )}
+
+            {activeOption === "Correo" && (
+                <RightSidebarForms action={handleChangeEmail} formOptions={emailDataOptions} setData={setMailData} data={mailData}>
+                    <MainButton disabled={loading} type="submit" icon="mail" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={loading ? "Cambiando..." : "Cambiar Correo"} />
                 </RightSidebarForms>
-            </>
-            }
-            { activeOption == "ImagenPerfil" && <>
-                <h3 className={styles.formDescription}>Cambiar Foto de Perfil</h3>
+            )}
+
+            {activeOption === "ImagenPerfil" && (
                 <div className={styles.imageUploadContainer}>
-                    <SubidaImagenes thumb={thumb} thumbInner={thumbInner} files={imagen} setFiles={setImagen}/>
-                    <MainButton disabled={imagen.length == 0} type={'submit'} icon={"mail"} iconSize={"3"} fontSize={"2.5"} color={"secondary"} borderRadius={'1.5'} text={"Cambiar Avatar"}/>
+                    <SubidaImagenes thumb={thumb} thumbInner={thumbInner} files={imagen} setFiles={setImagen} />
+                    <MainButton disabled={imagen.length === 0} type="submit" icon="mail" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text="Cambiar Avatar" />
                 </div>
-            </>}
+            )}
         </div>
     )
 }

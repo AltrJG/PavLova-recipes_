@@ -1,0 +1,30 @@
+.errorRightSidebarContainer{
+    margin: 0rem 2rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
+    border-radius: 1rem;
+    background: rgb(241,118,52);
+    background: -moz-linear-gradient(45deg, rgba(241,118,52,1) 27%, rgba(252,2,2,1) 100%);
+    background: -webkit-linear-gradient(45deg, rgba(241,118,52,1) 27%, rgba(252,2,2,1) 100%);
+    background: linear-gradient(45deg, rgba(241,118,52,1) 27%, rgba(252,2,2,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#f17634",endColorstr="#fc0202",GradientType=1);
+}
+
+.errorRightSidebar{
+    padding: .2rem 1rem;
+    color: white;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.4rem;
+}
+
+.errorRightSidebarContainerCentered{
+    text-align: center;
+    width: max-content;
+    margin: 0 auto;
+    & .errorRightSidebar{
+        font-size: 1.8rem;
+        margin: 1rem 2rem;
+    }
+}

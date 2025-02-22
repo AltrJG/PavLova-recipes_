@@ -121,3 +121,37 @@ body{
   margin: 1rem 0rem;
   color: white;
 }
+
+/* Estilos para swal */
+
+.swal_title{
+  font-family: "Oswald", sans-serif;
+  font-size: 3rem;
+}
+
+.swal_text{
+  font-size: 1.5rem !important;
+  font-family: "Lato", sans-serif;
+}
+
+.swal_confirm,
+.swal2-cancel{
+  font-size: 1.5rem !important;
+}
+
+.swal_title_mixin{
+  font-size: 2.3rem !important;
+  font-family: "Oswald", sans-serif;
+}
+
+.swal_icon{
+  font-size: 1.5rem !important;
+}
+
+.swal2-x-mark-line-right, .swal2-x-mark-line-left {
+  font-size: 15px !important;
+} 
+
+.swal2-success-line-tip, .swal2-success-line-long {
+font-size: 15px !important;
+}

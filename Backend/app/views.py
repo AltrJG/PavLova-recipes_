@@ -184,6 +184,8 @@ class UpdateUserPasswordView(APIView):
 
         if not user.check_password(old_password):
             return Response({"error": "La contraseña actual es incorrecta"}, status=status.HTTP_400_BAD_REQUEST)
+        if not new_password or not new_password_confirm:
+            return Response({"error": "Todos los campos son obligatorios"}, status=status.HTTP_400_BAD_REQUEST)
         if new_password != new_password_confirm:
             return Response({"error": "Las nuevas contraseñas no coinciden"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -200,8 +202,15 @@ class UpdateUserEmailView(APIView):
     def post(self, request):
         user = request.user
         new_email = request.data.get('correo')
+        contrasena = request.data.get('password')
         if not new_email:
             return Response({"error": "Debe proporcionar un nuevo correo"}, status=status.HTTP_400_BAD_REQUEST)
+        if not user.check_password(contrasena):
+            return Response({"error": "La contraseña actual es incorrecta"}, status=status.HTTP_400_BAD_REQUEST)
+        if user.email == new_email:
+            return Response({"error": "Este es tu correo actual."}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(email=new_email).exists():
+            return Response({'error': 'Ya existe un usuario con este correo electrónico.'}, status=status.HTTP_400_BAD_REQUEST)
         user.email = new_email
         user.save()
         return Response({"message": "Correo actualizado correctamente"}, status=status.HTTP_200_OK)
