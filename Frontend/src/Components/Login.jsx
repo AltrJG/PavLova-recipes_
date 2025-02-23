@@ -42,7 +42,6 @@ export default function Login(){
                 });
                 navigate('/users');
             } catch(error){
-                console.log(error);
                 setErrorsHandler({error: error.message});
             } finally{
                 setLoading(false);
@@ -64,7 +63,7 @@ export default function Login(){
                     <input name='password' id='password' onChange={e => setLoginData({...loginData, [e.target.name]: e.target.value})} type='password' required className={styles.form_input_group_input} placeholder='Contraseña' />
                 </div>
                 <div className={`align_center ${styles.formButton}`}>
-                    <MainButton disabled={false} type={'submit'} icon={"log-in"} iconSize={"3"} fontSize={"2.5"} color={"primary"} borderRadius={'1'} text={"Iniciar sesion"}/>
+                    <MainButton disabled={loading} type={'submit'} icon={"log-in"} iconSize={"3"} fontSize={"2.5"} color={"primary"} borderRadius={'1'} text={loading ? "Iniciando..." : "Iniciar sesion"}/>
                 </div>
             </form>
             <p className={styles.other_options}>No tienes cuenta? <Link className={styles.other_links} to={"/auth/registrarse"}>Registrate</Link></p>

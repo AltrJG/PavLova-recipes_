@@ -144,7 +144,8 @@
     padding-left: .2rem;
     height: 5rem;
   }
-  .nav_el.active:hover .icon::after{
+  .nav_el.active:hover .icon::after,
+  .nav_el.active .icon::after{
     height: 38px;
     width: 38px;
     margin-left: 1rem;

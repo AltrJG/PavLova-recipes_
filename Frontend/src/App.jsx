@@ -8,6 +8,7 @@ import MyProfile from './pages/MyProfile'
 import { RightSidebarProvider } from './context/RightSidebarProvider'
 import ManageUsers from './pages/ManageUsers'
 import { AuthProvider } from './context/AuthProvider'
+import ProtectedRoute from './Components/ProtectedRoute'
 
 function App() {
 
@@ -22,7 +23,9 @@ function App() {
                 <Route path='registrarse' element={<Register/>}/>
                 <Route path='recuperar-cuenta' element={<RecoverAccount/>}/>
               </Route>
-              <Route path='mi-perfil' element={<MyProfile/>}/>
+              <Route element={<ProtectedRoute/>}>
+                <Route path='mi-perfil' element={<MyProfile/>}/>
+              </Route>
               <Route path='users' element={<ManageUsers/>}/>
             </Route>
           </Routes>

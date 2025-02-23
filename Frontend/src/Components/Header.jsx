@@ -5,8 +5,8 @@ import styles from './Header.module.css';
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthProvider";
 
-export default function Header({toggleMenu, isMenuOpen, isAuthenticated}){
-    const { user, logout } = useAuth();
+export default function Header({toggleMenu, isMenuOpen}){
+    const { user, logout, isAuthenticated } = useAuth();
 
     const navigate = useNavigate();
 
@@ -29,7 +29,7 @@ export default function Header({toggleMenu, isMenuOpen, isAuthenticated}){
                     </div>
                 </Link></>
                 : <Link to={"/auth/iniciar-sesion"} className={styles.main_content_user} style={{textDecoration: "none"}}>
-                    <h3 className={styles.username}>Iniciar Sesion</h3>
+                    <h3 className={`${styles.username} ${styles.logInText}`}>Iniciar Sesion</h3>
                 </Link>}
             </div>
 

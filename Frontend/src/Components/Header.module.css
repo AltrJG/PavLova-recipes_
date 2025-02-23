@@ -127,9 +127,18 @@
     transform: rotate(-315deg) translate(-5px, -10px);
   }
 
+  .logInText{
+    margin-right: 0rem;
+
+  }
+
   @media(max-width: 59.375em){
     .username{
       display: none;
+    }
+    .logInText{
+      display: block;
+      font-size: 1.4rem;
     }
     .main_content_user{
       display: flex;

@@ -3,6 +3,9 @@ import MainButton from '../Components/MainButton';
 import styles from './UserAuthFormsSingle.module.css'
 import { useState } from 'react';
 import { useAuth } from '../context/AuthProvider';
+import { validateRegister } from './utils/validators';
+import Swal from 'sweetalert2';
+import RightSidebarErrors from './RightSidebarErrors';
 
 export default function Register(){
 
@@ -14,28 +17,46 @@ export default function Register(){
         correo: "",
         password: "",
         confirmPassword: ""
-    })
+    });
+    const [ loading, setLoading ] = useState(false);
+    const [ errorsHandler, setErrorsHandler ] = useState(false);
 
-    const [ error, setError ] = useState("");
 
     const handleSumbit = async (e) => {
         e.preventDefault();
 
-        if(registerData.password !== registerData.confirmPassword){
-            setError("Las contraseñas no coinciden");
-            return;
+        setLoading(true);
+        const errors = validateRegister(registerData);
+        setErrorsHandler(errors);
+        if(Object.keys(errors).length === 0){
+            try {
+                await register(registerData.nombre, registerData.correo, registerData.password);
+                Swal.fire({
+                    icon: "success",
+                    title: "Cuenta Creada",
+                    text: 'Registro exitoso, confirma tu cuenta para iniciar sesion',
+                    showConfirmButton: true,
+                    customClass: {
+                        title: "swal_title",
+                        icon: "swal_icon",
+                        htmlContainer: "swal_text",
+                        confirmButton: "swal_confirm"
+                    }
+                });
+                navigate('/auth/iniciar-sesion');
+            } catch (error) {
+                setErrorsHandler({error: error.message});
+            } finally{
+                setLoading(false);
+            }
         }
-
-        try {
-            await register(registerData.nombre, registerData.correo, registerData.password);
-        } catch (error) {
-            setError("Error de conexion");
-        }
+        setLoading(false);
     }
 
     return(
         <>
             <form className={styles.form_user_information} onSubmit={handleSumbit}>
+                <RightSidebarErrors errors={errorsHandler}/>
                 <div className={styles.form_input_group}>
                     <label className={styles.form_input_group_icon}><ion-icon name="id-card"></ion-icon></label>
                     <input name='nombre' id='nombre' onChange={e => setRegisterData({...registerData, [e.target.name]: e.target.value})}  type='text' required className={styles.form_input_group_input} placeholder='Nombre Completo' />
@@ -53,7 +74,7 @@ export default function Register(){
                     <input name='confirmPassword' id='confirmPassword' onChange={e => setRegisterData({...registerData, [e.target.name]: e.target.value})}  type='password' required className={styles.form_input_group_input} placeholder='Repite la contraseña' />
                 </div>
                 <div className={`align_center ${styles.formButton}`}>
-                    <MainButton disabled={false} type={'submit'} icon={"person-add"} iconSize={"3"} fontSize={"2.5"} color={"primary"} borderRadius={'1'} text={"Registrarse"}/>
+                    <MainButton disabled={loading} type={'submit'} icon={"person-add"} iconSize={"3"} fontSize={"2.5"} color={"primary"} borderRadius={'1'} text={loading ? "Registrando..." : "Registrarse"}/>
                 </div>
             </form>
             <p className={styles.other_options}>Ya tienes cuenta? <Link className={styles.other_links} to={"/auth/iniciar-sesion"}>Iniciar Sesion</Link></p>

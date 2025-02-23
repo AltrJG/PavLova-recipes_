@@ -3,8 +3,11 @@ import styles from './ManageUsers.module.css';
 import FilterForm from '../Components/FilterForm';
 import Help from '../Components/Help';
 import UserCard from '../Components/UserCard';
+import { useAuth } from '../context/AuthProvider';
 
 export default function ManageUsers(){
+
+    const { isSuperUser } = useAuth();
 
     const filterOptions = [
         { type: "text", name: "nombre", placeholder: "Filtrar por nombre..."},
@@ -24,28 +27,28 @@ export default function ManageUsers(){
             <div className={styles.usersContainer}>
                 <FilterForm filterOptions={filterOptions} data={userFilters} setData={setUserFilters}/>
                 <div className='usersContent'>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
-                    <UserCard/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
+                    <UserCard changeUserPermissions={isSuperUser}/>
                 </div>
             </div>
         </>

@@ -7,7 +7,7 @@ const AuthContext = createContext();
 
 const initialState = {
     user: {},
-    isLoading: false,
+    isLoading: true,
     accessToken: '',
     isAuthenticated: false,
     isStaff: false,
@@ -33,7 +33,7 @@ function reducer(state, action){
                     redFacebook: action.payload.social_facebook,
                     redYoutube: action.payload.social_youtube,
                     redTwitter: action.payload.social_twitter
-                }, isStaff: action.payload.is_staff, isSuperUser: action.payload.is_superuser };
+                }, isStaff: action.payload.is_staff, isSuperUser: action.payload.is_superuser};
         case 'auth/changeUserData':
             return{ ...state, user: 
                 {
@@ -59,7 +59,6 @@ const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         try{
             const response = await backendAPI.post('/auth/login/', { email: email, password });
-            console.log(response);
             dispatch({type: 'auth/addAccessToken', payload: response.data.access});
         } catch(error){
             throw new Error(error.response.data.error);
@@ -70,7 +69,7 @@ const AuthProvider = ({ children }) => {
         try{
             await backendAPI.post('/auth/register/', { nombre, correo: email, password });
         } catch(error){
-            console.log(error);
+            throw new Error(error.response.data.error);
         }
     }
 
@@ -151,6 +150,7 @@ const AuthProvider = ({ children }) => {
         <AuthContext.Provider value={{
             user,
             isAuthenticated,
+            isSuperUser,
             isLoading,
             changeUserData,
             logout,

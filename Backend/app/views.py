@@ -141,6 +141,8 @@ class UserInfoView(APIView):
             'email': user.email,
             'country': user.country,
             'about': user.about,
+            'is_staff': user.is_staff,
+            'is_superuser': user.is_superuser,
             'profile_picture': request.build_absolute_uri(user.profile_picture.url) if user.profile_picture else None,
             'social_youtube': user.social_youtube,
             'social_facebook': user.social_facebook,

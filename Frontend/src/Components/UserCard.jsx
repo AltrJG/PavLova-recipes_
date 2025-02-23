@@ -18,9 +18,9 @@ export default function UserCard({ changeUserPermissions }){
                     <p className={`${styles.userCardDataType} ${styles.typeUser}`}>Usuario</p>
                 </div>
             </div>
-            <div className={styles.userCardActions}>
+            {changeUserPermissions && <div className={styles.userCardActions}>
                 <button onClick={openUpdatePermissions} className={styles.userCardButton}>Cambiar Informacion</button>
-            </div>
+            </div> }
         </div>
     )
 }
