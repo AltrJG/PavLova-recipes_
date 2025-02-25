@@ -1,0 +1,54 @@
+.paginationContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    & p{
+        margin: 1rem 1rem;
+        font-size: 1.6rem;
+        font-weight: 600;
+        font-family: 'Oswald', sans-serif;
+    }
+    & ion-icon{
+        font-size: 2.5rem;
+    }
+}
+
+.buttonsPagination ion-icon{
+    font-size: 3rem;
+    color: #23130d;
+    transition: .3s;
+}
+
+.buttonsPagination{
+    cursor: pointer;
+    outline: none;
+    border: none;
+    border-radius: 1rem;
+    padding: .8rem;
+    background: rgb(241,180,52);
+    background: -moz-linear-gradient(315deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: -webkit-linear-gradient(315deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: linear-gradient(315deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    position: relative;
+}
+
+.buttonsPagination::before{
+    content: "";
+    top: 50%;
+    border-radius: 1rem;
+    left: 50%;
+    transition: .3s;
+    width: 85%;
+    position: absolute;
+    height: 85%;
+    transform: translate(-50%, -50%);
+    background-color: transparent;
+}
+
+.buttonsPagination:hover::before{
+    background-color: #23130d;
+}
+
+.buttonsPagination:hover ion-icon{
+    color: orange;
+}

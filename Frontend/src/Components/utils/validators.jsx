@@ -159,3 +159,21 @@ export const validateRegister = (userData) => {
 
     return errors;
 };
+
+export const validateUserForm = (data) => {
+    const errors = {};
+
+    // Validate role
+    const validRoles = ["Usuario", "Moderador", "Administrador"];
+    if (!validRoles.includes(data.rol)) {
+        errors.rol = "Rol de usuario no válido.";
+    }
+
+    // Validate account status
+    const validStatuses = ["Activado", "Desactivado"];
+    if (!validStatuses.includes(data.activo)) {
+        errors.activo = "Estado de cuenta no válido.";
+    }
+
+    return errors;
+};

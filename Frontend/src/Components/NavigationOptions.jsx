@@ -1,3 +1,4 @@
+import { FadeLoader } from "react-spinners";
 import { useAuth } from "../context/AuthProvider"
 import LinkSidebar from "./LinkSidebar"
 
@@ -5,7 +6,7 @@ export default function NavigationOptions(){
 
     const { isLoading, isAuthenticated, isStaff, isSuperUser } = useAuth();
 
-    if (isLoading) return "Cargando..."
+    if (isLoading) return <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
 
     return(
         <>

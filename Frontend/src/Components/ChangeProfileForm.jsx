@@ -180,12 +180,7 @@ export default function ChangeProfileForm(){
                         confirmButton: "swal_confirm"
                     }
                 });
-                setMailData({
-                    oldPassword: "",
-                    newPassword: "",
-                    newPasswordConfirm: ""
-                });
-                setPasswordData({...passwordData, password: ""});
+                setMailData({...mailData, password: ""});
             } catch(error){
                 console.log(error);
                 if(error.response?.status == 401){

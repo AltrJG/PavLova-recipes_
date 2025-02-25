@@ -155,3 +155,10 @@ body{
 .swal2-success-line-tip, .swal2-success-line-long {
 font-size: 15px !important;
 }
+
+.spinnerLoader{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4rem;
+}

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Recipe from "./Recipe";
 import styles from "./RecipesProfile.module.css";
+import Pagination from "./Pagination";
 
 export default function RecipesProfile(){
     
@@ -28,6 +29,13 @@ export default function RecipesProfile(){
                 <Recipe/>
                 <Recipe/>
             </div>
+            <Pagination                    
+                        
+                    next={'tgwgfw'} 
+                    previous={'wrw'} 
+                    count={15} 
+                    currentPage={5} 
+                    text="Mostrando usuarios {start}-{end} de {count}"/>
         </div>
     )
 }

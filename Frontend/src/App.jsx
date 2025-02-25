@@ -9,27 +9,30 @@ import { RightSidebarProvider } from './context/RightSidebarProvider'
 import ManageUsers from './pages/ManageUsers'
 import { AuthProvider } from './context/AuthProvider'
 import ProtectedRoute from './Components/ProtectedRoute'
+import { UpdateDataProvider } from './context/UpdateDataProvider'
 
 function App() {
 
   return (
     <AuthProvider>
       <RightSidebarProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path='/' element={<RootLayout/>}>
-              <Route path='auth' element={<UserAuthForms/>}>
-                <Route path='iniciar-sesion' element={<Login/>}/>
-                <Route path='registrarse' element={<Register/>}/>
-                <Route path='recuperar-cuenta' element={<RecoverAccount/>}/>
+        <UpdateDataProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path='/' element={<RootLayout/>}>
+                <Route path='auth' element={<UserAuthForms/>}>
+                  <Route path='iniciar-sesion' element={<Login/>}/>
+                  <Route path='registrarse' element={<Register/>}/>
+                  <Route path='recuperar-cuenta' element={<RecoverAccount/>}/>
+                </Route>
+                <Route element={<ProtectedRoute/>}>
+                  <Route path='mi-perfil' element={<MyProfile/>}/>
+                </Route>
+                <Route path='users' element={<ManageUsers/>}/>
               </Route>
-              <Route element={<ProtectedRoute/>}>
-                <Route path='mi-perfil' element={<MyProfile/>}/>
-              </Route>
-              <Route path='users' element={<ManageUsers/>}/>
-            </Route>
-          </Routes>
-        </BrowserRouter>
+            </Routes>
+          </BrowserRouter>
+        </UpdateDataProvider>
       </RightSidebarProvider>
     </AuthProvider>
   )

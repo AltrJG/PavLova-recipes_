@@ -6,7 +6,8 @@ const RightSidebarContext = createContext();
 const initialState = {
     isOpen: false,
     updatePermissions: false,
-    modifyProfile: false
+    modifyProfile: false,
+    userModify: {}
 }
 
 function reducer(state, action){
@@ -19,11 +20,13 @@ function reducer(state, action){
             return { ...state, modifyProfile: true, updatePermissions: false }
         case 'rightSidebar/openUpdatePermissions':
             return { ...state, modifyProfile: false, updatePermissions: true }
+        case 'rightSidebar/setUserModify':
+            return { ...state, userModify: action.payload }
     }
 }
 
 const RightSidebarProvider = ({ children }) => {
-    const [{ isOpen, updatePermissions, modifyProfile }, dispatch] = useReducer(reducer, initialState);
+    const [{ isOpen, updatePermissions, modifyProfile, userModify }, dispatch] = useReducer(reducer, initialState);
 
     function openRightSidebar(){
         dispatch({type: 'rightSidebar/open'});
@@ -38,8 +41,9 @@ const RightSidebarProvider = ({ children }) => {
         dispatch({type: 'rightSidebar/openModifyProfile'});
     }
 
-    function openUpdatePermissions(){
+    function openUpdatePermissions(user){
         openRightSidebar();
+        dispatch({type: 'rightSidebar/setUserModify', payload: user});
         dispatch({type: 'rightSidebar/openUpdatePermissions'});
     }
 
@@ -48,6 +52,7 @@ const RightSidebarProvider = ({ children }) => {
             isOpen,
             updatePermissions,
             modifyProfile,
+            userModify,
             openModifyProfile,
             openUpdatePermissions,
             closeRightSidebar,
