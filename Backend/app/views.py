@@ -11,8 +11,9 @@ from .models import User
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from .serializers import UserSerializer, UserUpdateSerializer
+from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer
 from .permissions import IsModeratorOrAdmin
+from .filters import UserFilter
 
 class RegisterView(APIView):
     def post(self, request):
@@ -156,6 +157,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.filter(is_active=True).order_by('id')
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
+    filterset_class = UserFilter
 
 class UserUpdateViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().order_by('id')
@@ -226,3 +228,34 @@ class UpdateUserEmailView(APIView):
         user.email = new_email
         user.save()
         return Response({"message": "Correo actualizado correctamente"}, status=status.HTTP_200_OK)
+    
+class ProfilePictureUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    MAX_FILE_SIZE_MB = 5
+    ALLOWED_FILE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'webp']
+
+    def put(self, request, *args, **kwargs):
+        user = request.user
+        profile_picture = request.FILES.get('profile_picture')
+        
+        if profile_picture:
+            max_size = self.MAX_FILE_SIZE_MB * 1024 * 1024
+            if profile_picture.size > max_size:
+                return Response(
+                    {'error': f'El tamaño máximo permitido es de {self.MAX_FILE_SIZE_MB} MB.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            file_extension = profile_picture.name.split('.')[-1].lower()
+            if file_extension not in self.ALLOWED_FILE_EXTENSIONS:
+                return Response(
+                    {'error': f'Formato de archivo no permitido. Usa: {", ".join(self.ALLOWED_FILE_EXTENSIONS)}.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        serializer = ProfilePictureUpdateSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Imagen de perfil actualizada correctamente.'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

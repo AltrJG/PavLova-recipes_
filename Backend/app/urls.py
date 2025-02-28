@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.documentation import include_docs_urls
 from rest_framework import routers
 from app import views
-from .views import RegisterView, LoginView, LogoutView, UserInfoView, CustomTokenRefreshView, UpdateUserProfileView, UpdateUserPasswordView, UpdateUserEmailView, UserViewSet, UserUpdateViewSet
+from .views import RegisterView, LoginView, LogoutView, UserInfoView, CustomTokenRefreshView, UpdateUserProfileView, UpdateUserPasswordView, UpdateUserEmailView, ProfilePictureUpdateView, UserViewSet, UserUpdateViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user') # /users/
@@ -18,4 +18,5 @@ urlpatterns = [
     path('user/update_profile/', UpdateUserProfileView.as_view(), name='update_user_profile'),
     path('user/update_password/', UpdateUserPasswordView.as_view(), name='update_user_password'),
     path('user/update_email/', UpdateUserEmailView.as_view(), name='update_user_email'),
+    path('profile/picture/', ProfilePictureUpdateView.as_view(), name='profile-picture-update'),
 ]

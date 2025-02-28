@@ -1,6 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager, Group, Permission
 from django.utils import timezone
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from PIL import Image
+from io import BytesIO
+import uuid
+from django.utils.deconstruct import deconstructible
 
 # Create your models here.
 
@@ -29,6 +34,13 @@ class CustomUserManager(UserManager):
         extra_fields.setdefault('is_superuser', True)
         return self._create_user(email, password, **extra_fields)
     
+@deconstructible
+class UniqueImagePath:
+    def __call__(self, instance, filename):
+        ext = filename.split('.')[-1]
+        filename = f"{uuid.uuid4()}.{ext}"
+        return f"images/{filename}"
+    
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(blank=False, default='', unique=True)
     name = models.CharField(max_length=255, blank=False, default='')
@@ -39,7 +51,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_login = models.DateTimeField(blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, default='')
     about = models.TextField(blank=True, default='')
-    profile_picture = models.ImageField(upload_to='images/', default='images/user-icon.png')
+    profile_picture = models.ImageField(upload_to=UniqueImagePath(), default='images/user-icon.webp')
     social_youtube = models.URLField(blank=True, default='')
     social_facebook = models.URLField(blank=True, default='')
     social_twitter = models.URLField(blank=True, default='')
@@ -70,3 +82,37 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     def get_short_name(self):
         return self.name or self.email.split('@')[0]
+    
+    def save(self, *args, **kwargs):
+        default_image = 'images/user-icon.webp'
+
+        if self.pk:
+            old_user = User.objects.get(pk=self.pk)
+            if old_user.profile_picture and old_user.profile_picture.name != default_image:
+                if old_user.profile_picture != self.profile_picture:
+                    old_user.profile_picture.delete(save=False)
+
+
+        if self.profile_picture and not self.profile_picture.name.endswith('.webp'):
+            img = Image.open(self.profile_picture)
+
+            if img.mode in ('RGBA', 'P') and 'transparency' in img.info:
+                img = img.convert('RGBA')
+            else:
+                img = img.convert('RGB')
+
+            output = BytesIO()
+            
+            img.save(output, format='WEBP', quality=80)
+            output.seek(0)
+            
+            self.profile_picture = InMemoryUploadedFile(
+                output,
+                'ImageField',
+                f"{self.profile_picture.name.split('.')[0]}.webp",
+                'image/webp',
+                output.getbuffer().nbytes,
+                None
+            )
+
+        super().save(*args, **kwargs)

@@ -10,7 +10,7 @@ export default function UserCard({ changeUserPermissions, user }){
         <div className={styles.cardContainer}>
             <div className={styles.userContainer}>
                 <div className={styles.userCardImage}>
-                    <img src={tempUserPic}/>
+                    <img src={user.profile_picture}/>
                 </div>
                 <div className={styles.userCardData}>
                     <h2 className={styles.userCardDataName}>{user.name}</h2>

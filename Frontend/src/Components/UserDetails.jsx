@@ -12,7 +12,7 @@ export default function UserDetails(){
         <div className={styles.userDetailsContainer}>
             <div className={styles.allUserData}>
                 <div className={styles.userData}>
-                    <img className={styles.userProfilePicture} src={tempUserPic}/>
+                    <img className={styles.userProfilePicture} src={user?.fotoPerfil}/>
                     <div className={styles.userDataText}>
                         <h5>{user?.nombre}</h5>
                         <p>{user?.pais}</p>

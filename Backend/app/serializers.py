@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'name', 'country', 'profile_picture', 'role', 'status']
+        fields = ['id', 'name', 'country', 'profile_picture', 'role', 'status', 'email']
 
     def get_profile_picture(self, obj):
         request = self.context.get('request')
@@ -56,4 +56,18 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             instance.is_active = False
 
         instance.save()
+        return instance
+    
+class ProfilePictureUpdateSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.ImageField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['profile_picture']
+
+    def update(self, instance, validated_data):
+        profile_picture = validated_data.get('profile_picture')
+        if profile_picture:
+            instance.profile_picture = profile_picture
+            instance.save()
         return instance
