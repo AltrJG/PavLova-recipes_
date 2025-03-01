@@ -35,7 +35,7 @@ class RegisterView(APIView):
 
             verification_code = EmailVerificationCode.objects.create(user=user)
 
-            verification_link = f"http://localhost:5173/app/verify_email/{verification_code.code}/"
+            verification_link = f"http://localhost:5173/verify_email/{verification_code.code}/"
 
             send_mail(
                 subject="Verificación de correo",
@@ -320,7 +320,7 @@ class VerifyEmailView(APIView):
             user.is_active = True
             user.save()
 
-            return Response({"message": "Correo verificado con éxito."}, status=status.HTTP_200_OK)
+            return Response({"message": "Correo verificado con éxito, ya puedes iniciar sesion."}, status=status.HTTP_200_OK)
 
         except EmailVerificationCode.DoesNotExist:
             return Response({"error": "Código inválido."}, status=status.HTTP_400_BAD_REQUEST)

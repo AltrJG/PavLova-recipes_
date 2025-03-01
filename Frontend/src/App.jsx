@@ -11,6 +11,8 @@ import { AuthProvider } from './context/AuthProvider'
 import ProtectedRoute from './Components/ProtectedRoute'
 import { UpdateDataProvider } from './context/UpdateDataProvider'
 import UserProfile from './pages/UserProfile'
+import PasswordReset from './Components/PasswordReset'
+import VerifyEmail from './pages/VerifyEmail'
 
 function App() {
 
@@ -24,6 +26,7 @@ function App() {
                 <Route path='auth' element={<UserAuthForms/>}>
                   <Route path='iniciar-sesion' element={<Login/>}/>
                   <Route path='registrarse' element={<Register/>}/>
+                  <Route path='password_reset/:token' element={<PasswordReset/>}/>
                   <Route path='recuperar-cuenta' element={<RecoverAccount/>}/>
                 </Route>
                 <Route element={<ProtectedRoute/>}>
@@ -31,6 +34,7 @@ function App() {
                 </Route>
                 <Route path='users' element={<ManageUsers/>}/>
                 <Route path='user/:user_id' element={<UserProfile/>}/>
+                <Route path='verify_email/:token' element={<VerifyEmail/>}/>
               </Route>
             </Routes>
           </BrowserRouter>

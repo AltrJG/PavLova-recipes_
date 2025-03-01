@@ -118,7 +118,7 @@ class PasswordResetRequestSerializer(serializers.Serializer):
 
         reset_token = PasswordResetToken.objects.create(user=user)
 
-        reset_link = f"http://localhost:8000/app/password_reset/{reset_token.token}/"
+        reset_link = f"http://localhost:5173/auth/password_reset/{reset_token.token}"
 
         send_mail(
             subject="Restablecimiento de contraseña",

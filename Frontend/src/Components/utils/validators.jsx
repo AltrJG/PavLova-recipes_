@@ -53,7 +53,7 @@ export const validatePasswordData = (passwordData) => {
         errors.newPassword = "La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, un simbolo y un número.";
     }
 
-    if (passwordData.newPassword !== passwordData.newPasswordConfirm) {
+    if (passwordData.newPassword != passwordData.newPasswordConfirm) {
         errors.newPasswordConfirm = "Las contraseñas no coinciden";
     }
 

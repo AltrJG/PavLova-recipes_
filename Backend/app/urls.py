@@ -22,5 +22,5 @@ urlpatterns = [
     path('profile/picture/', ProfilePictureUpdateView.as_view(), name='profile-picture-update'),
     path('password_reset/request/', PasswordResetRequestView.as_view(), name='password_reset_request'),
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
-    path("verify_email/<uuid:code>/", VerifyEmailView.as_view(), name="verify_email"),
+    path('verify_email/<uuid:code>/', VerifyEmailView.as_view(), name="verify_email"),
 ]

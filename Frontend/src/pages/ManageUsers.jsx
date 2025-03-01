@@ -8,9 +8,11 @@ import backendAPI from '../api/axiosConfig';
 import Pagination from '../Components/Pagination';
 import { useUpdateData } from '../context/UpdateDataProvider';
 import { FadeLoader } from 'react-spinners';
+import { useSearchParams } from 'react-router-dom';
 
 export default function ManageUsers(){
 
+    const [ searchParams ] = useSearchParams();
     const { isSuperUser, refreshAccessToken } = useAuth();
     const [ users, setUsers ] = useState([]);
     const [ loading, setLoading ] = useState(true);
@@ -20,6 +22,8 @@ export default function ManageUsers(){
     const [ currentPage, setCurrentPage ] = useState(1);
     const { updatedUser, disabledUser, resetUserState } = useUpdateData();
 
+    const name = searchParams.get("nombre");
+
     const filterOptions = [
         { type: "text", name: "nombre", placeholder: "Filtrar por nombre..."},
         { type: "text", name: "correo", placeholder: "Filtrar por correo..."},
@@ -27,12 +31,12 @@ export default function ManageUsers(){
     ]
 
     const [ userFilters, setUserFilters ] = useState({
-        nombre: "",
+        nombre: name != null ? name : "",
         correo: "",
         tipoUsuario: "Todos"
     });
 
-    const getUsers = async (previous = null, next = null) => {
+    const getUsers = async (previous = null, next = null, name = null) => {
         setLoading(true);
         try{
             let url = previous 
@@ -44,6 +48,7 @@ export default function ManageUsers(){
             const params = new URLSearchParams();
 
             if (userFilters.nombre.trim() && previous == null && next == null) params.append("name", userFilters.nombre);
+            if (name != null && params.append("name", name));
             if (userFilters.correo.trim() && previous == null && next == null) params.append("email", userFilters.correo);
             if (userFilters.tipoUsuario !== "Todos" && previous == null && next == null) params.append("role", userFilters.tipoUsuario);
 
@@ -69,7 +74,7 @@ export default function ManageUsers(){
     }
 
     useEffect(() => {
-        getUsers();
+        getUsers(null, null, name);
     }, []);
 
     useEffect(() => {
@@ -94,7 +99,9 @@ export default function ManageUsers(){
                 <FilterForm setCurrentPage={setCurrentPage} action={getUsers} filterOptions={filterOptions} data={userFilters} setData={setUserFilters}/>
                 { loading 
                 ? <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
-                :<>
+                : users.length == 0 
+                ? <p className={styles.usersNotFound}>No se encontraron usuarios con los filtros colocados, prueba modificando los filtros</p>
+                : <>
                 <div className='usersContent'>
                     { users.map(user => <UserCard key={user.id} user={user} changeUserPermissions={isSuperUser}/>) }
                 </div>

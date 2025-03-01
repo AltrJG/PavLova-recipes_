@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Swal from 'sweetalert2';
 import { validateAccountRecover } from './utils/validators';
 import RightSidebarErrors from './RightSidebarErrors';
+import backendAPI from '../api/axiosConfig';
 
 export default function RecoverAccount(){
 
@@ -24,7 +25,7 @@ export default function RecoverAccount(){
         setErrorsHandler(errors);
         if(Object.keys(errors).length === 0){
             try {
-                //await register(registerData.nombre, registerData.correo, registerData.password);
+                await backendAPI.post('password_reset/request/', { email: registerData.correo });
                 Swal.fire({
                     icon: "success",
                     title: "Solicitud Aceptada",
@@ -38,7 +39,8 @@ export default function RecoverAccount(){
                     }
                 });
             } catch (error) {
-                setErrorsHandler({error: error.message});
+                console.log(error);
+                setErrorsHandler(error.response.data);
             } finally{
                 setLoading(false);
             }
