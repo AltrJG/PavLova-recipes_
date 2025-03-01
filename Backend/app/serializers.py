@@ -1,5 +1,7 @@
-from .models import User
+from .models import User, PasswordResetToken
 from rest_framework import serializers
+from django.core.mail import send_mail
+from django.utils import timezone
 
 class UserSerializer(serializers.ModelSerializer):
     profile_picture = serializers.SerializerMethodField()
@@ -98,3 +100,72 @@ class ProfilePictureUpdateSerializer(serializers.ModelSerializer):
             instance.profile_picture = profile_picture
             instance.save()
         return instance
+    
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        if not User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("No existe una cuenta con este correo electrónico.")
+        return value
+
+    def create_reset_token(self):
+        email = self.validated_data['email']
+        user = User.objects.get(email=email)
+
+        PasswordResetToken.objects.filter(user=user, is_used=False).delete()
+
+        reset_token = PasswordResetToken.objects.create(user=user)
+
+        reset_link = f"http://localhost:5173/app/password_reset/{reset_token.token}/"
+
+        send_mail(
+            subject="Restablecimiento de contraseña",
+            message=f"Haz clic en el siguiente enlace para restablecer tu contraseña: {reset_link}",
+            from_email="pavlova.recipes.noreply@gmail.com",
+            recipient_list=[email],
+            fail_silently=False,
+        )
+
+        return reset_link
+    
+class PasswordResetSerializer(serializers.Serializer):
+    token = serializers.UUIDField()
+    new_password = serializers.CharField(write_only=True, min_length=8)
+    confirm_password = serializers.CharField(write_only=True, min_length=8)
+
+    def validate(self, data):
+        token = data.get("token")
+        new_password = data.get("new_password")
+        confirm_password = data.get("confirm_password")
+
+        try:
+            reset_token = PasswordResetToken.objects.get(token=token)
+        except PasswordResetToken.DoesNotExist:
+            raise serializers.ValidationError({"token": "Token inválido o inexistente."})
+
+        if reset_token.expires_at < timezone.now():
+            raise serializers.ValidationError({"token": "El enlace de restablecimiento ha expirado."})
+
+        if reset_token.is_used:
+            raise serializers.ValidationError({"token": "Este enlace ya ha sido utilizado."})
+
+        if new_password != confirm_password:
+            raise serializers.ValidationError({"confirm_password": "Las contraseñas no coinciden."})
+
+        return data
+
+    def save(self):
+        token = self.validated_data["token"]
+        new_password = self.validated_data["new_password"]
+
+        reset_token = PasswordResetToken.objects.get(token=token)
+
+        user = reset_token.user
+        user.set_password(new_password)
+        user.save()
+
+        reset_token.is_used = True
+        reset_token.save()
+
+        return user
