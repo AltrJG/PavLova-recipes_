@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.documentation import include_docs_urls
 from rest_framework import routers
 from app import views
-from .views import RegisterView, LoginView, LogoutView, UserInfoView, CustomTokenRefreshView, UpdateUserProfileView, UpdateUserPasswordView, UpdateUserEmailView, ProfilePictureUpdateView, UserViewSet, UserUpdateViewSet, GetUsuarioById, PasswordResetRequestView, PasswordResetView
+from .views import RegisterView, LoginView, LogoutView, UserInfoView, CustomTokenRefreshView, UpdateUserProfileView, UpdateUserPasswordView, UpdateUserEmailView, ProfilePictureUpdateView, UserViewSet, UserUpdateViewSet, GetUsuarioById, PasswordResetRequestView, PasswordResetView, VerifyEmailView
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user') # /users/
@@ -22,4 +22,5 @@ urlpatterns = [
     path('profile/picture/', ProfilePictureUpdateView.as_view(), name='profile-picture-update'),
     path('password_reset/request/', PasswordResetRequestView.as_view(), name='password_reset_request'),
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
+    path("verify_email/<uuid:code>/", VerifyEmailView.as_view(), name="verify_email"),
 ]

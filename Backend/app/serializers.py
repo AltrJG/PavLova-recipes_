@@ -2,6 +2,7 @@ from .models import User, PasswordResetToken
 from rest_framework import serializers
 from django.core.mail import send_mail
 from django.utils import timezone
+from django.conf import settings
 
 class UserSerializer(serializers.ModelSerializer):
     profile_picture = serializers.SerializerMethodField()
@@ -117,12 +118,12 @@ class PasswordResetRequestSerializer(serializers.Serializer):
 
         reset_token = PasswordResetToken.objects.create(user=user)
 
-        reset_link = f"http://localhost:5173/app/password_reset/{reset_token.token}/"
+        reset_link = f"http://localhost:8000/app/password_reset/{reset_token.token}/"
 
         send_mail(
             subject="Restablecimiento de contraseña",
             message=f"Haz clic en el siguiente enlace para restablecer tu contraseña: {reset_link}",
-            from_email="pavlova.recipes.noreply@gmail.com",
+            from_email=settings.EMAIL_HOST_USER,
             recipient_list=[email],
             fail_silently=False,
         )

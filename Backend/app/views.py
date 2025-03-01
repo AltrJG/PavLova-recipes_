@@ -6,16 +6,17 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from django.shortcuts import get_object_or_404
-from .models import User
+from .models import User, EmailVerificationCode
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate, update_session_auth_hash
-from .models import User
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer
 from .permissions import IsModeratorOrAdmin
 from .filters import UserFilter
+from django.core.mail import send_mail
+from django.conf import settings
 
 class RegisterView(APIView):
     def post(self, request):
@@ -31,7 +32,20 @@ class RegisterView(APIView):
 
         try:
             user = User.objects.create_user(email=correo, password=password, name=nombre)
-            return Response({'message': 'Usuario registrado exitosamente.'}, status=status.HTTP_201_CREATED)
+
+            verification_code = EmailVerificationCode.objects.create(user=user)
+
+            verification_link = f"http://localhost:5173/app/verify_email/{verification_code.code}/"
+
+            send_mail(
+                subject="Verificación de correo",
+                message=f"Usa este enlace para verificar tu cuenta: {verification_link}",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[correo],
+                fail_silently=False,
+            )
+
+            return Response({'message': 'Usuario registrado exitosamente. Se ha enviado un enlace de verificación a tu correo.'}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'error': 'Ocurrió un problema al registrar el usuario.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -290,3 +304,53 @@ class PasswordResetView(APIView):
             return Response({"message": "Tu contraseña ha sido restablecida exitosamente."}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class VerifyEmailView(APIView):
+    def post(self, request, code):
+        try:
+            verification_code = EmailVerificationCode.objects.get(code=code)
+            
+            if not verification_code.is_valid():
+                return Response({"error": "El código ya expiró o fue usado."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            verification_code.is_used = True
+            verification_code.save()
+
+            user = verification_code.user
+            user.is_active = True
+            user.save()
+
+            return Response({"message": "Correo verificado con éxito."}, status=status.HTTP_200_OK)
+
+        except EmailVerificationCode.DoesNotExist:
+            return Response({"error": "Código inválido."}, status=status.HTTP_400_BAD_REQUEST)
+        
+class ResendVerificationEmailView(APIView):
+    def post(self, request):
+        correo = request.data.get('correo')
+
+        if not correo:
+            return Response({'error': 'El correo es obligatorio.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.filter(email=correo, is_active=False).first()
+
+            if not user:
+                return Response({'error': 'No se encontró un usuario con este correo electrónico o el usuario ya está activo.'}, status=status.HTTP_404_NOT_FOUND)
+
+            verification_code = EmailVerificationCode.objects.create(user=user)
+            
+            verification_link = f"http://localhost:8000/app/verify_email/{verification_code.code}/"
+            
+            send_mail(
+                subject="Verificación de correo",
+                message=f"Usa este enlace para verificar tu cuenta: {verification_link}",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[correo],
+                fail_silently=False,
+            )
+
+            return Response({'message': 'Se ha enviado un nuevo enlace de verificación a tu correo.'}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': 'Ocurrió un problema al reenviar el enlace de verificación.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
