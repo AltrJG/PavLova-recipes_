@@ -1,8 +1,8 @@
 import styles from './FilterForm.module.css';
 
-export default function FilterForm({filterOptions, setData, data}){
+export default function FilterForm({setCurrentPage, filterOptions, setData, data, action}){
     return(
-        <form className={styles.filterForm}>
+        <form onSubmit={e => {e.preventDefault(); setCurrentPage(1); action();}} className={styles.filterForm}>
             <div className={styles.filterInputs}>
                 {filterOptions.map((filter) => (
                     <div key={filter.name} className={styles.filterField}>

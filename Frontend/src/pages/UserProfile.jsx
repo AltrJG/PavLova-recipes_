@@ -1,0 +1,65 @@
+import { useNavigate, useParams } from 'react-router-dom';
+import Help from '../Components/Help';
+import MainButton from '../Components/MainButton';
+import RecipesProfile from '../Components/RecipesProfile';
+import UserDetails from '../Components/UserDetails';
+import { useRightSidebar } from '../context/RightSidebarProvider';
+import styles from './UserProfile.module.css';
+import { useEffect, useState } from 'react';
+import backendAPI from '../api/axiosConfig';
+import { FadeLoader } from 'react-spinners';
+
+export default function UserProfile(){
+    const { openModifyProfile } = useRightSidebar();
+    const navigate = useNavigate();
+    let { user_id } = useParams();
+    const [ user, setUser ] = useState({});
+    const [ loading, setLoading ] = useState(true);
+    const [ errorPage, setErrorPage ] = useState(false);
+
+    useEffect(() => {
+        const getUserProfile = async () => {
+            try{
+                const userData = await backendAPI(`/user/${user_id}/`);
+                setUser({
+                    nombre: userData.data.name, 
+                    email: userData.data.email, 
+                    pais: userData.data.country, 
+                    sobreMi: userData.data.about, 
+                    fotoPerfil: userData.data.profile_picture,
+                    redFacebook: userData.data.social_facebook,
+                    redYoutube: userData.data.social_youtube,
+                    redTwitter: userData.data.social_twitter
+                });
+                console.log(userData);
+            } catch(error){
+                setErrorPage(true);
+                console.log(error);
+            } finally{
+                setLoading(false);
+            }
+        }
+        getUserProfile();
+    }, []);
+
+    const volver = () => {
+        navigate('/users');
+    }
+
+    if(errorPage) return <div className={styles.profileError}><h2>No se ha encontrado el usuario, vuelve para buscar otros usuarios</h2><MainButton action={volver} type={'button'} icon={"arrow-back"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Volver"}/></div>
+
+    return(
+        <>
+            { loading
+            ? <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
+            :<><Help title={`Perfil de ${user.nombre.split(' ')[0]}`} description={"Aqui puedes ver los detalles de este usuario"}>
+                <MainButton action={volver} disabled={false} type={'button'} icon={"arrow-back"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Volver"}/>
+            </Help>
+            <div className={styles.profileCurrentUser}>
+                <UserDetails usuario={user}/>
+                <RecipesProfile/>
+            </div></>
+            }
+        </>
+    )
+}

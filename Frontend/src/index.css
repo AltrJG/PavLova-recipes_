@@ -88,6 +88,7 @@ body{
 }
 
 .dropzone {
+  margin-top: 2rem !important;
   border: 2px dashed #ff9800;  /* Orange accent */
   border-radius: 12px;
   padding: 25px;

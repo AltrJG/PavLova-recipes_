@@ -4,18 +4,19 @@ import styles from "./UserDetails.module.css"
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthProvider";
 
-export default function UserDetails(){
+export default function UserDetails({ usuario = null }){
 
     const { user } = useAuth();
+    const userData = (usuario != null ? usuario : user);
 
     return(
         <div className={styles.userDetailsContainer}>
             <div className={styles.allUserData}>
                 <div className={styles.userData}>
-                    <img className={styles.userProfilePicture} src={user?.fotoPerfil}/>
+                    <img className={styles.userProfilePicture} src={userData?.fotoPerfil}/>
                     <div className={styles.userDataText}>
-                        <h5>{user?.nombre}</h5>
-                        <p>{user?.pais}</p>
+                        <h5>{userData?.nombre}</h5>
+                        <p>{userData?.pais}</p>
                     </div>
                 </div>
                 <div className={styles.userStats}>
@@ -33,13 +34,19 @@ export default function UserDetails(){
                 <div className={styles.userBio}>
                     <div className={styles.userSingleBio}>
                         <h6 className={styles.userBioSubtitle}>Sobre Mi</h6>
-                        <p className={styles.userBioText}>{user?.sobreMi == "" ? '- Aun no has agregado una descripcion, puedes agregarla cambiando tu informacion personal - ' : user?.sobreMi}</p>
+                        <p className={styles.userBioText}>{userData?.sobreMi == "" ? '- Aun no se ha agregado una descripcion - ' : userData?.sobreMi}</p>
+                    </div>
+                </div>
+                <div className={styles.userBio}>
+                    <div className={styles.userSingleBio}>
+                        <h6 className={styles.userBioSubtitle}>Mi Correo</h6>
+                        <p className={styles.userBioText}>{userData?.email}</p>
                     </div>
                 </div>
                 <div className={styles.userSocialMedia}>
-                    {user?.redFacebook != "" && <Link className={styles.socialMediaLink} target="_blank" to={user?.redFacebook}><ion-icon name="logo-facebook"></ion-icon></Link> }
-                    {user?.redTwitter != "" && <Link className={styles.socialMediaLink} target="_blank" to={user?.redTwitter}><ion-icon name="logo-twitter"></ion-icon></Link> }
-                    {user?.redYoutube != "" && <Link className={styles.socialMediaLink} target="_blank" to={user?.redYoutube}><ion-icon name="logo-youtube"></ion-icon></Link> }
+                    {userData?.redFacebook != "" && <Link className={styles.socialMediaLink} target="_blank" to={userData?.redFacebook}><ion-icon name="logo-facebook"></ion-icon></Link> }
+                    {userData?.redTwitter != "" && <Link className={styles.socialMediaLink} target="_blank" to={userData?.redTwitter}><ion-icon name="logo-twitter"></ion-icon></Link> }
+                    {userData?.redYoutube != "" && <Link className={styles.socialMediaLink} target="_blank" to={userData?.redYoutube}><ion-icon name="logo-youtube"></ion-icon></Link> }
                 </div>
             </div>
         </div>

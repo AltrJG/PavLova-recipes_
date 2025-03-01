@@ -5,13 +5,15 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
+from django.shortcuts import get_object_or_404
+from .models import User
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate, update_session_auth_hash
 from .models import User
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer
+from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer
 from .permissions import IsModeratorOrAdmin
 from .filters import UserFilter
 
@@ -151,6 +153,12 @@ class UserInfoView(APIView):
         }
     
         return Response(user_data, status=status.HTTP_200_OK)
+    
+class GetUsuarioById(APIView):
+    def get(self, request, usuario_id):
+        usuario = get_object_or_404(User, id=usuario_id)
+        serializer = UserDetailsSerializer(usuario, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 #Esta es la vista que devuelve la información de todos los usuarios (activos)
 class UserViewSet(viewsets.ReadOnlyModelViewSet):

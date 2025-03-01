@@ -11,7 +11,7 @@ import { FadeLoader } from 'react-spinners';
 
 export default function ManageUsers(){
 
-    const { isSuperUser } = useAuth();
+    const { isSuperUser, refreshAccessToken } = useAuth();
     const [ users, setUsers ] = useState([]);
     const [ loading, setLoading ] = useState(true);
     const [ nextPage, setNextPage ] = useState(null);
@@ -35,7 +35,23 @@ export default function ManageUsers(){
     const getUsers = async (previous = null, next = null) => {
         setLoading(true);
         try{
-            const response = await backendAPI(previous != null ? previous.split('app')[1] : (next != null ? next.split('app')[1] : '/users/'));
+            let url = previous 
+            ? previous.split('app')[1] 
+            : next 
+            ? next.split('app')[1] 
+            : `/users/`;
+
+            const params = new URLSearchParams();
+
+            if (userFilters.nombre.trim() && previous == null && next == null) params.append("name", userFilters.nombre);
+            if (userFilters.correo.trim() && previous == null && next == null) params.append("email", userFilters.correo);
+            if (userFilters.tipoUsuario !== "Todos" && previous == null && next == null) params.append("role", userFilters.tipoUsuario);
+
+            // Append query parameters if they exist
+            if (params.toString()) {
+                url += `?${params.toString()}`;
+            }
+            const response = await backendAPI(url);
             previous != null && setCurrentPage(currentPage-1);
             next != null && setCurrentPage(currentPage+1);
             setCount(response.data.count);
@@ -44,6 +60,9 @@ export default function ManageUsers(){
             setUsers(response.data.results);
         } catch(error){
             console.log(error);
+            if(error.response?.status == 401){
+                await refreshAccessToken(getUsers);
+            }
         } finally{
             setLoading(false);
         }
@@ -72,7 +91,7 @@ export default function ManageUsers(){
         <>
             <Help title={"Buscar Personas"} description={"Busca perfiles de otras personas"}/>
             <div className={styles.usersContainer}>
-                <FilterForm filterOptions={filterOptions} data={userFilters} setData={setUserFilters}/>
+                <FilterForm setCurrentPage={setCurrentPage} action={getUsers} filterOptions={filterOptions} data={userFilters} setData={setUserFilters}/>
                 { loading 
                 ? <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
                 :<>

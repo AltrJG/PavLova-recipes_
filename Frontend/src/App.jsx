@@ -10,6 +10,7 @@ import ManageUsers from './pages/ManageUsers'
 import { AuthProvider } from './context/AuthProvider'
 import ProtectedRoute from './Components/ProtectedRoute'
 import { UpdateDataProvider } from './context/UpdateDataProvider'
+import UserProfile from './pages/UserProfile'
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
                   <Route path='mi-perfil' element={<MyProfile/>}/>
                 </Route>
                 <Route path='users' element={<ManageUsers/>}/>
+                <Route path='user/:user_id' element={<UserProfile/>}/>
               </Route>
             </Routes>
           </BrowserRouter>

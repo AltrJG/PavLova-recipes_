@@ -1,5 +1,6 @@
 .userContainer {
     display: flex;
+    text-decoration: none;
     padding: 1.5rem;
 }
 
@@ -17,7 +18,14 @@
 
 /* Image Styling */
 .userCardImage {
-    flex-basis: 10rem;
+    width: 10rem;
+    height: 8rem;
+    flex-shrink: 0;
+    & img{
+        height: 8rem;
+        width: 5rem;
+        object-fit: cover;
+    }
 }
 
 .userCardImage img {
@@ -38,8 +46,17 @@
 }
 
 .userCardDataName {
+    color: #23130d !important;
+    text-decoration: none !important;
     font-size: 1.5rem;
     font-family: "Oswald", sans-serif;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-word; 
 }
 
 /* Country & Role */

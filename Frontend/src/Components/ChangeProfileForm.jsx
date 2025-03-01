@@ -37,7 +37,7 @@ export default function ChangeProfileForm(){
     const [ activeOption, setActiveOption ] = useState("Informacion");
     const [ loading, setLoading ] = useState(false);
     const [ errorsHandler, setErrorsHandler ] = useState({});
-    const { user, changeUserData, refreshAccessToken } = useAuth();
+    const { user, changeUserData, refreshAccessToken, getUserData } = useAuth();
 
     const mainFormOptions = [
         { type: "text", name: "nombre", label: "Nombre:"},
@@ -195,6 +195,39 @@ export default function ChangeProfileForm(){
         setLoading(false);
     }
 
+    const handleImageSubmit = async () => {
+        setLoading(true);
+        let formData = new FormData();
+        formData.append("profile_picture", imagen[0]);
+        try{
+            const response = await backendAPI.put('profile/picture/', formData);
+            Swal.fire({
+                icon: "success",
+                title: "Foto de perfil Actualizada",
+                text: response.data.message,
+                showConfirmButton: true,
+                customClass: {
+                    title: "swal_title",
+                    icon: "swal_icon",
+                    htmlContainer: "swal_text",
+                    confirmButton: "swal_confirm"
+                }
+            });
+            await getUserData();
+            setImagen([]);
+            setErrorsHandler({});
+        } catch(error){
+            console.log(error);
+            if(error.response?.status == 401){
+                await refreshAccessToken(handleImageSubmit);
+            } else{
+                setErrorsHandler(error.response.data);
+            }
+        } finally{
+            setLoading(false);
+        }
+    }
+
     const changeActiveOption = type => {
         setActiveOption(type);
         setErrorsHandler({});
@@ -248,7 +281,7 @@ export default function ChangeProfileForm(){
             {activeOption === "ImagenPerfil" && (
                 <div className={styles.imageUploadContainer}>
                     <SubidaImagenes thumb={thumb} thumbInner={thumbInner} files={imagen} setFiles={setImagen} />
-                    <MainButton disabled={imagen.length === 0} type="submit" icon="mail" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text="Cambiar Avatar" />
+                    <MainButton action={handleImageSubmit} disabled={imagen.length === 0 || loading} type="submit" icon="mail" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={loading ? "Cambiando..." : "Cambiar Avatar"} />
                 </div>
             )}
         </div>

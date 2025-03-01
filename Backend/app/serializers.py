@@ -28,6 +28,33 @@ class UserSerializer(serializers.ModelSerializer):
             return 'Activado'
         return 'Desactivado'
 
+class UserDetailsSerializer(serializers.ModelSerializer):
+    profile_picture = serializers.SerializerMethodField()
+    role = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'name', 'country', 'profile_picture', 'role', 'status', 'email', 'about', 'social_youtube', 'social_facebook', 'social_twitter']
+
+    def get_profile_picture(self, obj):
+        request = self.context.get('request')
+        if obj.profile_picture and request:
+            return request.build_absolute_uri(obj.profile_picture.url)
+        return None
+
+    def get_role(self, obj):
+        if obj.is_superuser:
+            return 'Administrador'
+        elif obj.is_staff:
+            return 'Moderador'
+        return 'Usuario'
+    
+    def get_status(self, obj):
+        if obj.is_active:
+            return 'Activado'
+        return 'Desactivado'
+
 class UserUpdateSerializer(serializers.ModelSerializer):
     role = serializers.ChoiceField(choices=[('Usuario', 'Usuario'), ('Moderador', 'Moderador'), ('Administrador', 'Administrador')], write_only=True)
     status = serializers.ChoiceField(choices=[('Activado', 'Activado'), ('Desactivado', 'Desactivado')], write_only=True)
