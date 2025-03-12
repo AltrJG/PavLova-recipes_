@@ -7,7 +7,9 @@ const initialState = {
     isOpen: false,
     updatePermissions: false,
     modifyProfile: false,
-    userModify: {}
+    ingredientForm: false,
+    userModify: {},
+    ingredientModify: {}
 }
 
 function reducer(state, action){
@@ -17,16 +19,20 @@ function reducer(state, action){
         case 'rightSidebar/close':
             return { ...state, isOpen: false }
         case 'rightSidebar/openModifyProfile':
-            return { ...state, modifyProfile: true, updatePermissions: false }
+            return { ...state, modifyProfile: true, updatePermissions: false, ingredientForm: false }
         case 'rightSidebar/openUpdatePermissions':
-            return { ...state, modifyProfile: false, updatePermissions: true }
+            return { ...state, modifyProfile: false, updatePermissions: true, ingredientForm: false }
+        case 'rightSidebar/openIngredientForm':
+            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: true }
         case 'rightSidebar/setUserModify':
             return { ...state, userModify: action.payload }
+        case 'rightSidebar/setIngredientModify':
+            return { ...state, ingredientModify: action.payload }
     }
 }
 
 const RightSidebarProvider = ({ children }) => {
-    const [{ isOpen, updatePermissions, modifyProfile, userModify }, dispatch] = useReducer(reducer, initialState);
+    const [{ isOpen, updatePermissions, modifyProfile, userModify, ingredientForm }, dispatch] = useReducer(reducer, initialState);
 
     function openRightSidebar(){
         dispatch({type: 'rightSidebar/open'});
@@ -47,15 +53,23 @@ const RightSidebarProvider = ({ children }) => {
         dispatch({type: 'rightSidebar/openUpdatePermissions'});
     }
 
+    function openIngredientModify(ingredient = null){
+        openRightSidebar();
+        dispatch({type: 'rightSidebar/openIngredientForm'});
+        (ingredient != null) && dispatch({type: 'rightSidebar/setIngredientModify', payload: ingredient});
+    }
+
     return (
         <RightSidebarContext.Provider value={{
             isOpen,
             updatePermissions,
             modifyProfile,
             userModify,
+            ingredientForm,
             openModifyProfile,
             openUpdatePermissions,
             closeRightSidebar,
+            openIngredientModify
         }}>
             {children}
         </RightSidebarContext.Provider>

@@ -258,7 +258,6 @@ export default function ChangeProfileForm(){
                 {activeOption === "ImagenPerfil" && "Cambiar Foto de Perfil"}
             </h3>
 
-            {/* ✅ Single instance of RightSidebarErrors */}
             <RightSidebarErrors errors={errorsHandler} />
 
             {activeOption === "Informacion" && (

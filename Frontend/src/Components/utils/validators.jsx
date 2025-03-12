@@ -177,3 +177,42 @@ export const validateUserForm = (data) => {
 
     return errors;
 };
+
+export const validateIngredientData = (ingredientData) => {
+    let errors = {};
+
+    // Validate 'nombre' (Max 25 characters, sanitized)
+    if (!ingredientData.nombre || ingredientData.nombre.trim().length === 0) {
+        errors.nombre = "El nombre es obligatorio.";
+    } else {
+        const sanitizedNombre = DOMPurify.sanitize(ingredientData.nombre.trim());
+        if (sanitizedNombre !== ingredientData.nombre) {
+            errors.nombre = "El contenido del nombre contiene código no permitido.";
+        }
+        if (sanitizedNombre.length > 25) {
+            errors.nombre = "El nombre no puede tener más de 25 caracteres.";
+        }
+    }
+
+    // Validate 'consistencia' (Must be either 'Liquido' or 'Solido')
+    const validConsistencies = ["Liquido", "Solido"];
+    if (!validConsistencies.includes(ingredientData.consistencia)) {
+        errors.consistencia = "La consistencia debe ser 'Liquido' o 'Solido'.";
+    }
+
+    // Validate numeric fields
+    const numericFields = [
+        "calorias", "carbohidratos", "proteinas", "grasasSaturadas", 
+        "grasasInsaturadas", "grasasTrans", "sodio"
+    ];
+
+    numericFields.forEach(field => {
+        if (ingredientData[field] !== undefined) {
+            if (!validator.isNumeric(ingredientData[field].toString(), { no_symbols: true })) {
+                errors[field] = `El campo ${field} debe ser un número válido.`;
+            }
+        }
+    });
+
+    return errors;
+};

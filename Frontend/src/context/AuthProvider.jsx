@@ -151,6 +151,7 @@ const AuthProvider = ({ children }) => {
             user,
             isAuthenticated,
             isSuperUser,
+            isStaff,
             isLoading,
             changeUserData,
             logout,

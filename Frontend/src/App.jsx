@@ -13,6 +13,7 @@ import { UpdateDataProvider } from './context/UpdateDataProvider'
 import UserProfile from './pages/UserProfile'
 import PasswordReset from './Components/PasswordReset'
 import VerifyEmail from './pages/VerifyEmail'
+import UserIngredients from './pages/UserIngredients'
 
 function App() {
 
@@ -31,6 +32,7 @@ function App() {
                 </Route>
                 <Route element={<ProtectedRoute/>}>
                   <Route path='mi-perfil' element={<MyProfile/>}/>
+                  <Route path='ingredientes' element={<UserIngredients/>}/>
                 </Route>
                 <Route path='users' element={<ManageUsers/>}/>
                 <Route path='user/:user_id' element={<UserProfile/>}/>

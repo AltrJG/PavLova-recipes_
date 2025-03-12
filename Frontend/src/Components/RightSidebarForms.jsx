@@ -1,11 +1,33 @@
 import styles from './RightSidebarForms.module.css';
+import SubidaImagenes from './SubidaImagenes';
 
-export default function RightSidebarForms({action, formOptions, setData, data, children}){
+const thumb = {
+    display: 'inline-flex',
+    borderRadius: 0,
+    marginBottom: 8,
+    marginRight: 8,
+    width: "15rem",
+    height: "15rem",
+    padding: 4,
+    boxSizing: 'border-box',
+};
+
+const thumbInner = {
+    display: 'flex',
+    minWidth: 0,
+    borderRadius: 10,
+    border: '.4rem solid orange',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden'
+};
+
+export default function RightSidebarForms({twoOnOne = false, action, formOptions, setData, data, children}){
     return(
         <form onSubmit={e => action(e)} className={styles.rightSidebarForm}>
-            <div className={styles.formInputs}>
+            <div className={`${styles.formInputs} ${twoOnOne ? styles.twoInputs : ""}`}>
                 {formOptions.map((formInput) => (
-                    <div key={formInput.name} className={styles.inputField}>
+                    <div key={formInput.name} className={`${styles.inputField} ${formInput.type == "imageSingle" ? styles.inputImage : ""}`}>
                         <label htmlFor={formInput.name}>{formInput.label}</label>
                         {formInput.type === "select" ? (
                             <select id={formInput.name} name={formInput.name} value={data[formInput.name]} onChange={e  => setData(formInputs => ({...formInputs, [e.target.name]: e.target.value}))}>
@@ -20,7 +42,9 @@ export default function RightSidebarForms({action, formOptions, setData, data, c
                                 value={data[formInput.name]}
                                 onChange={e => setData(formInputs => ({...formInputs, [e.target.name]: e.target.value}))}>
                             </textarea>
-                            :( <input
+                            :( formInput.type === 'imageSingle' 
+                                ? <SubidaImagenes key={formInput.name} thumb={thumb} thumbInner={thumbInner} files={formInput.imageData} setFiles={formInput.setImageData}/> 
+                                : <input
                                 id={formInput.name}
                                 type={formInput.type}
                                 name={formInput.name}
