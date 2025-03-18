@@ -1,0 +1,26 @@
+.notFoundContainer{
+    display: flex;
+    height: max-content;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 2rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: top;
+    background: rgb(241,180,52);
+    background: -moz-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: -webkit-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    width: max-content;
+}
+
+.notFoundDetails{
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: white;
+    font-family: 'Oswald', sans-serif;
+}
+
+.notFoundBack{
+    text-decoration: none;
+}

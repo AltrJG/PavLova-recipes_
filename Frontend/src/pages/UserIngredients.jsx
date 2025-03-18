@@ -57,7 +57,7 @@ export default function UserIngredients(){
                 : ingredients.length == 0 
                 ? <p className={styles.usersNotFound}>No se encontraron ingredientes con los filtros colocados, prueba modificando los filtros</p>
                 : <>
-                <div className='usersContent'>
+                <div className='ingredientsContent'>
                     { ingredients.map(ingredient => <Ingredient key={ingredient.id} ingredient={ingredient}/>) }
                 </div>
                 <Pagination

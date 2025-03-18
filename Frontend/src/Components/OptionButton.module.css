@@ -41,7 +41,8 @@
 
 @media(max-width: 59.375em){
     .button_search_type{
-        margin: 0 .5rem;
+        margin: 0 .7rem;
+        padding: .6rem;
         font-size: 1.2rem;
     }
     .button_row_mobile{

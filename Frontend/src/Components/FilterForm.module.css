@@ -80,8 +80,8 @@
 @media(max-width: 56.25em){
     .filterField input,
     .filterField select{
-        padding: 0.4rem 1rem;
-        font-size: 1.2rem;
+        padding: 0.6rem 1rem;
+        font-size: 1.4rem;
     }
 
     .filterInputs{

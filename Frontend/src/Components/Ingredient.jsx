@@ -58,6 +58,7 @@ export default function Ingredient(){
                         icon="arrow-back-circle"
                         onClick={() => setFlipped(!flipped)}
                     />
+                    <h4 className={styles.ingredientAmount}>Por cada 100 gramos:</h4>
                     <div className={styles.ingredientNutritionalInformation}>
                         {["Calorias", "Carbohidratos", "Proteinas", "Grasas Saturadas", "Grasas Insaturadas", "Grasas Trans", "Sodio"].map((item, index) => (
                             <div key={index} className={styles.ingredientNutritionalFact}>

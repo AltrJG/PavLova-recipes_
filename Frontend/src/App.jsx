@@ -14,6 +14,8 @@ import UserProfile from './pages/UserProfile'
 import PasswordReset from './Components/PasswordReset'
 import VerifyEmail from './pages/VerifyEmail'
 import UserIngredients from './pages/UserIngredients'
+import NotFound404 from './pages/NotFound404'
+import RecipeDetails from './pages/RecipeDetails'
 
 function App() {
 
@@ -35,8 +37,10 @@ function App() {
                   <Route path='ingredientes' element={<UserIngredients/>}/>
                 </Route>
                 <Route path='users' element={<ManageUsers/>}/>
+                <Route path='receta/:recipe_id' element={<RecipeDetails/>}/>
                 <Route path='user/:user_id' element={<UserProfile/>}/>
                 <Route path='verify_email/:token' element={<VerifyEmail/>}/>
+                <Route path='*' element={<NotFound404/>}/>
               </Route>
             </Routes>
           </BrowserRouter>

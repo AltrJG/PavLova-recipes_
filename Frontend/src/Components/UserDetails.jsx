@@ -3,6 +3,7 @@ import tempUserPic from "../assets/smile.png"
 import styles from "./UserDetails.module.css"
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthProvider";
+import CircleButton from "./CircleButton";
 
 export default function UserDetails({ usuario = null }){
 
@@ -44,9 +45,9 @@ export default function UserDetails({ usuario = null }){
                     </div>
                 </div>
                 <div className={styles.userSocialMedia}>
-                    {userData?.redFacebook != "" && <Link className={styles.socialMediaLink} target="_blank" to={userData?.redFacebook}><ion-icon name="logo-facebook"></ion-icon></Link> }
-                    {userData?.redTwitter != "" && <Link className={styles.socialMediaLink} target="_blank" to={userData?.redTwitter}><ion-icon name="logo-twitter"></ion-icon></Link> }
-                    {userData?.redYoutube != "" && <Link className={styles.socialMediaLink} target="_blank" to={userData?.redYoutube}><ion-icon name="logo-youtube"></ion-icon></Link> }
+                    {userData?.redFacebook != "" && <Link target="_blank" to={userData?.redFacebook}><CircleButton iconSize="3rem" text="Perfil de Facebook" iconName="logo-facebook"/></Link> }
+                    {userData?.redTwitter != "" && <Link  target="_blank" to={userData?.redTwitter}><CircleButton iconSize="3rem" text="Perfil de X" iconName="logo-twitter"/></Link> }
+                    {userData?.redYoutube != "" && <Link  target="_blank" to={userData?.redYoutube}><CircleButton iconSize="3rem" text="Perfil de Youtube" iconName="logo-youtube"/></Link> }
                 </div>
             </div>
         </div>
