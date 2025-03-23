@@ -9,6 +9,8 @@ from django.utils.deconstruct import deconstructible
 
 # Create your models here.
 
+#---------------------------USUARIO-------------------------------#
+
 class CustomUserManager(UserManager):
     def _create_user(self, email, password, **extra_fields):
         if not email:
@@ -39,7 +41,13 @@ class UniqueImagePath:
     def __call__(self, instance, filename):
         ext = filename.split('.')[-1]
         filename = f"{uuid.uuid4()}.{ext}"
-        return f"images/{filename}"
+        #return f"images/{filename}"
+        if isinstance(instance, User):
+            return f"images/{filename}"
+        elif isinstance(instance, Ingrediente):
+            return f"ingredientes/{filename}"
+        else:
+            return f"uploads/{filename}"
     
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(blank=False, default='', unique=True)
@@ -117,6 +125,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         super().save(*args, **kwargs)
 
+#---------------------------UTILIDADES-------------------------------#
+
 class PasswordResetToken(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='password_reset_tokens')
     token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
@@ -152,3 +162,78 @@ class EmailVerificationCode(models.Model):
 
     def __str__(self):
         return f"Código de {self.user.email} - {'Válido' if self.is_valid() else 'Expirado'}"
+    
+#---------------------------INGREDIENTE-------------------------------#
+
+class Ingrediente(models.Model):
+    TIPO_INGREDIENTE = [
+        ('personal', 'Personal'),
+        ('global', 'Global'),
+    ]
+
+    nombre = models.CharField(max_length=100, unique=True)
+    carbohidratos = models.FloatField()
+    proteinas = models.FloatField()
+    grasas_saturadas = models.FloatField()
+    grasas_trans = models.FloatField()
+    grasas_insaturadas = models.FloatField()
+    sodio = models.FloatField()
+    foto_ingrediente = models.ImageField(upload_to=UniqueImagePath(), default='ingredientes/ingrediente_placeholder.webp')
+    
+    tipo = models.CharField(max_length=10, choices=TIPO_INGREDIENTE, default='personal')
+    creador = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='ingredientes'
+    )
+
+    def __str__(self):
+        return f"{self.nombre} ({self.get_tipo_display()})"
+
+    def save(self, *args, **kwargs):
+        default_image = 'ingredientes/ingrediente_placeholder.webp'
+
+        if self.pk:
+            old_ingrediente = Ingrediente.objects.get(pk=self.pk)
+            if old_ingrediente.foto_ingrediente and old_ingrediente.foto_ingrediente.name != default_image:
+                if old_ingrediente.foto_ingrediente != self.foto_ingrediente:
+                    old_ingrediente.foto_ingrediente.delete(save=False)
+
+        if self.foto_ingrediente and not self.foto_ingrediente.name.endswith('.webp'):
+            img = Image.open(self.foto_ingrediente)
+
+            if img.mode in ('RGBA', 'P') and 'transparency' in img.info:
+                img = img.convert('RGBA')
+            else:
+                img = img.convert('RGB')
+
+            output = BytesIO()
+            img.save(output, format='WEBP', quality=80)
+            output.seek(0)
+
+            self.foto_ingrediente = InMemoryUploadedFile(
+                output,
+                'ImageField',
+                f"{self.foto_ingrediente.name.split('.')[0]}.webp",
+                'image/webp',
+                output.getbuffer().nbytes,
+                None
+            )
+
+        super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['nombre']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['nombre', 'tipo', 'creador'],
+                name='unique_ingrediente_personal_usuario'
+            ),
+            models.UniqueConstraint(
+                fields=['nombre', 'tipo'],
+                condition=models.Q(tipo='global'),
+                name='unique_ingrediente_global'
+            ),
+        ]
