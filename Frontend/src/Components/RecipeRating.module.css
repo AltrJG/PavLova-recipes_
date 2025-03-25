@@ -1,0 +1,78 @@
+.recipeHeaderRatingFormContainer {
+    color: #23130d;
+    border-radius: 2rem;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    width: 100%;
+}
+
+.recipeHeaderRatingText {
+    font-size: 1.8rem;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+/* Estilo para las estrellas */
+.recipeHeaderRatingOption {
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    width: max-content;
+    gap: 0.5rem;
+}
+
+.recipeHeaderRatingOption ion-icon {
+    font-size: 2.5rem;
+    margin-right: 0.3rem;
+    color: orange;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+/* Efecto para las estrellas al pasar el cursor */
+.recipeHeaderRatingOption ion-icon:hover {
+    transform: scale(1.2);
+}
+
+/* Diseño del textarea con dimensiones fijas */
+.recipeHeaderComment {
+    width: 100%;
+    font-family: 'Lato', sans-serif;
+    height: 8rem;
+    font-size: 1.3rem;
+    padding: 1rem;
+    background-color: #f8f8f8;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 1rem;
+    resize: none; /* Evita redimensionar */
+    transition: border-color 0.3s;
+}
+
+/* Borde más vistoso al enfocar el textarea */
+.recipeHeaderComment:focus {
+    outline: none;
+    background-color: white;
+    border-color: orange;
+    box-shadow: 0 0 8px rgba(255, 166, 0, 0.5);
+}
+
+@media(max-width: 68.75em){
+    .recipeHeaderRatingFormContainer{
+        width: 100% !important;
+        margin-top: 0;
+    }
+    .recipeHeaderRatingFormContainer{
+        max-width: 100%;
+    }
+}
+@media(max-width: 37.5em){
+    .recipeHeaderRatingFormContainer{
+        margin-top: 2rem;
+    }
+}

@@ -1,0 +1,25 @@
+.recipeNutritionContainer{
+    color: #23130d;
+    border-radius: 2rem;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgb(241,180,52);
+    background: -moz-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: -webkit-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#f1b434",endColorstr="#fc7302",GradientType=1);  
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    height: max-content;
+    width: 100%;
+}
+
+@media(max-width: 68.75em){
+    .recipeHeaderRatingFormContainer{
+        width: 100% !important;
+        margin-top: 0;
+    }
+    .recipeHeaderRatingFormContainer{
+        max-width: 100%;
+    }
+}

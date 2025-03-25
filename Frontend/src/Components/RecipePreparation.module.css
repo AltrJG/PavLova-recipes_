@@ -1,0 +1,17 @@
+.recipePreparationContainer{
+    color: #23130d;
+    border-radius: 2rem;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    height: max-content;
+    width: 100%;
+}
+
+@media(max-width: 68.75em){
+    .recipePreparationContainer{
+        position: absolute;
+        top: 100%;
+    }
+}

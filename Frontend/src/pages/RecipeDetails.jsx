@@ -1,3 +1,4 @@
+import RecipeContents from '../Components/RecipeContents';
 import RecipeHeader from '../Components/RecipeHeader';
 import styles from './RecipeDetails.module.css';
 

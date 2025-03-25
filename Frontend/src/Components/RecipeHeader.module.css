@@ -3,6 +3,8 @@
     grid-template-columns: 40rem 1fr;
     margin-top: 2rem;
     grid-gap: 2rem;
+    border-bottom: .1rem solid #23130d;
+    padding-bottom: 2rem;
 }
 
 .recipeHeaderImage{
@@ -19,7 +21,7 @@
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     background-color: white;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
+    height: max-content;
 }
 
 .recipeHeaderName{
@@ -103,13 +105,46 @@
     display: flex;
 }
 
+.recipeTags{
+    color: #23130d;
+    border-radius: 2rem;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    height: max-content;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    grid-gap: 1rem;
+}
+
+.recipeTag{
+    font-size: 1.8rem;
+    background-color: rgb(255, 136, 0);
+    padding: .5rem 1rem;
+    color: white;
+    font-family: 'Lato', sans-serif;
+    border-radius: 2rem;
+}
+
 @media(max-width: 68.75em){
     .recipeHeaderContainer{
         position: relative;
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column-reverse;
+    }
+    .recipeHeaderDataContainer,
+    .recipeHeaderRatingFormContainer{
+        width: 100% !important;
+    }
+    .recipeHeaderRatingFormContainer{
+        max-width: 100%;
+        margin-top: 0;
     }
     .recipeHeaderData{
-        bottom: 0;
+        top: 2%;
         left: 50%;
         transform: translateX(-50%);
         width: 60%;
@@ -145,11 +180,19 @@
     .recipeHeaderQuote{
         margin-top: .5rem;
     }
+    .recipeHeaderShowTwo{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 2rem;
+    }
 }
 
 @media(max-width: 50em){
     .recipeHeaderData{
         width: 70%;
+    }
+    .recipeHeaderShowTwo{
+        grid-template-columns: 1fr;
     }
 }
 
@@ -166,6 +209,7 @@
         grid-gap: 0;
     }
     .recipeHeaderData{
+        bottom: 0;
         width: 100%;
         border-top-left-radius: 0rem;
         border-top-right-radius: 0rem;
@@ -183,5 +227,20 @@
     .recipeHeaderData:hover {
         transform: translateX(-50%);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .recipeTag{
+        font-size: 1.2rem;
+    }
+    .recipeTags{
+        margin-top: 0;
+        border-radius: 0;
+        align-items: center;
+        justify-content: center;
+        border-top: .2rem solid #ff9500;
+        background-color: rgb(249, 249, 249);
+        border-bottom: .2rem solid #ff9500;
+    }
+    .recipeHeaderRatingFormContainer{
+        margin-top: 2rem;
     }
 }
