@@ -171,7 +171,7 @@ class Ingrediente(models.Model):
         ('global', 'Global'),
     ]
 
-    nombre = models.CharField(max_length=100, unique=True)
+    nombre = models.CharField(max_length=100, unique=False) # Poner unique=True en producción con los constraints aplicados
     carbohidratos = models.FloatField()
     proteinas = models.FloatField()
     grasas_saturadas = models.FloatField()
@@ -193,6 +193,7 @@ class Ingrediente(models.Model):
         return f"{self.nombre} ({self.get_tipo_display()})"
 
     def save(self, *args, **kwargs):
+
         default_image = 'ingredientes/ingrediente_placeholder.webp'
 
         if self.pk:
@@ -224,16 +225,30 @@ class Ingrediente(models.Model):
 
         super().save(*args, **kwargs)
 
+"""
+
+    Constraints:
+        - Global ingredients must have unique names
+        - Personal ingredients must have unique names per user
+
+    Descomentar en producción (MySQL/PostgreSQL/etc) y comentar en desarrollo (SQLite)
+    - En desarrollo, SQLite no soporta constraints, por lo que se debe usar otro método para validar los campos
+    - En producción, se pueden usar constraints para que la base de datos valide los campos
+    - Se recomienda usar constraints en producción, ya que es más eficiente y seguro
+    - Requiere hacer migraciones para crear las constraints
+
     class Meta:
         ordering = ['nombre']
         constraints = [
             models.UniqueConstraint(
-                fields=['nombre', 'tipo', 'creador'],
-                name='unique_ingrediente_personal_usuario'
-            ),
-            models.UniqueConstraint(
-                fields=['nombre', 'tipo'],
+                fields=['nombre'],
                 condition=models.Q(tipo='global'),
                 name='unique_ingrediente_global'
             ),
-        ]
+            models.UniqueConstraint(
+                fields=['nombre', 'creador'],
+                condition=models.Q(tipo='personal'),
+                name='unique_ingrediente_personal_usuario'
+            ),
+        ]"
+"""
