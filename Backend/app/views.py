@@ -6,17 +6,18 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from django.shortcuts import get_object_or_404
-from .models import User, EmailVerificationCode
+from .models import User, EmailVerificationCode, Ingrediente
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate, update_session_auth_hash
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer
+from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer
 from .permissions import IsModeratorOrAdmin
 from .filters import UserFilter
 from django.core.mail import send_mail
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 
 class RegisterView(APIView):
     def post(self, request):
@@ -354,3 +355,55 @@ class ResendVerificationEmailView(APIView):
 
         except Exception as e:
             return Response({'error': 'Ocurrió un problema al reenviar el enlace de verificación.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class IngredienteViewSet(viewsets.ModelViewSet):
+    serializer_class = IngredienteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if not user.is_staff and not user.is_superuser:
+            return Ingrediente.objects.filter(creador=user)
+
+        return Ingrediente.objects.all()
+
+    def perform_create(self, serializer):
+        user = self.request.user
+
+        tipo_ingrediente = serializer.validated_data.get('tipo', 'personal')
+        if tipo_ingrediente == 'global' and not (user.is_staff or user.is_superuser):
+            raise PermissionDenied(
+                "No tienes permisos para crear ingredientes globales."
+            )
+
+        if not serializer.validated_data.get('creador'):
+            serializer.validated_data['creador'] = user
+        
+        serializer.save()
+
+    def perform_update(self, serializer):
+        user = self.request.user
+        instance = serializer.instance
+
+        if instance.tipo == 'personal' and instance.creador != user and not (user.is_staff or user.is_superuser):
+            raise PermissionDenied(
+                "No tienes permisos para actualizar este ingrediente."
+            )
+        
+        if serializer.validated_data.get('tipo') == 'global' and not (user.is_staff or user.is_superuser):
+            raise PermissionDenied(
+                "No tienes permisos para cambiar el tipo a global."
+            )
+
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        user = self.request.user
+
+        if instance.tipo == 'personal' and instance.creador != user and not (user.is_staff or user.is_superuser):
+            raise PermissionDenied(
+                "No tienes permisos para eliminar este ingrediente."
+            )
+
+        instance.delete()

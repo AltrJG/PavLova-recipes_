@@ -1,4 +1,4 @@
-from .models import User, PasswordResetToken
+from .models import User, PasswordResetToken, Ingrediente
 from rest_framework import serializers
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -102,6 +102,8 @@ class ProfilePictureUpdateSerializer(serializers.ModelSerializer):
             instance.save()
         return instance
     
+#---------------------------UTILIDADES-------------------------------#
+    
 class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
@@ -170,3 +172,70 @@ class PasswordResetSerializer(serializers.Serializer):
         reset_token.save()
 
         return user
+    
+#---------------------------INGREDIENTE-------------------------------#
+
+class IngredienteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ingrediente
+        fields = '__all__'
+        read_only_fields = ('creador',)
+
+    def validate(self, data):
+        request = self.context.get('request')
+        user = request.user
+
+        if data.get('tipo') == 'global':
+            if Ingrediente.objects.filter(nombre=data['nombre'], tipo='global').exists():
+                raise serializers.ValidationError(
+                    {'nombre': 'Ya existe un ingrediente global con este nombre.'}
+                )
+
+        if data.get('tipo') == 'personal':
+            if Ingrediente.objects.filter(nombre=data['nombre'], tipo='personal', creador=user).exists():
+                raise serializers.ValidationError(
+                    {'nombre': 'Ya tienes un ingrediente personal con este nombre.'}
+                )
+
+        return data
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        user = request.user
+        validated_data['creador'] = user
+
+        if validated_data.get('tipo', 'personal') == 'global' and not (user.is_staff or user.is_superuser):
+            raise serializers.ValidationError(
+                "No tienes permisos para crear ingredientes globales."
+            )
+
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        request = self.context.get('request')
+        user = request.user
+
+        if instance.tipo == 'personal' and instance.creador != user and not (user.is_staff or user.is_superuser):
+            raise serializers.ValidationError(
+                "No tienes permisos para actualizar este ingrediente."
+            )
+
+        if 'tipo' in validated_data:
+            nuevo_tipo = validated_data['tipo']
+            if nuevo_tipo == 'global' and not (user.is_staff or user.is_superuser):
+                raise serializers.ValidationError(
+                    "No tienes permisos para establecer un ingrediente como global."
+                )
+
+        return super().update(instance, validated_data)
+    
+    def delete(self, instance):
+        request = self.context.get('request')
+        user = request.user
+
+        if instance.tipo == 'personal' and instance.creador != user and not (user.is_staff or user.is_superuser):
+            raise serializers.ValidationError(
+                "No tienes permisos para eliminar este ingrediente."
+            )
+        
+        return super().delete(instance)
