@@ -7,11 +7,14 @@ import Ingredient from "../Components/Ingredient";
 import { FadeLoader } from "react-spinners";
 import MainButton from "../Components/MainButton";
 import { useRightSidebar } from "../context/RightSidebarProvider";
+import backendAPI from "../api/axiosConfig";
+import { useAuth } from "../context/AuthProvider";
 
 
 export default function UserIngredients(){
     //Right Sidebar Actions
     const { openIngredientModify } = useRightSidebar();
+    const { refreshAccessToken, user, isStaff, isSuperUser } = useAuth();
 
     const [ loading, setLoading ] = useState(true);
     // Ingredients data
@@ -33,13 +36,48 @@ export default function UserIngredients(){
         { type: "select", name: "visibilidad", defaultOption: "Todos", options: ["Todos", "Universales", "Propios"]}
     ]
 
-    const getIngredients = async () => {
-        console.log("Ingredientes");
+    const getIngredients = async (previous = null, next = null) => {
         setLoading(true);
-        setTimeout(() => {
+        try{
+            let url = previous 
+            ? previous.split('app')[1] 
+            : next 
+            ? next.split('app')[1] 
+            : `/ingredientes/`;
+
+            const params = new URLSearchParams();
+
+            if (ingredientFilters.nombre.trim() && previous == null && next == null) params.append("nombre", ingredientFilters.nombre);
+            if (ingredientFilters.visibilidad !== "Todos" && previous == null && next == null) params.append("role", ingredientFilters.visibilidad);
+
+            // Append query parameters if they exist
+            if (params.toString()) {
+                url += `?${params.toString()}`;
+            }
+            const response = await backendAPI(url);
+            previous != null && setCurrentPage(currentPage-1);
+            next != null && setCurrentPage(currentPage+1);
+            setCount(response.data.count);
+            setNextPage(response.data.next);
+            setPreviousPage(response.data.previous);
+            setIngredients(response.data.results);
+        } catch(error){
+            console.log(error);
+            if(error.response?.status == 401){
+                await refreshAccessToken(getIngredients);
+            }
+        } finally{
             setLoading(false);
-        }, 3000);
+        }
     };
+
+    const updateIngredient = ingredient => {
+        openIngredientModify(ingredient)
+    }
+
+    const registerIngredient = () => {
+        openIngredientModify(null)
+    }
 
     useEffect(() => {
         getIngredients();
@@ -48,7 +86,7 @@ export default function UserIngredients(){
     return(
         <>
             <Help title={"Tus ingredientes"} description={"Gestiona los ingredientes que tienes"}>
-                <MainButton action={openIngredientModify} disabled={false} type={'button'} icon={"nutrition"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Crear Ingrediente"}/>
+                <MainButton action={registerIngredient} disabled={false} type={'button'} icon={"nutrition"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Crear Ingrediente"}/>
             </Help>
             <div className={styles.usersContainer}>
                 <FilterForm setCurrentPage={setCurrentPage} action={getIngredients} filterOptions={filterOptions} data={ingredientFilters} setData={setIngredientFilters}/>
@@ -58,7 +96,7 @@ export default function UserIngredients(){
                 ? <p className={styles.usersNotFound}>No se encontraron ingredientes con los filtros colocados, prueba modificando los filtros</p>
                 : <>
                 <div className='ingredientsContent'>
-                    { ingredients.map(ingredient => <Ingredient key={ingredient.id} ingredient={ingredient}/>) }
+                    { ingredients.map(ingredient => <Ingredient isStaff={isStaff} isSuperUser={isSuperUser} user_id={user.id} actionModify={updateIngredient} key={ingredient.id} ingredient={ingredient}/>) }
                 </div>
                 <Pagination
                     action={getIngredients}    
@@ -68,34 +106,6 @@ export default function UserIngredients(){
                     currentPage={currentPage} 
                     text="Mostrando Ingredientes {start}-{end} de {count}" />
                 </>}
-                <div className='ingredientsContent'>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                    <Ingredient/>
-                </div>
             </div>
         </>
     )

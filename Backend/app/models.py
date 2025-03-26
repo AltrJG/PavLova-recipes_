@@ -172,6 +172,7 @@ class Ingrediente(models.Model):
     ]
 
     nombre = models.CharField(max_length=100, unique=False) # Poner unique=True en producción con los constraints aplicados
+    calorias = models.FloatField()
     carbohidratos = models.FloatField()
     proteinas = models.FloatField()
     grasas_saturadas = models.FloatField()
@@ -179,7 +180,7 @@ class Ingrediente(models.Model):
     grasas_insaturadas = models.FloatField()
     sodio = models.FloatField()
     foto_ingrediente = models.ImageField(upload_to=UniqueImagePath(), default='ingredientes/ingrediente_placeholder.webp')
-    
+    consistencia = models.CharField(max_length=10, choices=[('liquido', 'Liquido'), ('solido', 'Solido')], default='liquido')
     tipo = models.CharField(max_length=10, choices=TIPO_INGREDIENTE, default='personal')
     creador = models.ForeignKey(
         User,

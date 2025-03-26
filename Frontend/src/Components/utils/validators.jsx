@@ -208,7 +208,7 @@ export const validateIngredientData = (ingredientData) => {
 
     numericFields.forEach(field => {
         if (ingredientData[field] !== undefined) {
-            if (!validator.isNumeric(ingredientData[field].toString(), { no_symbols: true })) {
+            if (!validator.isFloat(ingredientData[field].toString(), { min: 0 })) {
                 errors[field] = `El campo ${field} debe ser un número válido.`;
             }
         }

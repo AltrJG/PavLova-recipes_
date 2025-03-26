@@ -155,6 +155,7 @@ class UserInfoView(APIView):
         user = request.user
 
         user_data = {
+            'id': user.id,
             'username': user.name,
             'email': user.email,
             'country': user.country,
@@ -364,7 +365,7 @@ class IngredienteViewSet(viewsets.ModelViewSet):
         user = self.request.user
 
         if not user.is_staff and not user.is_superuser:
-            return Ingrediente.objects.filter(creador=user)
+            return Ingrediente.objects.filter(creador=user) | Ingrediente.objects.filter(tipo='global')
 
         return Ingrediente.objects.all()
 

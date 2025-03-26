@@ -184,6 +184,7 @@ class IngredienteSerializer(serializers.ModelSerializer):
     def validate(self, data):
         request = self.context.get('request')
         user = request.user
+        instance = self.instance
 
         if data.get('tipo') == 'global':
             if Ingrediente.objects.filter(nombre=data['nombre'], tipo='global').exists():
@@ -192,10 +193,16 @@ class IngredienteSerializer(serializers.ModelSerializer):
                 )
 
         if data.get('tipo') == 'personal':
-            if Ingrediente.objects.filter(nombre=data['nombre'], tipo='personal', creador=user).exists():
-                raise serializers.ValidationError(
-                    {'nombre': 'Ya tienes un ingrediente personal con este nombre.'}
-                )
+            if instance:
+                if Ingrediente.objects.filter(nombre=data['nombre'], tipo='personal').exclude(id=instance.id).exists():
+                    raise serializers.ValidationError(
+                        {'nombre': 'Este nombre de ingrediente ya existe.'}
+                    )
+            else:
+                if Ingrediente.objects.filter(nombre=data['nombre'], tipo='personal', creador=user).exists():
+                    raise serializers.ValidationError(
+                        {'nombre': 'Ya tienes un ingrediente personal con este nombre.'}
+                    )
 
         return data
 

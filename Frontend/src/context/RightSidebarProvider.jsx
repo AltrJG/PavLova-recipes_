@@ -9,7 +9,7 @@ const initialState = {
     modifyProfile: false,
     ingredientForm: false,
     userModify: {},
-    ingredientModify: {}
+    ingredientModify: null
 }
 
 function reducer(state, action){
@@ -23,7 +23,7 @@ function reducer(state, action){
         case 'rightSidebar/openUpdatePermissions':
             return { ...state, modifyProfile: false, updatePermissions: true, ingredientForm: false }
         case 'rightSidebar/openIngredientForm':
-            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: true }
+            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: true, ingredientModify: null }
         case 'rightSidebar/setUserModify':
             return { ...state, userModify: action.payload }
         case 'rightSidebar/setIngredientModify':
@@ -32,7 +32,7 @@ function reducer(state, action){
 }
 
 const RightSidebarProvider = ({ children }) => {
-    const [{ isOpen, updatePermissions, modifyProfile, userModify, ingredientForm }, dispatch] = useReducer(reducer, initialState);
+    const [{ isOpen, updatePermissions, modifyProfile, userModify, ingredientForm, ingredientModify }, dispatch] = useReducer(reducer, initialState);
 
     function openRightSidebar(){
         dispatch({type: 'rightSidebar/open'});
@@ -66,6 +66,7 @@ const RightSidebarProvider = ({ children }) => {
             modifyProfile,
             userModify,
             ingredientForm,
+            ingredientModify,
             openModifyProfile,
             openUpdatePermissions,
             closeRightSidebar,

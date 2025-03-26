@@ -25,6 +25,7 @@ function reducer(state, action){
         case 'auth/addUserData':
             return { ...state, user: 
                 {
+                    id: action.payload.id,
                     nombre: action.payload.username, 
                     email: action.payload.email, 
                     pais: action.payload.country, 
@@ -37,6 +38,7 @@ function reducer(state, action){
         case 'auth/changeUserData':
             return{ ...state, user: 
                 {
+                    id: state.user.id,
                     nombre: action.payload.nombre, 
                     email: state.user.email, 
                     pais: action.payload.pais, 

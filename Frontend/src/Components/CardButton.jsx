@@ -2,8 +2,8 @@ import styled from "styled-components";
 
 const ToggleButton = styled.button`
   position: absolute;
-  top: ${(props) => props.top}rem;
-  left: ${(props) => props.left}rem;
+  top: ${(props) => props.$top}rem;
+  left: ${(props) => props.$left}rem;
   background: #23130d;
   color: white;
   border: none;
@@ -34,7 +34,7 @@ const ToggleButton = styled.button`
   }
 
   &:hover {
-    width: ${(props) => props.hoverWidth || "7rem"};
+    width: ${(props) => props.$hoverWidth || "7rem"};
   }
 
   &:hover span {
@@ -44,7 +44,7 @@ const ToggleButton = styled.button`
 
 export default function CardButton({ text, hoverWidth, top, left, icon, onClick }) {
   return (
-    <ToggleButton onClick={onClick} hoverWidth={hoverWidth} top={top} left={left}>
+    <ToggleButton onClick={onClick} $hoverWidth={hoverWidth} $top={top} $left={left}>
       <ion-icon name={icon}></ion-icon>
       <span>{text}</span>
     </ToggleButton>
