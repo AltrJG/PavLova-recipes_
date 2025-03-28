@@ -52,12 +52,19 @@
     padding: 1rem;
     border-radius: 1rem;
     width: max-content;
+    display: flex;
+    flex-direction: column;
 
-    & ion-icon{
-        font-size: 3rem;
+    & svg{
+        width: 3rem;
+        height: 3rem;
         margin: 0 .5rem;
         color: white;
     }
+}
+
+.recipeHeaderStars{
+    display: flex;
 }
 
 .recipeRatingText{
@@ -170,8 +177,9 @@
     .recipeHeaderRating{
         padding: .5rem;
         margin-top: 0;
-        & ion-icon{
-            font-size: 2rem;
+        & svg{
+            width: 2rem;
+            height: 2rem;
         }
     }
     .recipeHeaderCreator{

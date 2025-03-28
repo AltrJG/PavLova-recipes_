@@ -2,6 +2,7 @@ import { useState } from "react"
 import styles from './SearchContent.module.css';
 import OptionButton from "./OptionButton";
 import { useNavigate } from "react-router-dom";
+import { ReactSVG } from "react-svg";
 
 export default function SearchContent(){
 
@@ -29,7 +30,7 @@ export default function SearchContent(){
             {searchOptions.map(option => (
                 <OptionButton key={option.label} option={option} active={searchOption} setData={setSearchOption} icon={option.icon} makeRowOnMobile={true}/>
             ))}  
-            </div><button aria-label="Iniciar búsqueda" type="submit" className={styles.main_content_search_bar_button}><ion-icon name="search-outline"></ion-icon></button>
+            </div><button aria-label="Iniciar búsqueda" type="submit" className={styles.main_content_search_bar_button}><ReactSVG src={`/src/assets/Iconos/search-outline.svg`}/></button>
         </form>
     )
 }

@@ -6,6 +6,7 @@ import RecipeRating from "./RecipeRating";
 import RecipeContents from "./RecipeContents";
 import RecipeNutritionalFacts from "./RecipeNutritionalFacts";
 import RecipePreparation from "./RecipePreparation";
+import { ReactSVG } from "react-svg";
 
 export default function RecipeHeader(){
 
@@ -16,11 +17,13 @@ export default function RecipeHeader(){
                     <h3 className={styles.recipeHeaderName}>Pavlova suprema mexicana global mundial</h3>
                     <p className={styles.recipeHeaderType}>Postre</p>
                     <div className={styles.recipeHeaderRating}>
-                        <ion-icon name="star"></ion-icon>
-                        <ion-icon name="star"></ion-icon>
-                        <ion-icon name="star"></ion-icon>
-                        <ion-icon name="star"></ion-icon>
-                        <ion-icon name="star"></ion-icon>
+                        <div className={styles.recipeHeaderStars}>
+                            <ReactSVG src={`/src/assets/Iconos/star.svg`}/>
+                            <ReactSVG src={`/src/assets/Iconos/star.svg`}/>
+                            <ReactSVG src={`/src/assets/Iconos/star.svg`}/>
+                            <ReactSVG src={`/src/assets/Iconos/star.svg`}/>
+                            <ReactSVG src={`/src/assets/Iconos/star.svg`}/>
+                        </div>
                         <p className={styles.recipeRatingText}>Promedio: 4.5 (10)</p>
                     </div>
                     <div className={styles.recipeHeaderCreator}>

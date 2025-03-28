@@ -25,16 +25,17 @@
     gap: 0.5rem;
 }
 
-.recipeHeaderRatingOption ion-icon {
-    font-size: 2.5rem;
+.recipeHeaderRatingOption svg {
+    width: 3.5rem;
+    height: 3.5rem;
     margin-right: 0.3rem;
-    color: orange;
+    color: currentColor;
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
 }
 
 /* Efecto para las estrellas al pasar el cursor */
-.recipeHeaderRatingOption ion-icon:hover {
+.recipeHeaderRatingOption svg:hover {
     transform: scale(1.2);
 }
 

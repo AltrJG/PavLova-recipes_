@@ -11,11 +11,19 @@
 }
 
 .form_input_group_icon{
-    font-size: 4.5rem;
+    width: 5rem;
+    height: 5rem;
     padding: 0 1rem;
     border-top-left-radius: 1rem;
     border-bottom-left-radius: 1rem;
     background-color: rgb(255, 166, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    & svg{
+        width: 3.5rem;
+        height: 3.5rem;
+    }
 }
 
 .form_input_group_input{
@@ -68,7 +76,12 @@
         padding: 1rem .7rem;
     }
     .form_input_group_icon{
-        font-size: 3.7rem;
+        width: 4.2rem;
+        height: 4.2rem;
+        & svg{
+            width: 3rem;
+            height: 3rem;
+        }
     }
     .formButton button{
         font-size: 2rem !important;
@@ -83,7 +96,12 @@
         padding: .8rem .7rem;
     }
     .form_input_group_icon{
-        font-size: 3rem;
+        width: 3.5rem;
+        height: 3.2rem;
+        & svg{
+            width: 2rem;
+            height: 2rem;
+        }
     }
     .formButton button{
         font-size: 2rem !important;
@@ -91,8 +109,9 @@
     .formButton button{
         font-size: 1.6rem !important;
     }
-    .formButton ion-icon{
-        font-size: 2rem !important;
+    .formButton svg{
+        width: 2rem !important;
+        height: 2rem !important;
     }
     .other_options,
     .other_links{

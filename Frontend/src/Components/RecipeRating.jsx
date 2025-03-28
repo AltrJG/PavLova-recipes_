@@ -1,6 +1,7 @@
 import { useState } from "react";
 import MainButton from "./MainButton";
 import styles from './RecipeRating.module.css';
+import { ReactSVG } from "react-svg";
 
 export default function RecipeRating(){
 
@@ -54,19 +55,24 @@ export default function RecipeRating(){
                 onMouseLeave={handleLeave}
             >
                 {[...Array(5)].map((_, index) => (
-                <ion-icon
+                  <div
                     key={index}
-                    name={getStarIcon(index)}
                     onMouseMove={(event) => handleHover(index, event)}
                     onClick={handleClick}
                     style={{
-                    fontSize: "3.5rem",
-                    marginRight: ".5rem",
-                    cursor: "pointer",
-                    color:
+                      width: "3.5rem",
+                      height: "3.5rem",
+                      marginRight: ".5rem",
+                      cursor: "pointer",
+                      color:
                         hovered > index || selected > index ? "#f7b731" : "#23130d",
                     }}
-                ></ion-icon>
+                  >
+                    <ReactSVG
+                      src={`/src/assets/Iconos/${getStarIcon(index)}.svg`}
+                      className="star-icon"
+                    />
+                  </div>
                 ))}
             </div>
             <form className={styles.recipeHeaderRatingForm}>

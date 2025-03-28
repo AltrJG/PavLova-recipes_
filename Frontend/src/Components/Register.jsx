@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthProvider';
 import { validateRegister } from './utils/validators';
 import Swal from 'sweetalert2';
 import RightSidebarErrors from './RightSidebarErrors';
+import { ReactSVG } from 'react-svg';
 
 export default function Register(){
 
@@ -58,19 +59,19 @@ export default function Register(){
             <form className={styles.form_user_information} onSubmit={handleSumbit}>
                 <RightSidebarErrors errors={errorsHandler}/>
                 <div className={styles.form_input_group}>
-                    <label className={styles.form_input_group_icon}><ion-icon name="id-card"></ion-icon></label>
+                    <label className={styles.form_input_group_icon}><ReactSVG src={`/src/assets/Iconos/id-card.svg`}/></label>
                     <input name='nombre' id='nombre' onChange={e => setRegisterData({...registerData, [e.target.name]: e.target.value})}  type='text' required className={styles.form_input_group_input} placeholder='Nombre Completo' />
                 </div>
                 <div className={styles.form_input_group}>
-                    <label className={styles.form_input_group_icon}><ion-icon name="mail"></ion-icon></label>
+                    <label className={styles.form_input_group_icon}><ReactSVG src={`/src/assets/Iconos/mail.svg`}/></label>
                     <input name='correo' id='correo' onChange={e => setRegisterData({...registerData, [e.target.name]: e.target.value})} type='email' required className={styles.form_input_group_input} placeholder='Correo Electronico' />
                 </div>
                 <div className={styles.form_input_group}>
-                    <label className={styles.form_input_group_icon}><ion-icon name="lock-closed"></ion-icon></label>
+                    <label className={styles.form_input_group_icon}><ReactSVG src={`/src/assets/Iconos/lock-closed.svg`}/></label>
                     <input name='password' id='password' onChange={e => setRegisterData({...registerData, [e.target.name]: e.target.value})}  type='password' required className={styles.form_input_group_input} placeholder='Contraseña' />
                 </div>
                 <div className={styles.form_input_group}>
-                    <label className={styles.form_input_group_icon}><ion-icon name="lock-closed"></ion-icon></label>
+                    <label className={styles.form_input_group_icon}><ReactSVG src={`/src/assets/Iconos/lock-closed.svg`}/></label>
                     <input name='confirmPassword' id='confirmPassword' onChange={e => setRegisterData({...registerData, [e.target.name]: e.target.value})}  type='password' required className={styles.form_input_group_input} placeholder='Repite la contraseña' />
                 </div>
                 <div className={`align_center ${styles.formButton}`}>
