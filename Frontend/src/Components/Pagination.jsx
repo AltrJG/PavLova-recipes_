@@ -1,4 +1,7 @@
+import { ReactSVG } from 'react-svg';
 import styles from './Pagination.module.css';
+import arrowBack from '../assets/Iconos/arrow-back.svg';
+import arrowForward from '../assets/Iconos/arrow-forward.svg';
 
 export default function Pagination({ next = null, previous = null, count, currentPage, text, action }){
 
@@ -8,9 +11,9 @@ export default function Pagination({ next = null, previous = null, count, curren
 
     return(
         <div className={styles.paginationContainer}>
-            {previous != null && <button className={styles.buttonsPagination} onClick={() => action(previous, null)}><ion-icon name="arrow-back"></ion-icon></button> }
+            {previous != null && <button className={styles.buttonsPagination} onClick={() => action(previous, null)}><ReactSVG src={arrowBack}/></button> }
             <p>{text.replace("{start}", start).replace("{end}", end).replace("{count}", count)}</p>
-            { next != null && <button className={styles.buttonsPagination} onClick={() => action(null, next)}><ion-icon name="arrow-forward"></ion-icon></button> }
+            { next != null && <button className={styles.buttonsPagination} onClick={() => action(null, next)}><ReactSVG src={arrowForward}/></button> }
         </div>
     )
 }

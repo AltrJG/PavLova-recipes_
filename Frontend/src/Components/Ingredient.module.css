@@ -42,8 +42,9 @@
     padding: .5rem 1rem;
     transition: .3s;
     border-radius: 1rem;
-    & ion-icon{
-        font-size: 3rem;
+    & svg{
+        width: 3rem;
+        height: 3rem;
         color: #ff8a00;
     }
 }

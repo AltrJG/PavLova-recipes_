@@ -1,3 +1,4 @@
+import { ReactSVG } from "react-svg";
 import styled from "styled-components";
 
 const ToggleButton = styled.button`
@@ -17,8 +18,9 @@ const ToggleButton = styled.button`
   overflow: hidden;
   transition: width 0.3s ease-in-out;
   
-  ion-icon {
-    font-size: 2.5rem;
+  svg {
+    width: 2.5rem;
+    height: 2.5rem;
     flex-shrink: 0;
   }
 
@@ -45,7 +47,7 @@ const ToggleButton = styled.button`
 export default function CardButton({ text, hoverWidth, top, left, icon, onClick }) {
   return (
     <ToggleButton onClick={onClick} $hoverWidth={hoverWidth} $top={top} $left={left}>
-      <ion-icon name={icon}></ion-icon>
+      <ReactSVG src={`/src/assets/Iconos/${icon}.svg`}/>
       <span>{text}</span>
     </ToggleButton>
   );

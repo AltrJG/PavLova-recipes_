@@ -19,14 +19,15 @@
   position: relative;
 }
 
-.link_container .icon ion-icon{
+.link_container .icon svg{
+  width: 35px !important;
+  height: 35px !important;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   min-width: 6rem;
-  height: 35px;
-  padding-left: 4px;
+  padding-left: 10px;
   color: white;
   font-size: 1.5rem;
   transition: .5s;
@@ -44,7 +45,7 @@
   transition: .5s;
 }
 
-.nav_el:hover .icon ion-icon,
+.nav_el:hover .icon svg,
 .nav_el:hover .text,
 .active.nav_el:hover .text{
   color: #ffa117;
@@ -84,11 +85,11 @@
   background: transparent;
 }
 
-.nav_el.active ion-icon{
+.nav_el.active svg{
   color: black;
 }
 
-.nav_el .icon ion-icon{
+.nav_el .icon svg{
   z-index: 1;
 }
 
@@ -157,8 +158,8 @@
     height: 44px;
     margin-left: 1rem;
   }
-  .link_container .icon ion-icon{
-    height: 30px;
+  .link_container .icon svg{
+    height: 28px !important;
   }
   .link_container{
     margin: 0 -1rem;

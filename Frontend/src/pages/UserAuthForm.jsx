@@ -2,6 +2,7 @@ import styles from './UserAuthForm.module.css';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
+import { FadeLoader } from 'react-spinners';
 
 const useAuthTexts = () => {
     const location = useLocation();
@@ -36,7 +37,7 @@ export default function UserAuthForms(){
 
     const { title, paragraph } = useAuthTexts();
 
-    if(isLoading) return "cargando...";
+    if(isLoading) return <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>;
     return (!isAuthenticated && !isLoading) ?         
     <div className={styles.form_container}>
         <div className={styles.form_user}>

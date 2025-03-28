@@ -79,17 +79,25 @@
     transition: .3s;
   }
   
-  .cerrar_sesion ion-icon{
+  .cerrar_sesion svg{
     margin: 0;
     color: gray;
+    width: 30px !important;
+    height: 30px !important;
     transition: .3s;
+  }
+
+  .cerrar_sesion div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .cerrar_sesion:hover{
     background-color: #23130d;
   }
   
-  .cerrar_sesion:hover ion-icon{
+  .cerrar_sesion:hover svg{
     color: white;
   }
 

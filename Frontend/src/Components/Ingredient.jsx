@@ -2,8 +2,11 @@ import styles from './Ingredient.module.css';
 import tempImage from '../assets/manzana_test.png';
 import { useState } from 'react';
 import CardButton from './CardButton';
+import { ReactSVG } from 'react-svg';
+import eye from '../assets/Iconos/eye.svg'
+import nutrition from '../assets/Iconos/nutrition.svg'
 
-export default function Ingredient({user_id, isStaff, isSuperUser, actionModify, ingredient}){
+export default function Ingredient({askDelete, user_id, isStaff, isSuperUser, actionModify, ingredient}){
     const [flipped, setFlipped] = useState(false);
     const nutritionalData = {
         Calorias: `${ingredient?.calorias} Kcal`,
@@ -41,7 +44,7 @@ export default function Ingredient({user_id, isStaff, isSuperUser, actionModify,
                         top={11}
                         left={.5}
                         icon="trash"
-                        onClick={() => setFlipped(!flipped)}
+                        onClick={() => askDelete(ingredient)}
                     />}                  
                     <div className={styles.ingredientImage}>
                         <img src={ingredient?.foto_ingrediente} alt="Ingredient" />
@@ -49,11 +52,11 @@ export default function Ingredient({user_id, isStaff, isSuperUser, actionModify,
                     <h4 className={styles.ingredientName}>{ingredient?.nombre}</h4>
                     <div className={styles.ingredientTypeContainer}>
                         <div className={styles.ingredientType}>
-                            <ion-icon name="eye"></ion-icon>
+                            <ReactSVG src={eye}/>
                             <p className={styles.ingredientSimpleData}>{ingredient?.tipo.replace(/^./, char => char.toUpperCase())}</p>
                         </div>
                         <div className={styles.ingredientType}>
-                            <ion-icon name="nutrition"></ion-icon>
+                            <ReactSVG src={nutrition}/>
                             <p className={styles.ingredientSimpleData}>{ingredient?.consistencia.replace(/^./, char => char.toUpperCase())}</p>
                         </div>
                     </div>
@@ -67,7 +70,7 @@ export default function Ingredient({user_id, isStaff, isSuperUser, actionModify,
                         icon="arrow-back-circle"
                         onClick={() => setFlipped(!flipped)}
                     />
-                    <h4 className={styles.ingredientAmount}>Por cada 100 gramos:</h4>
+                    <h4 className={styles.ingredientAmount}>{`Por cada 100 ${ingredient.consistencia == 'liquido' ? "mL" : "g"}`}</h4>
                     <div className={styles.ingredientNutritionalInformation}>
                         {Object.entries(nutritionalData).map(entry => (
                             <div key={entry[0]} className={styles.ingredientNutritionalFact}>

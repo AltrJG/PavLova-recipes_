@@ -9,14 +9,16 @@ import { validateIngredientData } from "./utils/validators";
 import Swal from "sweetalert2";
 import backendAPI from "../api/axiosConfig";
 import { useRightSidebar } from "../context/RightSidebarProvider";
+import { useUpdateData } from "../context/UpdateDataProvider";
 
 
 export default function IngredientsForm(){
     const [ activeOption, setActiveOption ] = useState("Informacion");
     const [ loading, setLoading ] = useState(false);
     const [ errorsHandler, setErrorsHandler ] = useState({});
-    const { user, changeUserData, refreshAccessToken, isSuperUser, isStaff } = useAuth();
+    const { refreshAccessToken, isSuperUser, isStaff } = useAuth();
     const { ingredientModify } = useRightSidebar();
+    const { setCreatedIngredient, setUpdatedIngredient } = useUpdateData();
     const [imagen, setImagen] = useState([]);
 
     let willUserModifyIngredient = ingredientModify != null;
@@ -46,13 +48,13 @@ export default function IngredientsForm(){
     const [ ingredientData, setIngredientData ] = useState({
         nombre: "",
         consistencia: "Liquido",
-        calorias: 0,
-        carbohidratos: 0,
-        proteinas: 0,
-        grasasSaturadas: 0,
-        grasasInsaturadas: 0,
-        grasasTrans: 0,
-        sodio: 0
+        calorias: '0',
+        carbohidratos: '0',
+        proteinas: '0',
+        grasasSaturadas: '0',
+        grasasInsaturadas: '0',
+        grasasTrans: '0',
+        sodio: '0'
     });
     const [ visibilityData, setVisibilityData ] = useState({
         visibilidad: "Personal",
@@ -94,20 +96,22 @@ export default function IngredientsForm(){
                             confirmButton: "swal_confirm"
                         }
                     });
+                    setUpdatedIngredient(response.data);
                 } else{
-                    console.log(formData.getAll('grasas_saturadas'))
                     const response = await backendAPI.post('ingredientes/', formData);
                     setIngredientData({
                         nombre: "",
                         consistencia: "Liquido",
-                        calorias: 0,
-                        carbohidratos: 0,
-                        proteinas: 0,
-                        grasas_saturadas: 0,
-                        grasas_insaturadas: 0,
-                        grasas_trans: 0,
-                        sodio: 0
+                        calorias: '0',
+                        carbohidratos: '0',
+                        proteinas: '0',
+                        grasasSaturadas: '0',
+                        grasasInsaturadas: '0',
+                        grasasTrans: '0',
+                        sodio: '0'
                     });
+                    setImagen([]);
+                    setVisibilityData({visibilidad: 'Personal'});
                     Swal.fire({
                         icon: "success",
                         title: "Ingrediente Creado",
@@ -120,6 +124,7 @@ export default function IngredientsForm(){
                             confirmButton: "swal_confirm"
                         }
                     });
+                    setCreatedIngredient(response.data);
                 }
             } catch(error){
                 console.log(error);
@@ -165,9 +170,9 @@ export default function IngredientsForm(){
                 calorias: 0,
                 carbohidratos: 0,
                 proteinas: 0,
-                grasas_saturadas: 0,
-                grasas_insaturadas: 0,
-                grasas_trans: 0,
+                grasasSaturadas: '0',
+                grasasInsaturadas: '0',
+                grasasTrans: '0',
                 sodio: 0
             });
             setVisibilityData({ visibilidad: "Personal" });

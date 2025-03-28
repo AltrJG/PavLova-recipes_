@@ -1,4 +1,5 @@
 import React from "react";
+import { ReactSVG } from "react-svg";
 import styled from "styled-components";
 
 const ActionButton = styled.button`
@@ -11,9 +12,17 @@ const ActionButton = styled.button`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  z-index: 1;
 
-  & ion-icon{
+  & svg{
     transition: .3s;
+    z-index: 2;
+    width: ${(props) => props.$iconSize} !important;
+    height: ${(props) => props.$iconSize} !important;
+  }
+
+  & div{
+    z-index: 1;
   }
   
   &::before {
@@ -27,19 +36,20 @@ const ActionButton = styled.button`
     height: 85%;
     transform: translate(-50%, -50%);
     background-color: transparent;
+    z-index: 1;
   }
 
   &:hover::before {
     background-color: #23130d;
   }
 
-  &:hover ion-icon {
-    color: orange;
+  &:hover svg {
+    color: orange !important;
   }
 
   &:hover span {
     opacity: 1;
-    top: 120%;
+    top: ${(props) => !props.$top ? "120%" : "-80%"};
     transform: translateX(-50%) scale(1);
   }
 `;
@@ -67,18 +77,18 @@ const Tooltip = styled.span`
     width: 3rem;
     height: 1rem;
     position: absolute;
-    top: -25%;
+    top: ${(props) => !props.$top ? "-25" : "100"}%;
     left: 50%;
     transform: translateX(-50%);
-    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    clip-path: polygon(50% ${(props) => !props.$top ? "0%" : "100%"}, 0% ${(props) => !props.$top ? "100%" : "0%"}, 100% ${(props) => !props.$top ? "100%" : "0%"});
   }
 `;
 
-const CircleButton = ({ iconName = "heart-outline", iconSize = "3rem", text = "Agregar a favoritos" }) => {
+const CircleButton = ({ iconName = "heart-outline", iconSize = "3rem", text = "Agregar a favoritos", top = false }) => {
   return (
-    <ActionButton>
-      <ion-icon name={iconName} style={{ fontSize: iconSize }}></ion-icon>
-      <Tooltip>{text}</Tooltip>
+    <ActionButton $iconSize={iconSize} $top={top}>
+      <ReactSVG src={`/src/assets/Iconos/${iconName}.svg`}/>
+      <Tooltip $top={top}>{text}</Tooltip>
     </ActionButton>
   );
 };

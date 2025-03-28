@@ -65,8 +65,9 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    & ion-icon{
-        font-size: 2.8rem;
+    & svg{
+        width: 2.8rem;
+        height: 2.8rem;
         color: white;
     }
 }

@@ -9,12 +9,15 @@ import MainButton from "../Components/MainButton";
 import { useRightSidebar } from "../context/RightSidebarProvider";
 import backendAPI from "../api/axiosConfig";
 import { useAuth } from "../context/AuthProvider";
+import { useUpdateData } from "../context/UpdateDataProvider";
+import Swal from "sweetalert2";
 
 
 export default function UserIngredients(){
     //Right Sidebar Actions
     const { openIngredientModify } = useRightSidebar();
     const { refreshAccessToken, user, isStaff, isSuperUser } = useAuth();
+    const { updatedIngredient, createdIngredient, deletedIngredient, resetIngredientState } = useUpdateData();
 
     const [ loading, setLoading ] = useState(true);
     // Ingredients data
@@ -33,12 +36,13 @@ export default function UserIngredients(){
     // Filter form options
     const filterOptions = [
         { type: "text", name: "nombre", placeholder: "Filtrar por nombre de ingrediente..."},
-        { type: "select", name: "visibilidad", defaultOption: "Todos", options: ["Todos", "Universales", "Propios"]}
+        { type: "select", name: "visibilidad", defaultOption: "Todos", options: ["Todos", "Universales", "Personales"]}
     ]
 
     const getIngredients = async (previous = null, next = null) => {
         setLoading(true);
         try{
+            let type = (ingredientFilters.visibilidad == "Universales" ? "global" : "personal");
             let url = previous 
             ? previous.split('app')[1] 
             : next 
@@ -48,7 +52,7 @@ export default function UserIngredients(){
             const params = new URLSearchParams();
 
             if (ingredientFilters.nombre.trim() && previous == null && next == null) params.append("nombre", ingredientFilters.nombre);
-            if (ingredientFilters.visibilidad !== "Todos" && previous == null && next == null) params.append("role", ingredientFilters.visibilidad);
+            if (ingredientFilters.visibilidad !== "Todos" && previous == null && next == null) params.append("tipo", type);
 
             // Append query parameters if they exist
             if (params.toString()) {
@@ -71,6 +75,49 @@ export default function UserIngredients(){
         }
     };
 
+    const deleteIngredientAsk = (ingredient) => {
+        Swal.fire({
+            title: "Eliminar Ingrediente",
+            icon: "question",
+            text: `Estas seguro de eliminar el ingrediente '${ingredient.nombre}'`,
+            customClass: {
+                title: "swal_title",
+                icon: "swal_icon",
+                htmlContainer: "swal_text",
+                confirmButton: "swal_confirm"
+            },
+            showCancelButton: true,
+            cancelButtonText: "Cancelar",
+            confirmButtonText: "Eliminar",
+            allowOutsideClick: () => !Swal.isLoading()
+          }).then((result) => {
+            if (result.isConfirmed) {
+                deleteIngrediente(ingredient);
+            }
+        });
+    }
+
+    const deleteIngrediente = async (ingredient) => {
+        try{
+            const response = await backendAPI.delete(`ingredientes/${ingredient.id}/`);
+            Swal.fire({
+                icon: "success",
+                title: "Eliminado!",
+                text: `El ingrediente '${ingredient.nombre}' fue eliminado con exito`,
+                showConfirmButton: true,
+                customClass: {
+                    title: "swal_title",
+                    icon: "swal_icon",
+                    htmlContainer: "swal_text",
+                    confirmButton: "swal_confirm"
+                }
+            });
+            await getIngredients();
+        } catch(error){
+            console.log(error);
+        }
+    }
+
     const updateIngredient = ingredient => {
         openIngredientModify(ingredient)
     }
@@ -82,6 +129,19 @@ export default function UserIngredients(){
     useEffect(() => {
         getIngredients();
     }, []);
+
+    useEffect(() => {
+        if(Object.keys(createdIngredient) != 0){
+            getIngredients();
+            resetIngredientState();
+        }        
+        else if(Object.keys(updatedIngredient) != 0){
+            setIngredients(ingredients => [
+                ...ingredients.filter(ingredient => ingredient.id !== updatedIngredient.id), // Remove the old user
+                updatedIngredient])
+            resetIngredientState();
+        }
+    }, [createdIngredient, updatedIngredient, deletedIngredient]);
 
     return(
         <>
@@ -96,7 +156,7 @@ export default function UserIngredients(){
                 ? <p className={styles.usersNotFound}>No se encontraron ingredientes con los filtros colocados, prueba modificando los filtros</p>
                 : <>
                 <div className='ingredientsContent'>
-                    { ingredients.map(ingredient => <Ingredient isStaff={isStaff} isSuperUser={isSuperUser} user_id={user.id} actionModify={updateIngredient} key={ingredient.id} ingredient={ingredient}/>) }
+                    { ingredients?.map(ingredient => <Ingredient askDelete={deleteIngredientAsk} isStaff={isStaff} isSuperUser={isSuperUser} user_id={user.id} actionModify={updateIngredient} key={ingredient.id} ingredient={ingredient}/>) }
                 </div>
                 <Pagination
                     action={getIngredients}    

@@ -4,6 +4,9 @@ import styles from "./UserDetails.module.css"
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthProvider";
 import CircleButton from "./CircleButton";
+import { ReactSVG } from "react-svg";
+import book from '../assets/Iconos/book.svg';
+import heart from '../assets/Iconos/heart.svg';
 
 export default function UserDetails({ usuario = null }){
 
@@ -22,12 +25,12 @@ export default function UserDetails({ usuario = null }){
                 </div>
                 <div className={styles.userStats}>
                     <div className={styles.userSingleStat}>
-                        <ion-icon name="book"></ion-icon>
+                        <ReactSVG src={book}/>
                         <h5 className={styles.userAmountStat}>50</h5>
                         <p className={styles.userStatDescription}>Recetas creadas</p>
                     </div>
                     <div className={`${styles.userSingleStat} ${styles.userSecondStat}`}>
-                        <ion-icon name="heart"></ion-icon>
+                        <ReactSVG src={heart}/>
                         <h5 className={styles.userAmountStat}>50</h5>
                         <p className={styles.userStatDescription}>Recetas Favoritas</p>
                     </div>
@@ -45,9 +48,9 @@ export default function UserDetails({ usuario = null }){
                     </div>
                 </div>
                 <div className={styles.userSocialMedia}>
-                    {userData?.redFacebook != "" && <Link target="_blank" to={userData?.redFacebook}><CircleButton iconSize="3rem" text="Perfil de Facebook" iconName="logo-facebook"/></Link> }
-                    {userData?.redTwitter != "" && <Link  target="_blank" to={userData?.redTwitter}><CircleButton iconSize="3rem" text="Perfil de X" iconName="logo-twitter"/></Link> }
-                    {userData?.redYoutube != "" && <Link  target="_blank" to={userData?.redYoutube}><CircleButton iconSize="3rem" text="Perfil de Youtube" iconName="logo-youtube"/></Link> }
+                    {userData?.redFacebook != "" && <Link target="_blank" to={userData?.redFacebook}><CircleButton top={true} iconSize="3rem" text="Perfil de Facebook" iconName="logo-facebook"/></Link> }
+                    {userData?.redTwitter != "" && <Link  target="_blank" to={userData?.redTwitter}><CircleButton top={true} iconSize="3rem" text="Perfil de X" iconName="logo-x"/></Link> }
+                    {userData?.redYoutube != "" && <Link  target="_blank" to={userData?.redYoutube}><CircleButton top={true} iconSize="3rem" text="Perfil de Youtube" iconName="logo-youtube"/></Link> }
                 </div>
             </div>
         </div>

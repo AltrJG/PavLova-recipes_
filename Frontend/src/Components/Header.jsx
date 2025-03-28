@@ -4,6 +4,8 @@ import SearchContent from "./SearchContent";
 import styles from './Header.module.css';
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthProvider";
+import { ReactSVG } from "react-svg";
+import logOutIcon from '../assets/Iconos/log-out-outline.svg'
 
 export default function Header({toggleMenu, isMenuOpen}){
     const { user, logout, isAuthenticated } = useAuth();
@@ -21,7 +23,7 @@ export default function Header({toggleMenu, isMenuOpen}){
                 <SearchContent/>
             </div>
             <div className={styles.opciones_usuario}>
-                {isAuthenticated ? <><button aria-label={`Cerrar sesion`} className={styles.cerrar_sesion} onClick={() => logout()}><ion-icon name="log-out-outline"></ion-icon></button>
+                {isAuthenticated ? <><button aria-label={`Cerrar sesion`} className={styles.cerrar_sesion} onClick={() => logout()}><ReactSVG src={logOutIcon}/></button>
                 <Link to={"/mi-perfil"} className={styles.main_content_user} style={{textDecoration: "none"}}>
                     <h3 className={styles.username}>{user?.nombre?.split(' ')[0]}</h3>
                     <div className={styles.user_img}>

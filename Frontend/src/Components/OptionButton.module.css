@@ -27,8 +27,9 @@
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#f1b434",endColorstr="#fc7302",GradientType=1);  
 }
 
-.button_search_type ion-icon{
-    font-size: 2rem;
+.button_search_type svg{
+    width: 2rem;
+    height: 2rem;
 }
 
 .button_search_white{
@@ -48,7 +49,8 @@
     .button_row_mobile{
         flex-direction: row;
     }
-    .button_search_type ion-icon{
-        font-size: 1.6rem;
+    .button_search_type svg{
+        width: 1.6rem;
+        height: 1.6rem;
     }
 }

@@ -1,4 +1,6 @@
 import styles from './FilterForm.module.css';
+import search from '../assets/Iconos/search.svg';
+import { ReactSVG } from 'react-svg';
 
 export default function FilterForm({setCurrentPage, filterOptions, setData, data, action}){
     return(
@@ -24,7 +26,7 @@ export default function FilterForm({setCurrentPage, filterOptions, setData, data
                     </div>
                 ))}
             </div>
-            <button className={styles.formSubmit}><ion-icon name="search"></ion-icon></button>
+            <button className={styles.formSubmit}><ReactSVG src={search}/></button>
         </form>
     )
 }

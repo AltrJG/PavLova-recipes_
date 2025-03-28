@@ -55,7 +55,7 @@ export default function SubidaImagenes({files, setFiles, thumb, thumbInner}){
         <section>
             <div {...getRootProps({className: 'dropzone'})}>
                 <input {...getInputProps()} />
-                <p>Coloca tu imagen aqui...</p>
+                <p className="innerImageText">Coloca tu imagen aqui...</p>
             </div>
             <aside style={thumbsContainer}>
                 {thumbs}

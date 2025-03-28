@@ -1,3 +1,4 @@
+import { ReactSVG } from 'react-svg';
 import styles from './OptionButton.module.css';
 
 export default function OptionButton({isBackgroundBlack, option, setData, active, makeRowOnMobile}){
@@ -9,7 +10,7 @@ export default function OptionButton({isBackgroundBlack, option, setData, active
             className={`${isBackgroundBlack ? styles.button_search_white : ""} ${makeRowOnMobile ? styles.button_row_mobile : ""} ${styles.button_search_type} ${active === option.type && styles.selected}`}
             aria-label={`Buscar por ${option.label}`}
         >
-            <ion-icon name={active === option.type ? option.icon : `${option.icon}-outline`}></ion-icon>
+            <ReactSVG src={`/src/assets/Iconos/${active === option.type ? option.icon : `${option.icon}-outline`}.svg`}/>
             {option.label}
         </button>
     )

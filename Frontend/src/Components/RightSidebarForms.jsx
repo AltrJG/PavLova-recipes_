@@ -6,7 +6,7 @@ const thumb = {
     borderRadius: 0,
     marginBottom: 8,
     marginRight: 8,
-    width: "15rem",
+    width: "20rem",
     height: "15rem",
     padding: 4,
     boxSizing: 'border-box',

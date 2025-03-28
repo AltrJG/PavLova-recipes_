@@ -51,8 +51,9 @@
     background: linear-gradient(145deg, #ffffff, #f2f2f2);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     
-    & ion-icon{
-        font-size: 3rem;
+    & svg{
+        width: 3rem;
+        height: 3rem;
         color: rgb(255, 136, 0);
     }
 
@@ -68,8 +69,9 @@
 }
 
 .userSecondStat{
-    & ion-icon{
-        font-size: 3rem;
+    & svg{
+        width: 3rem;
+        height: 3rem;
         color: rgb(255, 77, 0);
     }
 
@@ -103,43 +105,6 @@
     padding: 1.5rem 1rem;
     border-bottom-left-radius: 2rem;
     border-bottom-right-radius: 2rem;
-}
-
-.socialMediaLink ion-icon{
-    font-size: 3rem;
-    color: #23130d;
-    transition: .3s;
-}
-
-.socialMediaLink{
-    border-radius: 50%;
-    padding: 1.2rem;
-    background: rgb(241,180,52);
-    background: -moz-linear-gradient(315deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
-    background: -webkit-linear-gradient(315deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
-    background: linear-gradient(315deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
-    position: relative;
-}
-
-.socialMediaLink::before{
-    content: "";
-    top: 50%;
-    border-radius: 50%;
-    left: 50%;
-    transition: .3s;
-    width: 85%;
-    position: absolute;
-    height: 85%;
-    transform: translate(-50%, -50%);
-    background-color: transparent;
-}
-
-.socialMediaLink:hover::before{
-    background-color: #23130d;
-}
-
-.socialMediaLink:hover ion-icon{
-    color: orange;
 }
 
 

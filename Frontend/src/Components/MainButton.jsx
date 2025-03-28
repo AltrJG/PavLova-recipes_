@@ -1,3 +1,4 @@
+import { ReactSVG } from "react-svg";
 import styled from "styled-components"
 
 const colors = {
@@ -19,8 +20,9 @@ const Button = styled.button`
     align-items: center;
     justify-content: center;
 
-    & ion-icon {
-        font-size: ${({ $iconSize }) => $iconSize}rem;
+    & svg {
+        width: ${({ $iconSize }) => $iconSize}rem;
+        height: ${({ $iconSize }) => $iconSize}rem;
         margin-right: 1rem;
     }
 
@@ -46,7 +48,7 @@ export default function MainButton({ action, disabled, fontSize, color, icon, ic
             $iconSize={iconSize}
             $borderRadius={borderRadius}
         >
-            <ion-icon name={icon}></ion-icon>{text}
+            <ReactSVG src={`/src/assets/Iconos/${icon}.svg`}/>{text}
         </Button>
     );
 }

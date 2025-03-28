@@ -8,15 +8,26 @@
         font-weight: 600;
         font-family: 'Oswald', sans-serif;
     }
-    & ion-icon{
-        font-size: 2.5rem;
+    & svg{
+        width: 2.5rem;
+        height: 2.5rem;
     }
 }
 
-.buttonsPagination ion-icon{
-    font-size: 3rem;
+.buttonsPagination{
+    z-index: 1;
+}
+
+.buttonsPagination svg{
+    width: 3rem;
+    height: 3rem;
     color: #23130d;
     transition: .3s;
+}
+
+.buttonsPagination div{
+    z-index: 2;
+    position: relative;
 }
 
 .buttonsPagination{
@@ -35,6 +46,7 @@
 .buttonsPagination::before{
     content: "";
     top: 50%;
+    z-index: 1;
     border-radius: 1rem;
     left: 50%;
     transition: .3s;
@@ -49,6 +61,6 @@
     background-color: #23130d;
 }
 
-.buttonsPagination:hover ion-icon{
+.buttonsPagination:hover svg{
     color: orange;
 }

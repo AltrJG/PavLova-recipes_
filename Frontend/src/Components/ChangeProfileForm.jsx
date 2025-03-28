@@ -281,7 +281,7 @@ export default function ChangeProfileForm(){
             {activeOption === "ImagenPerfil" && (
                 <div className={styles.imageUploadContainer}>
                     <SubidaImagenes thumb={thumb} thumbInner={thumbInner} files={imagen} setFiles={setImagen} />
-                    <MainButton action={handleImageSubmit} disabled={imagen.length === 0 || loading} type="submit" icon="mail" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={loading ? "Cambiando..." : "Cambiar Avatar"} />
+                    <MainButton action={handleImageSubmit} disabled={imagen.length === 0 || loading} type="submit" icon="aperture" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={loading ? "Cambiando..." : "Cambiar Avatar"} />
                 </div>
             )}
         </div>

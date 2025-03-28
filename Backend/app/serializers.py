@@ -187,11 +187,15 @@ class IngredienteSerializer(serializers.ModelSerializer):
         instance = self.instance
 
         if data.get('tipo') == 'global':
-            if Ingrediente.objects.filter(nombre=data['nombre'], tipo='global').exists():
+            if instance and Ingrediente.objects.filter(nombre=data['nombre'], tipo='global').exclude(id=instance.id).exists():
                 raise serializers.ValidationError(
                     {'nombre': 'Ya existe un ingrediente global con este nombre.'}
                 )
-
+            elif Ingrediente.objects.filter(nombre=data['nombre'], tipo='global').exists():
+                raise serializers.ValidationError(
+                    {'nombre': 'Ya existe un ingrediente global con este nombre.'}
+                )
+            
         if data.get('tipo') == 'personal':
             if instance:
                 if Ingrediente.objects.filter(nombre=data['nombre'], tipo='personal').exclude(id=instance.id).exists():
