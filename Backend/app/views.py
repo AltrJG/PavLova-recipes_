@@ -14,10 +14,11 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer
 from .permissions import IsModeratorOrAdmin
-from .filters import UserFilter
+from .filters import UserFilter, IngredienteFilter
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from .pagination import IngredientePagination, UserPagination
 
 class RegisterView(APIView):
     def post(self, request):
@@ -180,6 +181,7 @@ class GetUsuarioById(APIView):
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.filter(is_active=True).order_by('id')
     serializer_class = UserSerializer
+    pagination_class = UserPagination
     permission_classes = [AllowAny]
     filterset_class = UserFilter
 
@@ -359,7 +361,9 @@ class ResendVerificationEmailView(APIView):
 
 class IngredienteViewSet(viewsets.ModelViewSet):
     serializer_class = IngredienteSerializer
+    pagination_class = IngredientePagination
     permission_classes = [IsAuthenticated]
+    filterset_class = IngredienteFilter
 
     def get_queryset(self):
         user = self.request.user
