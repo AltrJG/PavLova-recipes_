@@ -1,0 +1,29 @@
+.ingredientNutritionalInformation {
+    display: flex;
+    align-items: space-between;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 1rem;
+    color: black;
+    height: max-content;
+}
+
+.ingredientNutritionalFact {
+    font-size: 2.3rem;
+    outline: .1rem black solid;
+    padding: .5rem 1rem;
+    font-family: "Oswald", sans-serif;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.ingredientNutritionalFact:first-of-type{
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+}
+
+.ingredientNutritionalFact:last-of-type{
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}

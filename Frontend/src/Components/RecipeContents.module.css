@@ -10,9 +10,144 @@
     height: 100%;
 }
 
+.recipeContentsText{
+    font-size: 2rem;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
+}
+
+.recipeContentsUsefulData{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.portionSliderContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .portionSliderText {
+    font-size: 1.8rem;
+    font-family: "Oswald", sans-serif;
+    color: #23130d;
+  }
+  
+  .portionSliderValue {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #f7b731;
+  }
+
 @media(max-width: 68.75em){
     .recipeContentsContainer{
         width: 100% !important;
         margin-top: 0;
     }
 }
+
+@media(max-width: 37.5em){
+    .recipeContentsContainer{
+        margin-top: 1rem;
+    }
+}
+
+/***** Estilos del slider adaptado al proyecto *****/
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 60%;
+    height: 10px;
+    border-radius: 5px;
+    background: #f5e1c3;
+    outline: none;
+    margin: 1rem 0;
+    transition: background 0.3s;
+    cursor: pointer;
+  }
+  
+  /* Cuando el slider está en foco */
+  input[type="range"]:focus {
+    outline: none;
+  }
+  
+  /***** Estilo de la pista del slider (Webkit) *****/
+  input[type="range"]::-webkit-slider-runnable-track {
+    width: 60%;
+    height: 8px;
+    cursor: pointer;
+    background: #f7b731;
+    border-radius: 10px;
+    transition: background 0.3s;
+  }
+  
+  /***** Estilo del "thumb" del slider (Webkit) *****/
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #7e3900;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    margin-top: -6px;
+    transition: background 0.3s;
+  }
+  
+  /* Cuando el slider está enfocado */
+  input[type="range"]:focus::-webkit-slider-runnable-track {
+    background: #ffcd4b;
+  }
+  
+  /***** Estilo para Firefox *****/
+  input[type="range"]::-moz-range-track {
+    width: 60%;
+    height: 8px;
+    cursor: pointer;
+    background: #f7b731;
+    border-radius: 10px;
+    transition: background 0.3s;
+  }
+  
+  input[type="range"]::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #7e3900;
+    cursor: pointer;
+  }
+  
+  /***** Estilo para IE/Edge *****/
+  input[type="range"]::-ms-track {
+    width: 60%;
+    height: 8px;
+    cursor: pointer;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+  }
+  
+  input[type="range"]::-ms-fill-lower {
+    background: #f7b731;
+    border-radius: 10px;
+  }
+  
+  input[type="range"]::-ms-fill-upper {
+    background: #f7b731;
+    border-radius: 10px;
+  }
+  
+  input[type="range"]::-ms-thumb {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #7e3900;
+    cursor: pointer;
+  }
+  
+  /***** Efecto hover para el thumb *****/
+  input[type="range"]::-webkit-slider-thumb:hover {
+    background: #ff934b;
+  }

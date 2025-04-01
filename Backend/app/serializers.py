@@ -191,7 +191,7 @@ class IngredienteSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     {'nombre': 'Ya existe un ingrediente global con este nombre.'}
                 )
-            elif Ingrediente.objects.filter(nombre=data['nombre'], tipo='global').exists():
+            elif not instance and Ingrediente.objects.filter(nombre=data['nombre'], tipo='global').exists():
                 raise serializers.ValidationError(
                     {'nombre': 'Ya existe un ingrediente global con este nombre.'}
                 )

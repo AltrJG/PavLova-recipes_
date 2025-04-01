@@ -5,6 +5,7 @@ import CardButton from './CardButton';
 import { ReactSVG } from 'react-svg';
 import eye from '../assets/Iconos/eye.svg'
 import nutrition from '../assets/Iconos/nutrition.svg'
+import NutritionalTable from './NutritionalTable';
 
 export default function Ingredient({askDelete, user_id, isStaff, isSuperUser, actionModify, ingredient}){
     const [flipped, setFlipped] = useState(false);
@@ -71,14 +72,7 @@ export default function Ingredient({askDelete, user_id, isStaff, isSuperUser, ac
                         onClick={() => setFlipped(!flipped)}
                     />
                     <h4 className={styles.ingredientAmount}>{`Por cada 100 ${ingredient.consistencia == 'liquido' ? "mL" : "g"}`}</h4>
-                    <div className={styles.ingredientNutritionalInformation}>
-                        {Object.entries(nutritionalData).map(entry => (
-                            <div key={entry[0]} className={styles.ingredientNutritionalFact}>
-                                <h5 className={styles.ingredientFact}>{entry[0]}:</h5>
-                                <h5 className={styles.ingredientValue}>{entry[1]}</h5>
-                            </div>
-                        ))}
-                    </div>
+                    <NutritionalTable nutritionalData={nutritionalData}/>
                 </div>
             </div>
         </div>

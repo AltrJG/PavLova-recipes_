@@ -35,7 +35,7 @@ export default function RecipesProfile(){
                     previous={'wrw'} 
                     count={15} 
                     currentPage={5} 
-                    text="Mostrando usuarios {start}-{end} de {count}"/>
+                    text="Mostrando Recetas {start}-{end} de {count}"/>
         </div>
     )
 }

@@ -1,0 +1,50 @@
+.showImageText{
+    font-size: 1.6rem;
+    font-family: 'Lato', sans-serif;
+    padding: .5rem;
+}
+
+.textHighlight{
+    color: rgb(255, 136, 0);
+    background-color: rgb(255, 237, 207);
+    font-weight: 700;
+    padding: .5rem;
+    border-radius: 1rem;
+    transition: .3s;
+    cursor: pointer;
+}
+
+.showImageContainer{
+    position: relative;
+    width: max-content;
+}
+
+.textRight + section{
+    transform: translateX(-10%);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.textHighlight:hover{
+    background-color: orange;
+    color: white;
+}
+
+.textRight:hover + section{
+    transform: translateX(0%);
+    opacity: 1;
+    visibility: visible;
+}
+
+
+.textTop + section{
+    transform: translateY(10%);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.textTop:hover + section{
+    transform: translateX(0%);
+    opacity: 1;
+    visibility: visible;
+}
