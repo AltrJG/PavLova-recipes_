@@ -7,6 +7,7 @@ import RecipeContents from "./RecipeContents";
 import RecipeNutritionalFacts from "./RecipeNutritionalFacts";
 import RecipePreparation from "./RecipePreparation";
 import { ReactSVG } from "react-svg";
+import RecipeComments from "./RecipeComments";
 
 export default function RecipeHeader(){
 
@@ -35,11 +36,12 @@ export default function RecipeHeader(){
                         <CircleButton iconName={"heart-outline"} iconSize="3.5rem"/>
                     </div>
                 </div>
-                <div className={styles.recipeHeaderShowTwo}>
-                  <RecipeRating/>
-                  <RecipeContents/>
-                </div>
+                <RecipeContents/>
                 <RecipeNutritionalFacts/>
+                <div className={styles.recipeHeaderShowTwo}>
+                    <RecipeRating/>
+                    <RecipeComments/>
+                </div>
             </div>
             <div className={styles.recipeImageTagsContainer}>
                 <img className={styles.recipeHeaderImage} src={tempImg}/>

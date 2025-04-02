@@ -59,4 +59,8 @@
         width: 100%;
         margin: 0 auto;
     }
+
+    .recipeNutritionContainer{
+        margin-top: 2rem;
+    }
 }

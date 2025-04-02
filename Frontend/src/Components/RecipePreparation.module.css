@@ -9,9 +9,21 @@
     width: 100%;
 }
 
+.recipeContentsText{
+    font-size: 2.5rem;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
+}
+
 @media(max-width: 68.75em){
     .recipePreparationContainer{
         position: absolute;
         top: 100%;
+    }
+}
+
+@media(max-width: 37.5em){
+    .recipeContentsText{
+        font-size: 2rem;
     }
 }

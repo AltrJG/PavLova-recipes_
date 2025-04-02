@@ -1,0 +1,99 @@
+.recipeCommentsContainer{
+    color: #23130d;
+    border-radius: 2rem;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    height: max-content;
+}
+
+.recipeCommentsTitle {
+    font-size: 2rem;
+    font-family: "Oswald", sans-serif;
+    font-weight: 500;
+    color: rgb(80, 27, 0);
+    margin-bottom: 1rem;
+}
+
+.recipeComment {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid rgb(200, 200, 200);
+}
+
+.recipeComment:last-child {
+    border-bottom: none;
+}
+
+.recipeCommentAvatar {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid orange;
+}
+
+.recipeCommentAvatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.recipeCommentData {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.recipeCommentName {
+    font-size: 1.6rem;
+    font-family: "Oswald", sans-serif;
+    font-weight: 700;
+    color: rgb(30, 30, 30);
+    margin: 0;
+}
+
+.recipeCommentDate {
+    font-size: 1.1rem;
+    color: rgb(100, 100, 100);
+    font-family: "Ubuntu", sans-serif;
+    margin: 0.2rem 0;
+}
+
+.recipeCommentsStars{
+    display: flex;
+}
+
+.recipeCommentStar svg {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    color: rgb(255, 195, 83);
+    margin-right: 2px;
+}
+
+.recipeCommentStar .star-icon {
+    width: 100%;
+    height: 100%;
+}
+
+.recipeCommentText {
+    font-size: 1.4rem;
+    font-family: "Oswald", sans-serif;
+    color: rgb(50, 50, 50);
+    line-height: 1.5;
+    margin-top: 0.5rem;
+}
+
+.recipeCommentPagination{
+    margin-top: 1.5rem;
+}
+
+@media(max-width: 37.5em){
+    .recipeCommentsContainer{
+        margin-top: 0;
+    }
+}

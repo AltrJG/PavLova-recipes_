@@ -30,7 +30,6 @@ export default function RecipesProfile(){
                 <Recipe/>
             </div>
             <Pagination                    
-                        
                     next={'tgwgfw'} 
                     previous={'wrw'} 
                     count={15} 
