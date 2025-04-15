@@ -1,7 +1,8 @@
 .title{
-    font-size: 3rem;
+    font-size: 4rem;
     color: #23130d;
-    font-family: "Oswald", sans-serif;
+    font-weight: 400;
+    font-family: 'Bryce Pro', sans-serif;
 }
 
 .description{
@@ -19,7 +20,7 @@
 
 @media(max-width: 50em){
     .title{
-        font-size: 2rem;
+        font-size: 2.5rem;
     }
     .description{
         font-size: 1.6rem;

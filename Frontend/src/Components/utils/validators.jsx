@@ -216,3 +216,23 @@ export const validateIngredientData = (ingredientData) => {
 
     return errors;
 };
+
+
+export const validateEtiquetaCategoriaData = (categoriaEtiqueta) => {
+    let errors = {};
+
+    // Validate 'nombre' (Max 25 characters, sanitized)
+    if (!categoriaEtiqueta.nombre || categoriaEtiqueta.nombre.trim().length === 0) {
+        errors.nombre = "El nombre es obligatorio.";
+    } else {
+        const sanitizedNombre = DOMPurify.sanitize(categoriaEtiqueta.nombre.trim());
+        if (sanitizedNombre !== categoriaEtiqueta.nombre) {
+            errors.nombre = "El contenido del nombre contiene código no permitido.";
+        }
+        if (sanitizedNombre.length > 25) {
+            errors.nombre = "El nombre no puede tener más de 25 caracteres.";
+        }
+    }
+
+    return errors;
+};

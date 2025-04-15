@@ -16,6 +16,9 @@ import VerifyEmail from './pages/VerifyEmail'
 import UserIngredients from './pages/UserIngredients'
 import NotFound404 from './pages/NotFound404'
 import RecipeDetails from './pages/RecipeDetails'
+import EtiquetaCategoria from './pages/EtiquetaCategoria'
+import RestrictedRoute from './Components/RestrictedRoute'
+import CrearReceta from './pages/CrearReceta'
 
 function App() {
 
@@ -35,6 +38,10 @@ function App() {
                 <Route element={<ProtectedRoute/>}>
                   <Route path='mi-perfil' element={<MyProfile/>}/>
                   <Route path='ingredientes' element={<UserIngredients/>}/>
+                  <Route path='crear-receta' element={<CrearReceta/>}/>
+                </Route>
+                <Route element={<RestrictedRoute isStaffAllowed={true} isSuperUserAllowed={true}/>}>
+                  <Route path='etiquetas' element={<EtiquetaCategoria/>}/>
                 </Route>
                 <Route path='users' element={<ManageUsers/>}/>
                 <Route path='receta/:recipe_id' element={<RecipeDetails/>}/>

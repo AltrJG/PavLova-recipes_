@@ -12,10 +12,31 @@ const thumb = {
     boxSizing: 'border-box',
 };
 
+const thumbCategoria = {
+    display: 'inline-flex',
+    borderRadius: '50%',
+    marginBottom: 8,
+    marginRight: 8,
+    width: "20rem",
+    height: "20rem",
+    padding: 4,
+    boxSizing: 'border-box',
+};
+
 const thumbInner = {
     display: 'flex',
     minWidth: 0,
     borderRadius: 10,
+    border: '.4rem solid orange',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden'
+};
+
+const thumbInnerCategoria = {
+    display: 'flex',
+    minWidth: 0,
+    borderRadius: '100%',
     border: '.4rem solid orange',
     alignItems: 'center',
     justifyContent: 'center',
@@ -43,7 +64,7 @@ export default function RightSidebarForms({twoOnOne = false, action, formOptions
                                 onChange={e => setData(formInputs => ({...formInputs, [e.target.name]: e.target.value}))}>
                             </textarea>
                             :( formInput.type === 'imageSingle' 
-                                ? <SubidaImagenes key={formInput.name} thumb={thumb} thumbInner={thumbInner} files={formInput.imageData} setFiles={formInput.setImageData}/> 
+                                ? <SubidaImagenes key={formInput.name} thumb={formInput.name == 'imagenCategoria' ? thumbCategoria : thumb} thumbInner={formInput.name == 'imagenCategoria' ? thumbInnerCategoria : thumbInner} files={formInput.imageData} setFiles={formInput.setImageData}/> 
                                 : <input
                                 id={formInput.name}
                                 type={formInput.type}

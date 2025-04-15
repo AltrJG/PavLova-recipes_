@@ -1,0 +1,26 @@
+.card {
+    display: flex;
+    align-items: center;
+    background-color: #fffefb;
+    border-radius: 1.5rem;
+    padding: 2rem 1.5rem 2rem 7rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: 0.2s ease-in-out;
+    width: 100%;
+    position: relative;
+    gap: 1.2rem;
+    height: 11rem
+}
+
+.card:hover {
+    background-color: rgb(255, 240, 221);
+    transform: scale(1.03);
+    box-shadow: 0 4px 12px rgba(255, 165, 0, 0.4);
+}
+
+.name {
+    font-family: 'Oswald', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #3c3c3c;
+}
