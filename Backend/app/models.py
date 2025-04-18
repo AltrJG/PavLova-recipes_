@@ -41,11 +41,19 @@ class UniqueImagePath:
     def __call__(self, instance, filename):
         ext = filename.split('.')[-1]
         filename = f"{uuid.uuid4()}.{ext}"
-        #return f"images/{filename}"
+
         if isinstance(instance, User):
             return f"images/{filename}"
+        
         elif isinstance(instance, Ingrediente):
             return f"ingredientes/{filename}"
+        
+        elif isinstance(instance, Categoria):
+            return f"categorias/{filename}"
+        
+        elif isinstance(instance, Receta):
+            return f"recetas/{filename}"
+        
         else:
             return f"uploads/{filename}"
     
@@ -253,3 +261,70 @@ class Ingrediente(models.Model):
             ),
         ]"
 """
+
+#---------------------------RECETA-------------------------------#
+
+class Categoria(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+    foto_categoria = models.ImageField(upload_to=UniqueImagePath(), default='images/categoria_placeholder.webp')
+
+    def __str__(self):
+        return self.nombre
+    
+class Etiqueta(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.nombre
+
+class Receta(models.Model):
+    nombre = models.CharField(max_length=100, unique=False)
+    porciones = models.IntegerField()
+    frase = models.TextField()
+    foto_receta = models.ImageField(upload_to=UniqueImagePath(), default='images/receta_placeholder.webp')
+    procedimiento = models.TextField()
+    rating = models.FloatField(default=0.0) #Se le debería poner un nombre más descriptivo, el nombre es muy similar a puntuación
+    tiempo_preparacion = models.IntegerField(default=0)
+    tiempo_coccion = models.IntegerField(default=0)
+    visibilidad = models.BooleanField(default=True)
+    verificado = models.BooleanField(default=False)
+    puntuacion = models.FloatField(default=0.0)
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='recetas')
+    ingredientes = models.ManyToManyField(Ingrediente, through='RecetaIngrediente', related_name='recetas')
+    etiquetas = models.ManyToManyField(Etiqueta, related_name='recetas')
+    creador = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='recetas'
+    )
+
+class Comentario(models.Model):
+    receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name='comentarios')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comentarios')
+    puntuacion = models.IntegerField(default=0)
+    contenido = models.TextField()
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.usuario.email} - {self.receta.nombre}"
+
+class RecetaIngrediente(models.Model):
+    receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name='receta_ingredientes')
+    ingrediente = models.ForeignKey(Ingrediente, on_delete=models.CASCADE, related_name='receta_ingredientes')
+    cantidad = models.FloatField()
+    unidad = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f"{self.ingrediente.nombre} - {self.receta.nombre}"
+    
+class RecetaFavorito(models.Model):
+    receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name='receta_favoritas')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receta_favoritas')
+
+    class Meta:
+        unique_together = ('receta', 'usuario')
+
+    def __str__(self):
+        return f"{self.receta.nombre} - {self.usuario.email}"
