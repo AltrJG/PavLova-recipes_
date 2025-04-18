@@ -1,0 +1,66 @@
+.crearRecetaOptions{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 75%; 
+    margin: 2rem 0;
+}
+
+.container{
+    height: 100%;
+}
+
+.formContainer{
+    width: 55%;
+    margin-left: 4rem;
+    position: relative;
+}
+
+.createButtonCenter{
+    display: flex;
+    margin-top: 1rem;
+    padding-bottom: 2rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.formInfoGeneral{
+    font-family: 'Bryce Pro', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+}
+
+.section {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px) scale(0.80);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  
+  .activeSection {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0px) scale(1);
+    position: relative;
+    z-index: 1;
+    pointer-events: auto;
+  }
+
+@media(max-width: 71.875em){
+    .crearRecetaOptions{
+        flex-direction: column;
+        height: min-content;
+        justify-content: flex-start;
+    }
+    .formContainer{
+        margin-left: 0;
+        width: 100%;
+    }
+}

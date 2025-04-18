@@ -134,11 +134,18 @@ body{
   background-color: rgba(255, 255, 255, 0.2); /* Slightly more visible */
 }
 
-.dropzone p {
+.dropzone p{
   font-size: 16px;
   font-weight: bold;
   color: #ffcc80; /* Soft yellow text */
 }
+
+.dropzoneBG p{
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffa114; /* Soft yellow text */
+}
+
 
 .imagenTexto{
   font-size: 2rem;
@@ -153,6 +160,41 @@ body{
 
 .innerImageText{
   font-family: 'Oswald', sans-serif;
+}
+
+.dropzoneBG {
+  border: 2px dashed #ff9800;
+  border-radius: 12px;
+  padding: 25px;
+  text-align: center;
+  background-color: #fffdf7; /* Blanco cálido */
+  color: #333;  /* Texto oscuro */
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 100%;
+  margin: auto;
+}
+
+.dropzoneBG:hover {
+  border-color: #ffa726; /* Naranja brillante al pasar el mouse */
+  background-color: #fffaf0; /* Ligero cambio de tono */
+}
+
+.innerImageTextBG {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ff9800;  /* Igual al borde */
+}
+
+.imagenTextoBG {
+  font-size: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 600;
+  color: #444; /* Texto más sobrio sobre blanco */
+  text-align: center;
+  margin-top: 1rem;
 }
 
 /* Estilos para swal */

@@ -14,7 +14,11 @@ const img = {
     height: '100%',
   };
 
-export default function SubidaImagenes({files, setFiles, thumb, thumbInner}){
+export default function SubidaImagenes({files, setFiles, thumb, thumbInner, onWhiteBg = false}){
+
+    const styleDropzone = onWhiteBg ? "dropzoneBG" : "dropzone";
+    const droptext = onWhiteBg ? "innerImageTextBG" : "innerImageText";
+    const afterImageText = onWhiteBg ? "imagenTextoBG" : "imagenTexto";
 
     const {getRootProps, getInputProps} = useDropzone({
       accept: {
@@ -53,13 +57,13 @@ export default function SubidaImagenes({files, setFiles, thumb, thumbInner}){
 
     return(
         <section>
-            <div {...getRootProps({className: 'dropzone'})}>
+            <div {...getRootProps({className: styleDropzone})}>
                 <input {...getInputProps()} />
-                <p className="innerImageText">Coloca tu imagen aqui...</p>
+                <p className={droptext}>Coloca tu imagen aqui...</p>
             </div>
             <aside style={thumbsContainer}>
                 {thumbs}
-                {files.length != 0 && <p className="imagenTexto">Esta Imagen sera la que se utilizara</p>}
+                {files.length != 0 && <p className={afterImageText}>Esta Imagen sera la que se utilizara</p>}
             </aside>
         </section>
     )
