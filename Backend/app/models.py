@@ -266,10 +266,43 @@ class Ingrediente(models.Model):
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
-    foto_categoria = models.ImageField(upload_to=UniqueImagePath(), default='images/categoria_placeholder.webp')
+    foto_categoria = models.ImageField(upload_to=UniqueImagePath(), default='categorias/categoria_placeholder.webp')
 
     def __str__(self):
         return self.nombre
+    
+    def save(self, *args, **kwargs):
+
+        default_image = 'categorias/categoria_placeholder.webp'
+
+        if self.pk:
+            old_categoria = Categoria.objects.get(pk=self.pk)
+            if old_categoria.foto_categoria and old_categoria.foto_categoria.name != default_image:
+                if old_categoria.foto_categoria != self.foto_categoria:
+                    old_categoria.foto_categoria.delete(save=False)
+
+        if self.foto_categoria and not self.foto_categoria.name.endswith('.webp'):
+            img = Image.open(self.foto_categoria)
+
+            if img.mode in ('RGBA', 'P') and 'transparency' in img.info:
+                img = img.convert('RGBA')
+            else:
+                img = img.convert('RGB')
+
+            output = BytesIO()
+            img.save(output, format='WEBP', quality=80)
+            output.seek(0)
+
+            self.foto_categoria = InMemoryUploadedFile(
+                output,
+                'ImageField',
+                f"{self.foto_categoria.name.split('.')[0]}.webp",
+                'image/webp',
+                output.getbuffer().nbytes,
+                None
+            )
+
+        super().save(*args, **kwargs)
     
 class Etiqueta(models.Model):
     nombre = models.CharField(max_length=100, unique=True)

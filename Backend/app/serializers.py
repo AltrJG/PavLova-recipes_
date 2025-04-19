@@ -1,8 +1,12 @@
-from .models import User, PasswordResetToken, Ingrediente
+from .models import User, PasswordResetToken, Ingrediente, Categoria, Etiqueta
 from rest_framework import serializers
 from django.core.mail import send_mail
 from django.utils import timezone
 from django.conf import settings
+import bleach
+
+def sanitize_input(value):
+    return bleach.clean(value, tags=[], strip=True)
 
 class UserSerializer(serializers.ModelSerializer):
     profile_picture = serializers.SerializerMethodField()
@@ -250,3 +254,21 @@ class IngredienteSerializer(serializers.ModelSerializer):
             )
         
         return super().delete(instance)
+    
+#---------------------------RECETA-------------------------------#
+
+class CategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categoria
+        fields = ['id', 'nombre', 'foto_categoria']
+
+    def validate_nombre(self, value):
+        return sanitize_input(value)
+
+class EtiquetaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Etiqueta
+        fields = ['id', 'nombre']
+
+    def validate_nombre(self, value):
+        return sanitize_input(value)

@@ -6,14 +6,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from django.shortcuts import get_object_or_404
-from .models import User, EmailVerificationCode, Ingrediente
+from .models import User, EmailVerificationCode, Ingrediente, Categoria, Etiqueta
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate, update_session_auth_hash
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer
-from .permissions import IsModeratorOrAdmin
+from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer
+from .permissions import IsModeratorOrAdmin, IsSuperUserOrReadOnly, IsStaffOrSuperUserOrReadOnly
 from .filters import UserFilter, IngredienteFilter
 from django.core.mail import send_mail
 from django.conf import settings
@@ -412,3 +412,13 @@ class IngredienteViewSet(viewsets.ModelViewSet):
             )
 
         instance.delete()
+
+class CategoriaViewSet(viewsets.ModelViewSet):
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
+    permission_classes = [IsSuperUserOrReadOnly]
+
+class EtiquetaViewSet(viewsets.ModelViewSet):
+    queryset = Etiqueta.objects.all()
+    serializer_class = EtiquetaSerializer
+    permission_classes = [IsStaffOrSuperUserOrReadOnly]

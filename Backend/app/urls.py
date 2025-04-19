@@ -2,13 +2,14 @@ from django.urls import path, include
 from rest_framework.documentation import include_docs_urls
 from rest_framework import routers
 from app import views
-from .views import RegisterView, LoginView, LogoutView, UserInfoView, CustomTokenRefreshView, UpdateUserProfileView, UpdateUserPasswordView, UpdateUserEmailView, ProfilePictureUpdateView, UserViewSet, UserUpdateViewSet, GetUsuarioById, PasswordResetRequestView, PasswordResetView, VerifyEmailView, IngredienteViewSet
+from .views import RegisterView, LoginView, LogoutView, UserInfoView, CustomTokenRefreshView, UpdateUserProfileView, UpdateUserPasswordView, UpdateUserEmailView, ProfilePictureUpdateView, UserViewSet, UserUpdateViewSet, GetUsuarioById, PasswordResetRequestView, PasswordResetView, VerifyEmailView, IngredienteViewSet, CategoriaViewSet, EtiquetaViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user') # /users/
 router.register(r'users/update', UserUpdateViewSet, basename='user_update') # /users/update/<id>/
 router.register(r'ingredientes', IngredienteViewSet, basename='ingrediente') # /ingredientes/
-
+router.register(r'categorias', CategoriaViewSet, basename='categoria') # /categorias/
+router.register(r'etiquetas', EtiquetaViewSet, basename='etiqueta') # /etiquetas/
 
 urlpatterns = [
     path('', include(router.urls)),
