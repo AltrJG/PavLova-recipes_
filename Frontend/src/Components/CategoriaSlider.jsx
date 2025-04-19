@@ -20,8 +20,6 @@ export default function CategoriaSlider({categorias, activeCategoria, setActiveC
                 }}
                 spaceBetween={30}
                 slidesPerView={"auto"}
-                onSlideChange={() => console.log('slide change')}
-                onSwiper={(swiper) => console.log(swiper)}
                 enabled={true}
                 
             >

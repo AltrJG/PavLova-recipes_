@@ -247,3 +247,94 @@ font-size: 15px !important;
   justify-content: center;
   margin-top: 4rem;
 }
+
+.selectorMulti {
+    font-family: inherit;
+    font-size: 1.6rem;
+    width: 100%;
+  }
+  
+  .selectorMulti__control {
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    background-color: white;
+    min-height: 4.2rem;
+    cursor: pointer;
+    box-shadow: none;
+    transition: 0.3s;
+  }
+  
+  .selectorMulti__control--is-focused {
+    transform: scale(1.03);
+    border-color: #f7931e; /* o el color de acento que estés usando */
+    box-shadow: 0 0 0 2px rgba(247, 147, 30, 0.2);
+  }
+  
+  .selectorMulti__multi-value {
+    background-color: #f7931e;
+    color: white;
+    border-radius: 0.3rem;
+    margin-right: 1rem;
+    padding: 0.2rem 0.5rem;
+  }
+  
+  .selectorMulti__multi-value__label {
+    color: white;
+    font-size: 1.4rem;
+    font-family: 'Oswald', sans-serif;
+  }
+  
+  .selectorMulti__multi-value__remove {
+    color: white;
+    cursor: pointer;
+  }
+  
+  .selectorMulti__menu {
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    background-color: white;
+    font-size: 2rem;
+    z-index: 999;
+  }
+  
+  .selectorMulti__option {
+    padding: 0.8rem;
+    cursor: pointer;
+    transition: .2s;
+    font-family: 'Lato', sans-serif;
+  }
+  
+  .selectorMulti__option--is-focused {
+    background-color: #fce5cd;
+  }
+  
+  .selectorMulti__option--is-selected {
+    background-color: #f7931e;
+    color: white;
+  }
+
+  .selectorMulti__placeholder {
+    font-size: 1.6rem;
+    font-family: 'Lato', sans-serif;
+  }
+  
+  .selectorMulti__single-value {
+    font-size: 1.6rem;
+  }
+  
+  .selectorMulti__input {
+    font-size: 1.6rem !important;
+  }
+  
+  .selectorMulti__no-options-message {
+    font-size: 1.6rem !important;
+    padding: 1rem;
+    color: #888;
+    text-align: center;
+    font-family: 'Lato', sans-serif;
+  }
+  
+  .selectorMulti__no-options-message * {
+    font-size: inherit !important;
+  }
