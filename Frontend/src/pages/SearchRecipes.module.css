@@ -1,0 +1,23 @@
+.searchRecipesContainer{
+    margin-top: 1rem;
+}
+
+.filterOptions{
+    display: flex;
+    margin-right: 1rem;
+}
+
+.filterOptionsContainer{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+@media(max-width: 31.25em){
+    .filterOptionsContainer{
+        flex-direction: column-reverse;
+    }
+    .filterOptions{
+        margin-top: 1rem;
+    }
+}

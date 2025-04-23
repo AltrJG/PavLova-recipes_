@@ -16,7 +16,7 @@ export default function NavigationOptions(){
                 <LinkSidebar text={"Registrarse"} iconWhenActive={"person-add"} icon={"person-add-outline"} linkActiveText={["/registrarse"]} redirectTo={"/auth/registrarse"} position={2}/>
             </> }
             { isAuthenticated && <>
-                <LinkSidebar text={"Mis Recetas"} iconWhenActive={"restaurant"} icon={"restaurant-outline"} linkActiveText={["/ey", '/crear-receta']} redirectTo={"/ey"}/>
+                <LinkSidebar text={"Mis Recetas"} iconWhenActive={"restaurant"} icon={"restaurant-outline"} linkActiveText={["/mis_recetas", '/crear-receta']} redirectTo={"/mis_recetas"}/>
                 <LinkSidebar text={"Mis Ingredientes"} iconWhenActive={"nutrition"} icon={"nutrition-outline"} linkActiveText={["/ingredientes"]} redirectTo={"/ingredientes"}/>
                 <LinkSidebar text={"Plan Alimenticio"} iconWhenActive={"calendar"} icon={"calendar-outline"} linkActiveText={["/yes"]} redirectTo={"/yes"}/>
                 <LinkSidebar text={"Perfil"} iconWhenActive={"person"} icon={"person-outline"} linkActiveText={["/mi-perfil"]} redirectTo={"/mi-perfil"}/>

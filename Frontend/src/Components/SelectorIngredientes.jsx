@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import icon from '../assets/Iconos/trash.svg'
 import { ReactSVG } from 'react-svg';
 
-export default function SelectorIngredientes({ingredientes, handleChange, handleFormChange, activeIngredients, removeIngredient}){
+export default function SelectorIngredientes({ingredientes, porciones, setPorciones, handleChange, handleFormChange, activeIngredients, removeIngredient}){
 
     const customStyles = {
         noOptionsMessage: (base) => ({
@@ -49,6 +49,17 @@ export default function SelectorIngredientes({ingredientes, handleChange, handle
     return(
         <div className={styles.selectorIngredientesContainer}>
             <Select value={activeIngredients} onChange={handleChange} components={{ Option: CustomOption }} styles={customStyles} noOptionsMessage={() => "No hay ingredientes disponibles"} classNamePrefix="selectorMulti" unstyled isMulti className={'selectorMulti'} options={ingredientesDisponibles}/>
+            <div className={styles.portionSliderContainer}>
+                <p className={styles.portionSliderText}>Porciones: <span className={styles.portionSliderValue}>{porciones}</span></p>
+                <input
+                type="range"
+                min="1"
+                max="20"
+                value={porciones}
+                onChange={(e) => setPorciones(Number(e.target.value))}
+                className={styles.portionSlider}
+                />
+            </div>
             <div className={styles.recipeIngredientSetup}>
                 { activeIngredients?.length != 0 
                     ? activeIngredients.map(activeIngredient => <div key={activeIngredient.id} className={styles.activeIngredientPicker}>

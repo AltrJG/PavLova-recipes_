@@ -27,7 +27,7 @@ export default function Ingredient({askDelete, user_id, isStaff, isSuperUser, ac
                         text="Info. Nutricional"
                         hoverWidth="14rem"
                         top={1}
-                        left={.5}
+                        left={1.5}
                         icon="nutrition"
                         onClick={() => setFlipped(!flipped)}
                     />     
@@ -35,7 +35,7 @@ export default function Ingredient({askDelete, user_id, isStaff, isSuperUser, ac
                         text="Editar"
                         hoverWidth="8rem"
                         top={6}
-                        left={.5}
+                        left={1.5}
                         icon="create"
                         onClick={() => actionModify(ingredient)}
                     />}
@@ -43,7 +43,7 @@ export default function Ingredient({askDelete, user_id, isStaff, isSuperUser, ac
                         text="Eliminar"
                         hoverWidth="10rem"
                         top={11}
-                        left={.5}
+                        left={1.5}
                         icon="trash"
                         onClick={() => askDelete(ingredient)}
                     />}                  

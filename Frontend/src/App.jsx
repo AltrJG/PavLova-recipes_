@@ -19,6 +19,8 @@ import RecipeDetails from './pages/RecipeDetails'
 import EtiquetaCategoria from './pages/EtiquetaCategoria'
 import RestrictedRoute from './Components/RestrictedRoute'
 import CrearReceta from './pages/CrearReceta'
+import SearchRecipes from './pages/SearchRecipes'
+import UserRecipes from './pages/UserRecipes'
 
 function App() {
 
@@ -47,6 +49,8 @@ function App() {
                 <Route path='receta/:recipe_id' element={<RecipeDetails/>}/>
                 <Route path='user/:user_id' element={<UserProfile/>}/>
                 <Route path='verify_email/:token' element={<VerifyEmail/>}/>
+                <Route path="/" element={<SearchRecipes/>}/>
+                <Route path='/mis_recetas' element={<UserRecipes/>}/>
                 <Route path='*' element={<NotFound404/>}/>
               </Route>
             </Routes>

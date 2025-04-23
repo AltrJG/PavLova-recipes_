@@ -11,6 +11,7 @@
     display: grid;
     grid-template-columns: 1fr 5rem;
     grid-gap: 2rem;
+    padding-right: 2rem;
 }
 
 .formSubmit{
@@ -105,5 +106,11 @@
     .filterField select{
         width: 100%;
         padding: 0.2rem .5rem;
+    }
+}
+
+@media(max-width: 34.375em){
+    .filterForm{
+        padding-right: 0;
     }
 }

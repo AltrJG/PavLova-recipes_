@@ -23,8 +23,6 @@ export default function RecipeContents(){
             <h4 className={styles.recipeContentsText}>Ingredientes:</h4>
             <div className={styles.portionSliderContainer}>
                 <p className={styles.portionSliderText}>Porciones: <span className={styles.portionSliderValue}>{portion}</span></p>
-                
-
                 <input
                 type="range"
                 min="1"

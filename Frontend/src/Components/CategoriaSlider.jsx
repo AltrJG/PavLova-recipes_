@@ -7,9 +7,9 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 
-export default function CategoriaSlider({categorias, activeCategoria, setActiveCategoria}){
+export default function CategoriaSlider({categorias, activeCategoria, setActiveCategoria, isFilter = false}){
     return(
-        <div className={styles.sliderContainer}>
+        <div className={`${styles.sliderContainer} ${isFilter ? styles.filterSlider : ""}`}>
             <div className={`${"swiper-button-prev"} ${styles.prevButton}`}></div>
             <div className={`${"swiper-button-next"} ${styles.nextButton}`}></div>
             <Swiper
@@ -18,13 +18,13 @@ export default function CategoriaSlider({categorias, activeCategoria, setActiveC
                     nextEl: '.swiper-button-next',
                     prevEl: '.swiper-button-prev',
                 }}
-                spaceBetween={30}
+                spaceBetween={isFilter ? 15 : 30}
                 slidesPerView={"auto"}
                 enabled={true}
                 
             >
-                { categorias.map(categoria => <SwiperSlide onClick={() => setActiveCategoria(categoria.id)} className={styles.swiperContainer} key={categoria.id}>
-                    <div className={`${styles.cardContainer} ${activeCategoria == categoria.id ? styles.activeCard : ""}`}>
+                { categorias.map(categoria => <SwiperSlide onClick={() => {categoria.id == activeCategoria ? setActiveCategoria('') : setActiveCategoria(categoria.id)}} className={styles.swiperContainer} key={categoria.id}>
+                    <div className={`${styles.cardContainer} ${isFilter ? styles.filterContainer : ""} ${activeCategoria == categoria.id ? styles.activeCard : ""}`}>
                         <img className={styles.categoriaImagen} src={categoria.imagen}/>
                         <h4 className={styles.categoriaNombre}>{categoria.nombre}</h4>
                     </div>

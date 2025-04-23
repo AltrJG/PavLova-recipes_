@@ -13,6 +13,7 @@ import backendAPI from '../api/axiosConfig';
 import SelectorIngredientes from '../Components/SelectorIngredientes';
 import { FadeLoader } from 'react-spinners';
 import { useAuth } from '../context/AuthProvider';
+import Swal from 'sweetalert2';
 
 export default function CrearReceta() {
 
@@ -63,6 +64,7 @@ export default function CrearReceta() {
   const [ etiquetas, setEtiquetas ] = useState([]);
   const [ imagen, setImagen ] = useState([]);
   const [ activeCategoria, setActiveCategoria ] = useState('');
+  const [ porciones, setPorciones ] = useState(1);
 
   const volver = () => {
     navigate(-1);
@@ -137,6 +139,59 @@ export default function CrearReceta() {
     setActiveIngredientOptions(deletedIngredient);
   }
 
+  const createReceta = async e => {
+    e.preventDefault();
+    setLoading(true);
+    //let errors = validateUserData(userData);
+    //setErrorsHandler(errors);
+    //if(Object.keys(errors).length === 0){
+        try{
+            //const response = await backendAPI.post('user/update_profile/', userData);
+            let formData = new FormData();
+            formData.append('nombre', generalRecipeData.nombre);
+            formData.append('frase', generalRecipeData.frase);
+            formData.append('tiempo_preparado', generalRecipeData.tiempo_preparado);
+            formData.append('tiempo_cocinado', generalRecipeData.tiempo_cocinado);
+            formData.append('imagen_receta', imagen[0]);
+            let ingredientes = activeIngredientOptions.map(ingrediente => {
+              return{
+                id: ingrediente.id,
+                cantidad: ingrediente.cantidad,
+                tipo_metrica: ingrediente.tipoMetrica
+              }
+            });
+            formData.append('porciones', porciones);
+            formData.append('ingredientes', ingredientes);
+            formData.append('categoria', activeCategoria);
+            formData.append('etiquetas', etiquetas);
+            formData.append('procedimiento', JSON.stringify(richTextRecipe));
+            for (const value of formData.values()) {
+              console.log(value);
+            }
+            Swal.fire({
+                icon: "success",
+                title: "Informacion Modificada",
+                text: "Ye",
+                showConfirmButton: true,
+                customClass: {
+                    title: "swal_title",
+                    icon: "swal_icon",
+                    htmlContainer: "swal_text",
+                    confirmButton: "swal_confirm"
+                }
+            });
+        } catch(error){
+            console.log(error);
+            //if(error.response?.status == 401){
+            //    await refreshAccessToken(handleChangeInformation, e);
+            //}
+        } finally{
+            setLoading(false);
+        }
+    //}
+    setLoading(false);
+}
+
   if(loading) return <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>;
 
   return (
@@ -157,7 +212,7 @@ export default function CrearReceta() {
           </div>
           <div className={`${styles.section} ${active === "ingre" ? styles.activeSection : ""}`}>
             <h2 className={styles.formInfoGeneral}>Ingredientes</h2>
-            <SelectorIngredientes activeIngredients={activeIngredientOptions} removeIngredient={removeIngredient} handleFormChange={handleFormChange} handleChange={handleIngredientesSeleccionados} ingredientes={ingredientOptions}/>
+            <SelectorIngredientes porciones={porciones} setPorciones={setPorciones} activeIngredients={activeIngredientOptions} removeIngredient={removeIngredient} handleFormChange={handleFormChange} handleChange={handleIngredientesSeleccionados} ingredientes={ingredientOptions}/>
           </div>
           <div className={`${styles.section} ${active === "proced" ? styles.activeSection : ""}`}>
             <h2 className={styles.formInfoGeneral}>Procedimiento</h2>
@@ -166,7 +221,7 @@ export default function CrearReceta() {
         </div>
       </div>
       <div className={styles.createButtonCenter}>
-        <MainButton action={volver} disabled={false} type={'button'} icon={"restaurant"} iconSize={"4.5"} fontSize={"3"} color={"primary"} borderRadius={'1'} text={"Crear Receta"}/>
+        <MainButton action={createReceta} disabled={false} type={'button'} icon={"restaurant"} iconSize={"4.5"} fontSize={"3"} color={"primary"} borderRadius={'1'} text={"Crear Receta"}/>
       </div>
     </div>
   );

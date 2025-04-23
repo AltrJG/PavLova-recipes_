@@ -77,6 +77,40 @@
     width: 15rem !important;
 }
 
+.filterContainer{
+    background-color: transparent;
+}
+
+.filterContainer:hover{
+    transform: scale(1.03);
+}
+
+.filterSlider .swiperContainer{
+    width: 10rem !important;
+}
+
+.filterContainer .categoriaNombre{
+    font-size: 1.4rem;
+}
+
+.filterContainer .categoriaImagen{
+    width: 80%;
+}
+
+.filterSlider{
+    margin: 0;
+    padding: 1rem 0;
+}
+
+.filterContainer{
+    padding: 1rem;
+}
+
+.filterSlider .nextButton,
+.filterSlider .prevButton{
+    top: 110% !important;
+}
+
 @media(max-width: 50em){
     .swiperContainer{
         width: 10rem !important;
@@ -84,4 +118,9 @@
     .categoriaNombre{
         font-size: 1.4rem;
     }
+    
+    .filterContainer .categoriaImagen{
+        width: 85%;
+    }
+
 }
