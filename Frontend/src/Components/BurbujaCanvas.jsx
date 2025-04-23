@@ -23,8 +23,7 @@ export default function BurbujaCanvas() {
         x: Math.random() * canvas.width,
         y: canvas.height + radius,
         radius,
-        speed: Math.random() * 0.2,
-        opacity: Math.random() * 0.5 + 0.3,
+        speed: Math.random() * 0.4,
       };
     };
 
@@ -36,7 +35,7 @@ export default function BurbujaCanvas() {
 
         ctx.beginPath();
         ctx.arc(bubble.x, bubble.y, bubble.radius, 0, 2 * Math.PI);
-        ctx.fillStyle = `rgba(173, 216, 230, ${bubble.opacity})`;
+        ctx.fillStyle = `rgb(173, 216, 230)`;
         ctx.fill();
 
         if (bubble.y + bubble.radius < 0) {
@@ -44,7 +43,7 @@ export default function BurbujaCanvas() {
         }
       });
 
-      if (bubbles.current.length < 20) {
+      if (bubbles.current.length < 30) {
         bubbles.current.push(createBubble());
       }
 

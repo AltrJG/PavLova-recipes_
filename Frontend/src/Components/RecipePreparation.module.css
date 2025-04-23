@@ -19,11 +19,15 @@
     .recipePreparationContainer{
         position: absolute;
         top: 100%;
+        width: 98%;
     }
 }
 
 @media(max-width: 37.5em){
     .recipeContentsText{
         font-size: 2rem;
+    }
+    .recipePreparationContainer{
+        width: 100%;
     }
 }

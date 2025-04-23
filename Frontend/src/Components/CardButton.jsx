@@ -3,10 +3,12 @@ import styled from "styled-components";
 
 const ToggleButton = styled.button`
   position: absolute;
+  display: block;
   top: ${(props) => props.$top}rem;
-  left: ${(props) => props.$left}rem;
+  left: ${(props) => props.$left}%;
   background: #23130d;
   color: white;
+  flex-direction: ${(props) => props.$showRight ? 'row-reverse' : 'row'};
   border: none;
   padding: 0.5rem;
   border-radius: 1rem;
@@ -16,7 +18,8 @@ const ToggleButton = styled.button`
   justify-content: space-between;
   align-items: center;
   overflow: hidden;
-  transition: width 0.3s ease-in-out;
+  transition: 0.3s ease-in-out;
+  z-index: 2;
   
   svg {
     width: 2.5rem;
@@ -37,16 +40,27 @@ const ToggleButton = styled.button`
 
   &:hover {
     width: ${(props) => props.$hoverWidth || "7rem"};
+    transform: ${(props) =>
+      props.$showRight
+        ? `translateX(-${parseFloat(props.$hoverWidth) / 1.5}rem)`
+        : "translateX(0)"};
   }
 
   &:hover span {
     opacity: 1;
   }
+
+  @media(max-width: 37.5em){
+      svg {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
 `;
 
-export default function CardButton({ text, hoverWidth, top, left, icon, onClick }) {
+export default function CardButton({ text, hoverWidth, top, left, icon, showRight = false, onClick }) {
   return (
-    <ToggleButton onClick={onClick} $hoverWidth={hoverWidth} $top={top} $left={left}>
+    <ToggleButton onClick={onClick} $showRight={showRight} $hoverWidth={hoverWidth} $top={top} $left={left}>
       <ReactSVG src={`/src/assets/Iconos/${icon}.svg`}/>
       <span>{text}</span>
     </ToggleButton>
