@@ -119,7 +119,18 @@ export default function UserIngredients(){
     }
 
     const updateIngredient = ingredient => {
-        openIngredientModify(ingredient)
+        const modifiedIngredient = {
+            ...ingredient,
+            calorias: Number.parseFloat(ingredient?.calorias * 100).toFixed(1),
+            carbohidratos: Number.parseFloat(ingredient?.carbohidratos * 100).toFixed(3),
+            proteinas: Number.parseFloat(ingredient?.proteinas * 100).toFixed(3),
+            grasas_saturadas: Number.parseFloat(ingredient?.grasas_saturadas * 100).toFixed(3),
+            grasas_insaturadas: Number.parseFloat(ingredient?.grasas_insaturadas * 100).toFixed(3),
+            grasas_trans: Number.parseFloat(ingredient?.grasas_trans * 100).toFixed(3),
+            sodio: Number.parseFloat(ingredient?.sodio * 100).toFixed(3),
+        };
+    
+        openIngredientModify(modifiedIngredient);
     }
 
     const registerIngredient = () => {

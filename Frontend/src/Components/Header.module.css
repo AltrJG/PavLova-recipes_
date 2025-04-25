@@ -165,6 +165,10 @@
     }
   }
   @media(max-width: 37.5em){
+    .burger_search{
+      flex-basis: 100%;
+      justify-content: flex-start;
+    }
     .main_content_header{
       padding: .5rem 1rem;
     }

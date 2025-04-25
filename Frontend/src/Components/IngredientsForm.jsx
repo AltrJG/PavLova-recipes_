@@ -71,13 +71,13 @@ export default function IngredientsForm(){
                 // Preparado de la informacion
                 formData.append('nombre', ingredientData.nombre);
                 formData.append('consistencia', ingredientData.consistencia.toLowerCase());
-                formData.append('calorias', parseFloat(ingredientData.calorias));
-                formData.append('carbohidratos', parseFloat(ingredientData.carbohidratos));
-                formData.append('proteinas', parseFloat(ingredientData.proteinas));
-                formData.append('grasas_saturadas', parseFloat(ingredientData.grasasSaturadas));
-                formData.append('grasas_insaturadas', parseFloat(ingredientData.grasasInsaturadas));
-                formData.append('grasas_trans', parseFloat(ingredientData.grasasTrans));
-                formData.append('sodio', parseFloat(ingredientData.sodio));
+                formData.append('calorias', parseFloat(ingredientData.calorias)/100);
+                formData.append('carbohidratos', parseFloat(ingredientData.carbohidratos)/100);
+                formData.append('proteinas', parseFloat(ingredientData.proteinas)/100);
+                formData.append('grasas_saturadas', parseFloat(ingredientData.grasasSaturadas)/100);
+                formData.append('grasas_insaturadas', parseFloat(ingredientData.grasasInsaturadas)/100);
+                formData.append('grasas_trans', parseFloat(ingredientData.grasasTrans)/100);
+                formData.append('sodio', parseFloat(ingredientData.sodio)/100);
                 formData.append('tipo', visibilityData.visibilidad.toLowerCase());
                 if(imagen.length == 1){
                     formData.append('foto_ingrediente', imagen[0]);

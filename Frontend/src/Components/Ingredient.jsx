@@ -10,13 +10,13 @@ import NutritionalTable from './NutritionalTable';
 export default function Ingredient({askDelete, user_id, isStaff, isSuperUser, actionModify, ingredient}){
     const [flipped, setFlipped] = useState(false);
     const nutritionalData = {
-        Calorias: `${ingredient?.calorias} Kcal`,
-        Carbohidratos: `${ingredient?.carbohidratos}g`,
-        Proteinas: `${ingredient?.proteinas}g`,
-        'Grasas Saturadas': `${ingredient?.grasas_saturadas}g`,
-        'Grasas Insaturadas': `${ingredient?.grasas_insaturadas}g`,
-        'Grasas Trans': `${ingredient?.grasas_trans}g`,
-        Sodio: `${ingredient?.sodio}mg`
+        Calorias: `${Number.parseFloat(ingredient?.calorias*100).toFixed(1)} Kcal`,
+        Carbohidratos: `${Number.parseFloat(ingredient?.carbohidratos*100).toFixed(3)}g`,
+        Proteinas: `${Number.parseFloat(ingredient?.proteinas*100).toFixed(3)}g`,
+        'Grasas Saturadas': `${Number.parseFloat(ingredient?.grasas_saturadas*100).toFixed(3)}g`,
+        'Grasas Insaturadas': `${Number.parseFloat(ingredient?.grasas_insaturadas*100).toFixed(3)}g`,
+        'Grasas Trans': `${Number.parseFloat(ingredient?.grasas_trans*100).toFixed(3)}g`,
+        Sodio: `${Number.parseFloat(ingredient?.sodio*100).toFixed(3)}mg`
     }
 
     return(

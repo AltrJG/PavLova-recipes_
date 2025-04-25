@@ -6,6 +6,7 @@ import UserDetails from '../Components/UserDetails';
 import { useRightSidebar } from '../context/RightSidebarProvider';
 import styles from './UserProfile.module.css';
 import { useEffect, useState } from 'react';
+import NotFound404 from '../pages/NotFound404'
 import backendAPI from '../api/axiosConfig';
 import { FadeLoader } from 'react-spinners';
 
@@ -46,7 +47,7 @@ export default function UserProfile(){
         navigate('/users');
     }
 
-    if(errorPage) return <div className={styles.profileError}><h2>No se ha encontrado el usuario, vuelve para buscar otros usuarios</h2><MainButton action={volver} type={'button'} icon={"arrow-back"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Volver"}/></div>
+    if(errorPage) return <NotFound404/>
 
     return(
         <>
