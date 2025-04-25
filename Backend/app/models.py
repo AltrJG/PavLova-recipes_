@@ -314,7 +314,7 @@ class Receta(models.Model):
     nombre = models.CharField(max_length=100, unique=False)
     porciones = models.IntegerField()
     frase = models.TextField()
-    foto_receta = models.ImageField(upload_to=UniqueImagePath(), default='images/receta_placeholder.webp')
+    foto_receta = models.ImageField(upload_to=UniqueImagePath(), default='recetas/receta_placeholder.webp')
     procedimiento = models.TextField()
     rating = models.FloatField(default=0.0) #Se le debería poner un nombre más descriptivo, el nombre es muy similar a puntuación
     tiempo_preparacion = models.IntegerField(default=0)
@@ -322,7 +322,7 @@ class Receta(models.Model):
     visibilidad = models.BooleanField(default=True)
     verificado = models.BooleanField(default=False)
     puntuacion = models.FloatField(default=0.0)
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='recetas')
+    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True, related_name='recetas')
     ingredientes = models.ManyToManyField(Ingrediente, through='RecetaIngrediente', related_name='recetas')
     etiquetas = models.ManyToManyField(Etiqueta, related_name='recetas')
     creador = models.ForeignKey(
@@ -332,6 +332,42 @@ class Receta(models.Model):
         blank=True,
         related_name='recetas'
     )
+
+    def __str__(self):
+        return self.nombre
+    
+    def save(self, *args, **kwargs):
+
+        default_image = 'recetas/receta_placeholder.webp'
+
+        if self.pk:
+            old_receta = Receta.objects.get(pk=self.pk)
+            if old_receta.foto_receta and old_receta.foto_receta.name != default_image:
+                if old_receta.foto_receta != self.foto_receta:
+                    old_receta.foto_receta.delete(save=False)
+
+        if self.foto_receta and not self.foto_receta.name.endswith('.webp'):
+            img = Image.open(self.foto_receta)
+
+            if img.mode in ('RGBA', 'P') and 'transparency' in img.info:
+                img = img.convert('RGBA')
+            else:
+                img = img.convert('RGB')
+
+            output = BytesIO()
+            img.save(output, format='WEBP', quality=80)
+            output.seek(0)
+
+            self.foto_receta = InMemoryUploadedFile(
+                output,
+                'ImageField',
+                f"{self.foto_receta.name.split('.')[0]}.webp",
+                'image/webp',
+                output.getbuffer().nbytes,
+                None
+            )
+
+        super().save(*args, **kwargs)
 
 class Comentario(models.Model):
     receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name='comentarios')
