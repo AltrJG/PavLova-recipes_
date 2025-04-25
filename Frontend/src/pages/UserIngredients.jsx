@@ -17,7 +17,7 @@ export default function UserIngredients(){
     //Right Sidebar Actions
     const { openIngredientModify } = useRightSidebar();
     const { refreshAccessToken, user, isStaff, isSuperUser } = useAuth();
-    const { updatedIngredient, createdIngredient, deletedIngredient, resetIngredientState } = useUpdateData();
+    const { updatedIngredient, createdIngredient, resetIngredientState } = useUpdateData();
 
     const [ loading, setLoading ] = useState(true);
     // Ingredients data
@@ -99,7 +99,7 @@ export default function UserIngredients(){
 
     const deleteIngrediente = async (ingredient) => {
         try{
-            const response = await backendAPI.delete(`ingredientes/${ingredient.id}/`);
+            await backendAPI.delete(`ingredientes/${ingredient.id}/`);
             Swal.fire({
                 icon: "success",
                 title: "Eliminado!",
@@ -133,6 +133,7 @@ export default function UserIngredients(){
     useEffect(() => {
         if(Object.keys(createdIngredient) != 0){
             getIngredients();
+            setCurrentPage(1);
             resetIngredientState();
         }        
         else if(Object.keys(updatedIngredient) != 0){
@@ -141,7 +142,7 @@ export default function UserIngredients(){
                 updatedIngredient])
             resetIngredientState();
         }
-    }, [createdIngredient, updatedIngredient, deletedIngredient]);
+    }, [createdIngredient, updatedIngredient]);
 
     return(
         <>

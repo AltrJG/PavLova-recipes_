@@ -4,8 +4,10 @@ import MainButton from './MainButton';
 import OptionButton from './OptionButton';
 import RightSidebarErrors from './RightSidebarErrors';
 import RightSidebarForms from './RightSidebarForms';
+import backendAPI from '../api/axiosConfig';
 import { useRightSidebar } from '../context/RightSidebarProvider';
 import { useAuth } from '../context/AuthProvider';
+import Swal from "sweetalert2";
 import { useUpdateData } from '../context/UpdateDataProvider';
 import { validateEtiquetaCategoriaData } from './utils/validators';
 
@@ -16,7 +18,7 @@ export default function EtiquetaCategoriaForm(){
     const [ errorsHandler, setErrorsHandler ] = useState({});
     const { refreshAccessToken, isSuperUser, isStaff } = useAuth();
     const { categoriaModify, etiquetaModify, categoriaEtiquetaModify } = useRightSidebar();
-    const { setCreatedIngredient, setUpdatedIngredient } = useUpdateData();
+    const { setCreatedEtiqueta, setUpdatedEtiqueta, setCreatedCategoria, setUpdatedCategoria } = useUpdateData();
     const [imagen, setImagen] = useState([]);
 
     const CategoriaFormOptions = [
@@ -46,28 +48,18 @@ export default function EtiquetaCategoriaForm(){
         let errors = validateEtiquetaCategoriaData(activeOption == 'Categoria' ? categoriaData : etiquetaData);
         setErrorsHandler(errors);
         if(Object.keys(errors).length === 0){
-            /*const formData = new FormData();
+            const formData = new FormData();
             try{
-                // Preparado de la informacion
-                formData.append('nombre', ingredientData.nombre);
-                formData.append('consistencia', ingredientData.consistencia.toLowerCase());
-                formData.append('calorias', parseFloat(ingredientData.calorias));
-                formData.append('carbohidratos', parseFloat(ingredientData.carbohidratos));
-                formData.append('proteinas', parseFloat(ingredientData.proteinas));
-                formData.append('grasas_saturadas', parseFloat(ingredientData.grasasSaturadas));
-                formData.append('grasas_insaturadas', parseFloat(ingredientData.grasasInsaturadas));
-                formData.append('grasas_trans', parseFloat(ingredientData.grasasTrans));
-                formData.append('sodio', parseFloat(ingredientData.sodio));
-                formData.append('tipo', visibilityData.visibilidad.toLowerCase());
-                if(imagen.length == 1){
-                    formData.append('foto_ingrediente', imagen[0]);
-                }
-                if(willUserModifyIngredient){
-                    const response = await backendAPI.put(`ingredientes/${ingredientModify.id}/`, formData);
+                // Envio de informacion
+                if(activeOption == 'Etiqueta'){
+                    // Preparado de la informacion
+                    formData.append('nombre', etiquetaData.nombre);
+
+                    const response = etiquetaModify ? await backendAPI.put(`etiquetas/${categoriaEtiquetaModify.id}/`, formData) : await backendAPI.post("etiquetas/", formData);
                     Swal.fire({
                         icon: "success",
-                        title: "Ingrediente Modificado",
-                        text: response.data.message,
+                        title: etiquetaModify ? "Etiqueta modificada" : "Etiqueta Creada",
+                        text: etiquetaModify ? `Se ha modificado la etiqueta '${response.data.nombre}' con exito` : "Etiqueta Creada con exito",
                         showConfirmButton: true,
                         customClass: {
                             title: "swal_title",
@@ -76,26 +68,20 @@ export default function EtiquetaCategoriaForm(){
                             confirmButton: "swal_confirm"
                         }
                     });
-                    setUpdatedIngredient(response.data);
+                    !etiquetaModify && setEtiquetaData({nombre: ""});
+                    etiquetaModify ? setUpdatedEtiqueta(response.data) : setCreatedEtiqueta(response.data);
                 } else{
-                    const response = await backendAPI.post('ingredientes/', formData);
-                    setIngredientData({
-                        nombre: "",
-                        consistencia: "Liquido",
-                        calorias: '0',
-                        carbohidratos: '0',
-                        proteinas: '0',
-                        grasasSaturadas: '0',
-                        grasasInsaturadas: '0',
-                        grasasTrans: '0',
-                        sodio: '0'
-                    });
-                    setImagen([]);
-                    setVisibilityData({visibilidad: 'Personal'});
+                    // Preparado de la informacion
+                    formData.append('nombre', categoriaData.nombre);
+                    if(imagen.length == 1){
+                        formData.append('foto_categoria', imagen[0]);
+                    }
+                    // Preparado y envio de la peticion
+                    const response = categoriaModify ? await backendAPI.put(`categorias/${categoriaEtiquetaModify.id}/`, formData) : await backendAPI.post("categorias/", formData);
                     Swal.fire({
                         icon: "success",
-                        title: "Ingrediente Creado",
-                        text: response.data.message,
+                        title: categoriaModify ? "Categoria modificada" : "Categoria Creada",
+                        text: categoriaModify ? `Se ha modificado la categoria '${response.data.nombre}' con exito` : "Categoria Creada con exito",
                         showConfirmButton: true,
                         customClass: {
                             title: "swal_title",
@@ -104,7 +90,9 @@ export default function EtiquetaCategoriaForm(){
                             confirmButton: "swal_confirm"
                         }
                     });
-                    setCreatedIngredient(response.data);
+                    !categoriaModify && setCategoriaData({nombre: ""});
+                    setImagen([]);
+                    categoriaModify ? setUpdatedCategoria(response.data) : setCreatedCategoria(response.data);
                 }
             } catch(error){
                 console.log(error);
@@ -115,13 +103,9 @@ export default function EtiquetaCategoriaForm(){
                 }
             } finally{
                 setLoading(false);
-            }*/
+            }
         }
         setLoading(false);
-    }
-
-    const handleChangeVisibility = async e => {
-        e.preventDefault();
     }
 
     const changeActiveOption = type => {
@@ -173,7 +157,7 @@ export default function EtiquetaCategoriaForm(){
             )}
 
             {activeOption === "Etiqueta" && (isStaff || isSuperUser) && (
-                <RightSidebarForms action={handleChangeVisibility} formOptions={EtiquetaFormOptions} setData={setEtiquetaData} data={etiquetaData}>
+                <RightSidebarForms action={handleChangeInformation} formOptions={EtiquetaFormOptions} setData={setEtiquetaData} data={etiquetaData}>
                     <MainButton disabled={loading} type="submit" icon="bookmarks" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={loading ? (!etiquetaModify ? "Creando..." : "Modificando...") : (!etiquetaModify ? "Crear etiqueta" : "Modificar etiqueta")} />
                 </RightSidebarForms>
             )}

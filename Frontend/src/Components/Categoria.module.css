@@ -3,7 +3,7 @@
     align-items: center;
     background-color: #fffefb;
     border-radius: 1.5rem;
-    padding: 2rem 1.5rem 2rem 5rem;
+    padding: 2rem 1.5rem 2rem 1.5rem;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     transition: 0.2s ease-in-out;
     width: 100%;
@@ -11,10 +11,19 @@
     gap: 1.2rem;
 }
 
+.card button{
+    opacity: 0;
+}
+
 .card:hover {
     background-color: rgb(255, 240, 221);
     transform: scale(1.03);
     box-shadow: 0 4px 12px rgba(255, 165, 0, 0.4);
+    padding-left: 5rem;
+}
+
+.card:hover button{
+    opacity: 1;
 }
 
 .imageContainer {
@@ -38,4 +47,13 @@
     font-size: 2.2rem;
     font-weight: 600;
     color: #3c3c3c;
+}
+
+@media(max-width: 81.25em){
+    .card button{
+        opacity: 1;
+    }
+    .card{
+        padding-left: 5rem;
+    }
 }

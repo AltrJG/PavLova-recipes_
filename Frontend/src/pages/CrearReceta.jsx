@@ -21,6 +21,8 @@ export default function CrearReceta() {
   const { refreshAccessToken, user, isStaff, isSuperUser } = useAuth();
   const [ loading, setLoading ] = useState(true);
   const [ ingredientOptions, setIngredientOptions ] = useState([]);
+  const [ categorias, setCategorias ] = useState([]);
+  const [ etiquetasOptions, setEtiquetasOptions ] = useState([]);
   const [ activeIngredientOptions, setActiveIngredientOptions ] = useState([]);
   const navigate = useNavigate();
 
@@ -86,7 +88,11 @@ export default function CrearReceta() {
     const obtenerInformacion = async () => {
       try{
         const ingredientes = await backendAPI.get('/ingredientes');
+        const categorias = await backendAPI.get("/categorias/");
+        const etiquetas = await backendAPI.get("/etiquetas/");
         setIngredientOptions(ingredientes.data.results);
+        setCategorias(categorias.data.results);
+        setEtiquetasOptions(etiquetas.data.results);
       }
       catch(error){
         console.log(error);
@@ -208,7 +214,7 @@ export default function CrearReceta() {
           </div>
           <div className={`${styles.section} ${active === "clas" ? styles.activeSection : ""} ${active === "clas" ? styles.sliderForm : ""}`}>
             <h2 className={styles.formInfoGeneral}>Clasificaciones</h2>
-            <RecetaCategoriaForm activeEtiquetas={etiquetas} etiquetas={etiquetasRecetas} toggleEtiquetas={toggleEtiquetas} categorias={datosDummy} setActiveCategoria={setActiveCategoria} activeCategoria={activeCategoria}/>
+            <RecetaCategoriaForm activeEtiquetas={etiquetas} etiquetas={etiquetasOptions} toggleEtiquetas={toggleEtiquetas} categorias={categorias} setActiveCategoria={setActiveCategoria} activeCategoria={activeCategoria}/>
           </div>
           <div className={`${styles.section} ${active === "ingre" ? styles.activeSection : ""}`}>
             <h2 className={styles.formInfoGeneral}>Ingredientes</h2>

@@ -1,12 +1,7 @@
 import styles from './Etiqueta.module.css';
 import CardButton from './CardButton';
 
-export default function Etiqueta({ actualizarEtiqueta }){
-
-    const etiqueta = {
-        nombre: 'Postre',
-        id: 5
-    }
+export default function Etiqueta({ preguntarEliminado, actualizarEtiqueta, etiqueta }){
 
     return(
         <div className={styles.card}>
@@ -15,7 +10,7 @@ export default function Etiqueta({ actualizarEtiqueta }){
                 text="Editar"
                 hoverWidth="8.5rem"
                 top={1}
-                left={1}
+                left={2}
                 icon="Create"
                 onClick={() => actualizarEtiqueta(etiqueta)}
             />  
@@ -23,9 +18,9 @@ export default function Etiqueta({ actualizarEtiqueta }){
                 text="Eliminar"
                 hoverWidth="9rem"
                 top={6}
-                left={1}
+                left={2}
                 icon="Trash"
-                onClick={() => console.log("yes")}
+                onClick={() => preguntarEliminado(etiqueta, 'Etiqueta')}
             />  
         </div>
     )

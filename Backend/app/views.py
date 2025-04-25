@@ -144,7 +144,7 @@ class CustomTokenRefreshView(TokenRefreshView):
             response.delete_cookie('refresh_token')
             return response
         except User.DoesNotExist:
-            response = Response({'error': 'Usuario no encontrado.'}, status=status.HTTP_401_UNAUTHORIZED)
+            response = Response({'error': 'Usuario .'}, status=status.HTTP_401_UNAUTHORIZED)
             response.delete_cookie('refresh_token')
             return response
 

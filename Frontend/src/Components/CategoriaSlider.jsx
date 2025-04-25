@@ -25,7 +25,7 @@ export default function CategoriaSlider({categorias, activeCategoria, setActiveC
             >
                 { categorias.map(categoria => <SwiperSlide onClick={() => {categoria.id == activeCategoria ? setActiveCategoria('') : setActiveCategoria(categoria.id)}} className={styles.swiperContainer} key={categoria.id}>
                     <div className={`${styles.cardContainer} ${isFilter ? styles.filterContainer : ""} ${activeCategoria == categoria.id ? styles.activeCard : ""}`}>
-                        <img className={styles.categoriaImagen} src={categoria.imagen}/>
+                        <img className={styles.categoriaImagen} src={categoria.foto_categoria}/>
                         <h4 className={styles.categoriaNombre}>{categoria.nombre}</h4>
                     </div>
                 </SwiperSlide>) }

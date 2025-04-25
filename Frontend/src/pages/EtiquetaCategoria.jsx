@@ -8,22 +8,24 @@ import Pagination from "../Components/Pagination";
 import { useRightSidebar } from "../context/RightSidebarProvider";
 import { useAuth } from "../context/AuthProvider";
 import { useUpdateData } from "../context/UpdateDataProvider";
+import backendAPI from '../api/axiosConfig';
 import Categoria from "../Components/Categoria";
 import Etiqueta from "../Components/Etiqueta";
+import Swal from "sweetalert2";
 
 
 export default function EtiquetaCategoria(){
     const { openCategoriaEtiquetaForm } = useRightSidebar();
     const { refreshAccessToken, user, isStaff, isSuperUser } = useAuth();
-    //const { updatedIngredient, createdIngredient, deletedIngredient, resetIngredientState } = useUpdateData();
+    const { updatedEtiqueta, createdEtiqueta, createdCategoria, updatedCategoria, resetCategoriaEtiquetaState } = useUpdateData();
 
     const [ loading, setLoading ] = useState(true);
     // Ingredients data
-    const [ ingredientFilters, setIngredientFilters ] = useState({
+    const [ etiquetaCategoriaFilters, setEtiquetaCategoriaFilters ] = useState({
         nombre: "",
-        tipo: "Categorias"
+        tipo: "Etiquetas"
     });
-    const [ ingredients, setIngredients ] = useState([]);
+    const [ etiquetasCategorias, setEtiquetasCategorias ] = useState([]);
 
     // Pagination
     const [ nextPage, setNextPage ] = useState(null);
@@ -32,15 +34,46 @@ export default function EtiquetaCategoria(){
     const [ currentPage, setCurrentPage ] = useState(1);
 
     // Filter form options
-    const filterOptions = [
+    const filterOptions = isSuperUser ? [
         { type: "text", name: "nombre", placeholder: "Filtrar por nombre de clasificacion..."},
         { type: "select", name: "tipo", defaultOption: "Categorias", options: ["Categorias", "Etiquetas"]}
-    ];
+    ] : [
+        { type: "text", name: "nombre", placeholder: "Filtrar por nombre de clasificacion..."}
+    ] ;
 
-    const getEtiquetasCategorias = () => {
-        setTimeout(() => {
+    const getEtiquetasCategorias = async (previous = null, next = null) => {
+        setLoading(true);
+        try{
+            let url = previous 
+            ? previous.split('app')[1] 
+            : next 
+            ? next.split('app')[1] 
+            : `${etiquetaCategoriaFilters.tipo == "Etiquetas" ? "etiquetas/" : "categorias/"}`;
+
+            const params = new URLSearchParams();
+
+            if (etiquetaCategoriaFilters.nombre.trim() && previous == null && next == null) params.append("nombre", etiquetaCategoriaFilters.nombre);
+
+            // Append query parameters if they exist
+            if (params.toString()) {
+                url += `?${params.toString()}`;
+            }
+            console.log(url);
+            const response = await backendAPI(url);
+            previous != null && setCurrentPage(currentPage-1);
+            next != null && setCurrentPage(currentPage+1);
+            setCount(response.data.count);
+            setNextPage(response.data.next);
+            setPreviousPage(response.data.previous);
+            setEtiquetasCategorias(response.data.results);
+        } catch(error){
+            console.log(error);
+            if(error.response?.status == 401){
+                await refreshAccessToken(getEtiquetasCategorias);
+            }
+        } finally{
             setLoading(false);
-        }, 3000);
+        }
     }
 
     const updateCategoria = categoriaEtiqueta => {
@@ -55,37 +88,111 @@ export default function EtiquetaCategoria(){
         openCategoriaEtiquetaForm(null, null)
     }
 
+    const deleteCategoriaEtiquetaAsk = (categoriaEtiqueta, tipo) => {
+        Swal.fire({
+            title: `Eliminar ${tipo}`,
+            icon: "question",
+            text: `Estas seguro de eliminar la ${tipo} '${categoriaEtiqueta.nombre}'`,
+            customClass: {
+                title: "swal_title",
+                icon: "swal_icon",
+                htmlContainer: "swal_text",
+                confirmButton: "swal_confirm"
+            },
+            showCancelButton: true,
+            cancelButtonText: "Cancelar",
+            confirmButtonText: "Eliminar",
+            allowOutsideClick: () => !Swal.isLoading()
+          }).then((result) => {
+            if (result.isConfirmed) {
+                deleteCategoriaEtiqueta(categoriaEtiqueta, tipo);
+            }
+        });
+    }
+
+    const deleteCategoriaEtiqueta = async (categoriaEtiqueta, tipo) => {
+        try{
+            tipo == 'Etiqueta' ? await backendAPI.delete(`etiquetas/${categoriaEtiqueta.id}/`) : await backendAPI.delete(`categorias/${categoriaEtiqueta.id}/`);
+            Swal.fire({
+                icon: "success",
+                title: "Eliminado!",
+                text: `La ${tipo} '${categoriaEtiqueta.nombre}' fue eliminado con exito`,
+                showConfirmButton: true,
+                customClass: {
+                    title: "swal_title",
+                    icon: "swal_icon",
+                    htmlContainer: "swal_text",
+                    confirmButton: "swal_confirm"
+                }
+            });
+            setCurrentPage(1);
+            await getEtiquetasCategorias();
+        } catch(error){
+            console.log(error);
+            if(error.response?.status == 401){
+                await refreshAccessToken(deleteCategoriaEtiqueta);
+            }
+        }
+    }
+
     useEffect(() => {
+        setCurrentPage(1);
         getEtiquetasCategorias();
-    }, []);
+    }, [etiquetaCategoriaFilters.tipo]);
+
+    useEffect(() => {
+        if(Object.keys(createdEtiqueta) != 0){
+            setEtiquetaCategoriaFilters({...etiquetaCategoriaFilters, tipo: "Etiquetas"});
+            getEtiquetasCategorias();
+            setCurrentPage(1);
+            resetCategoriaEtiquetaState();
+        }        
+        else if(Object.keys(updatedEtiqueta) != 0){
+            setEtiquetasCategorias(etiquetas => [
+                ...etiquetas.filter(ingredient => ingredient.id !== updatedEtiqueta.id),
+                updatedEtiqueta])
+            resetCategoriaEtiquetaState();
+        }
+        if(Object.keys(createdCategoria) != 0){
+            setEtiquetaCategoriaFilters({...etiquetaCategoriaFilters, tipo: "Categorias"});
+            getEtiquetasCategorias();
+            setCurrentPage(1);
+            resetCategoriaEtiquetaState();
+        }        
+        else if(Object.keys(updatedCategoria) != 0){
+            setEtiquetasCategorias(etiquetas => [
+                ...etiquetas.filter(ingredient => ingredient.id !== updatedCategoria.id),
+                updatedCategoria])
+            resetCategoriaEtiquetaState();
+        }
+    }, [updatedEtiqueta, createdEtiqueta, updatedCategoria, createdCategoria]);
 
     return(
         <>
-            <Help title={"Categorias y Etiquetas Presentes"} description={"Gestiona la informacion presente para todos los usuarios"}>
+            <Help title={"Categorias y Etiquetas"} description={"Gestiona las clasificaciones para todos los usuarios"}>
                 <MainButton action={registerCategoriaEtiqueta} disabled={false} type={'button'} icon={"bookmarks"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Crear Clasificacion"}/>
             </Help>
             <div className={styles.usersContainer}>
-                <FilterForm setCurrentPage={setCurrentPage} action={getEtiquetasCategorias} filterOptions={filterOptions} data={ingredientFilters} setData={setIngredientFilters}/>
+                <FilterForm setCurrentPage={setCurrentPage} action={getEtiquetasCategorias} filterOptions={filterOptions} data={etiquetaCategoriaFilters} setData={setEtiquetaCategoriaFilters}/>
                 { loading 
                 ? <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
-                : ingredients.length == 0 
+                : etiquetasCategorias.length == 0 
                 ? <p className={styles.usersNotFound}>No se encontraron clasificaciones con los filtros colocados, prueba modificando los filtros</p>
                 : <>
-                <div className='ingredientsContent'>
-                    
+                <div className='categoriaEtiquetaContent'>
+                    { etiquetaCategoriaFilters.tipo == 'Etiquetas' 
+                        ? etiquetasCategorias.map(etiqueta=> (<Etiqueta preguntarEliminado={deleteCategoriaEtiquetaAsk} etiqueta={etiqueta}  key={etiqueta.id} actualizarEtiqueta={updateEtiqueta}/>)) 
+                        : etiquetasCategorias.map(categoria=> (<Categoria preguntarEliminado={deleteCategoriaEtiquetaAsk} categoria={categoria} key={categoria.id} isSuperUser={isSuperUser} actualizarCategoria={updateCategoria}/>))
+                    }
                 </div>
                 <Pagination
-                    action={getEtiquetasCategorias}    
+                    action={getEtiquetasCategorias}
                     next={nextPage} 
                     previous={previousPage} 
                     count={count} 
                     currentPage={currentPage} 
-                    text="Mostrando Etiquetas {start}-{end} de {count}" />
+                    text={`Mostrando ${etiquetaCategoriaFilters.tipo} {start}-{end} de {count}`} />
                 </>}
-                <div className='categoriaEtiquetaContent'>
-                    <Categoria isSuperUser={isSuperUser} actualizarCategoria={updateCategoria}/>
-                    <Etiqueta actualizarEtiqueta={updateEtiqueta}/>
-                </div>
             </div>
         </>
     )

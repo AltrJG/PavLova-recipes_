@@ -67,7 +67,7 @@ export default function Ingredient({askDelete, user_id, isStaff, isSuperUser, ac
                         text="Volver"
                         hoverWidth="8rem"
                         top={.5}
-                        left={1}
+                        left={1.5}
                         icon="arrow-back-circle"
                         onClick={() => setFlipped(!flipped)}
                     />

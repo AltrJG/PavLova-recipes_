@@ -6,8 +6,16 @@
     border-radius: 1rem;
 }
 
+.ingredientContainer button{
+    opacity: 0;
+}
+
 .ingredientContainer:hover .ingredientInner {
     transform: rotateY(180deg);
+}
+
+.ingredientContainer:hover button{
+    opacity: 1;
 }
 
 .ingredientInner {
@@ -89,6 +97,12 @@
     margin-bottom: .5rem;
     text-align: center;
     font-family: 'Oswald', sans-serif;
+}
+
+@media(max-width: 81.25em){
+    .ingredientContainer button{
+        opacity: 1;
+    }
 }
 
 @media(max-width: 31.25em){

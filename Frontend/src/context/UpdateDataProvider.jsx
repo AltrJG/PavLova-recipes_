@@ -7,6 +7,10 @@ const initialState = {
     disabledUser: -1,
     createdIngredient: {},
     updatedIngredient: {},
+    createdEtiqueta: {},
+    updatedEtiqueta: {},
+    createdCategoria: {},
+    updatedCategoria: {},
 }
 
 function reducer(state, action){
@@ -21,15 +25,25 @@ function reducer(state, action){
             return { ...state, createdIngredient: action.payload }
         case 'updateData/setUpdatedIngredient':
             return { ...state, updatedIngredient: action.payload }
-        case 'updateData/setDeletedIngredient':
-            return { ...state, deletedIngredient: action.payload }
         case 'updateData/resetIngredientState':
             return { ...state, updatedIngredient: {}, createdIngredient: {}}
+        case 'updateData/setCreatedEtiqueta':
+            return { ...state, createdEtiqueta: action.payload }
+        case 'updateData/setUpdatedEtiqueta':
+            return { ...state, updatedEtiqueta: action.payload }
+        case 'updateData/setCreatedCategoria':
+            return { ...state, createdCategoria: action.payload }
+        case 'updateData/setUpdatedCategoria':
+            return { ...state, updatedCategoria: action.payload }
+        case 'updateData/resetEtiquetaState':
+            return { ...state, updatedEtiqueta: {}, createdEtiqueta: {}}
+        case 'updateData/resetCategoriaState':
+            return { ...state, updatedCategoria: {}, createdCategoria: {}}
     }
 }
 
 const UpdateDataProvider = ({ children }) => {
-    const [{ updatedUser, disabledUser, createdIngredient, updatedIngredient }, dispatch] = useReducer(reducer, initialState);
+    const [{ updatedUser, disabledUser, createdIngredient, updatedIngredient, createdEtiqueta, updatedEtiqueta, createdCategoria, updatedCategoria }, dispatch] = useReducer(reducer, initialState);
 
     function setUpdatedUser(user){
         dispatch({type: 'updateData/updateUser', payload: user});
@@ -47,6 +61,22 @@ const UpdateDataProvider = ({ children }) => {
         dispatch({type: 'updateData/setUpdatedIngredient', payload: ingredient});
     }
 
+    function setCreatedEtiqueta(etiqueta){
+        dispatch({type: 'updateData/setCreatedEtiqueta', payload: etiqueta});
+    }
+
+    function setUpdatedEtiqueta(etiqueta){
+        dispatch({type: 'updateData/setUpdatedEtiqueta', payload: etiqueta});
+    }
+
+    function setCreatedCategoria(categoria){
+        dispatch({type: 'updateData/setCreatedCategoria', payload: categoria});
+    }
+
+    function setUpdatedCategoria(categoria){
+        dispatch({type: 'updateData/setUpdatedCategoria', payload: categoria});
+    }
+
     function resetUserState(){
         dispatch({type: 'updateData/resetUserState'});
     }
@@ -55,18 +85,32 @@ const UpdateDataProvider = ({ children }) => {
         dispatch({type: 'updateData/resetIngredientState'})
     }
 
+    function resetCategoriaEtiquetaState(){
+        dispatch({type: "updateData/resetEtiquetaState"});
+        dispatch({type: "updateData/resetCategoriaState"});
+    }
+
     return (
         <UpdateDataContext.Provider value={{
             updatedUser,
             disabledUser,
             createdIngredient,
             updatedIngredient,
+            createdEtiqueta,
+            updatedEtiqueta,
+            createdCategoria,
+            updatedCategoria,
             setUpdatedUser,
             setDisabledUser,
             setCreatedIngredient,
             setUpdatedIngredient,
+            setCreatedEtiqueta,
+            setUpdatedEtiqueta,
+            setCreatedCategoria,
+            setUpdatedCategoria,
             resetUserState,
-            resetIngredientState
+            resetIngredientState,
+            resetCategoriaEtiquetaState
         }}>
             {children}
         </UpdateDataContext.Provider>
