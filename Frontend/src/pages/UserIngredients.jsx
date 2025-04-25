@@ -159,13 +159,15 @@ export default function UserIngredients(){
                 <div className='ingredientsContent'>
                     { ingredients?.map(ingredient => <Ingredient askDelete={deleteIngredientAsk} isStaff={isStaff} isSuperUser={isSuperUser} user_id={user.id} actionModify={updateIngredient} key={ingredient.id} ingredient={ingredient}/>) }
                 </div>
-                <Pagination
-                    action={getIngredients}    
-                    next={nextPage} 
-                    previous={previousPage} 
-                    count={count} 
-                    currentPage={currentPage} 
-                    text="Mostrando Ingredientes {start}-{end} de {count}" />
+                    <div className="mobileSpace">
+                    <Pagination
+                        action={getIngredients}    
+                        next={nextPage} 
+                        previous={previousPage} 
+                        count={count} 
+                        currentPage={currentPage} 
+                        text="Mostrando Ingredientes {start}-{end} de {count}" />
+                    </div>
                 </>}
             </div>
         </>

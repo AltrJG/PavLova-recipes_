@@ -185,14 +185,17 @@ export default function EtiquetaCategoria(){
                         : etiquetasCategorias.map(categoria=> (<Categoria preguntarEliminado={deleteCategoriaEtiquetaAsk} categoria={categoria} key={categoria.id} isSuperUser={isSuperUser} actualizarCategoria={updateCategoria}/>))
                     }
                 </div>
-                <Pagination
-                    action={getEtiquetasCategorias}
-                    next={nextPage} 
-                    previous={previousPage} 
-                    count={count} 
-                    currentPage={currentPage} 
-                    text={`Mostrando ${etiquetaCategoriaFilters.tipo} {start}-{end} de {count}`} />
+                <div className="mobileSpace">
+                    <Pagination
+                        action={getEtiquetasCategorias}
+                        next={nextPage} 
+                        previous={previousPage} 
+                        count={count} 
+                        currentPage={currentPage} 
+                        text={`Mostrando ${etiquetaCategoriaFilters.tipo} {start}-{end} de {count}`} />
+                </div>
                 </>}
+                
             </div>
         </>
     )

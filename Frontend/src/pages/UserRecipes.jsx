@@ -67,13 +67,15 @@ export default function UserRecipes(){
                     <Recipe isModificationAllowed={true}/>
                     <Recipe isModificationAllowed={true}/>
                 </div>
-                <Pagination               
-                    next={'tgwgfw'} 
-                    previous={'wrw'} 
-                    count={15} 
-                    currentPage={5} 
-                    text="Mostrando Recetas {start}-{end} de {count}"
-                />
+                <div className='mobileSpace'>
+                    <Pagination               
+                        next={'tgwgfw'} 
+                        previous={'wrw'} 
+                        count={15} 
+                        currentPage={5} 
+                        text="Mostrando Recetas {start}-{end} de {count}"
+                    />
+                </div>
             </div>
         </>
     )

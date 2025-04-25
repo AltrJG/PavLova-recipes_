@@ -4,6 +4,7 @@ import SearchContent from "./SearchContent";
 import styles from './Header.module.css';
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthProvider";
+import libreriaLogo from "../assets/logo.png"
 import { ReactSVG } from "react-svg";
 import logOutIcon from '../assets/Iconos/log-out-outline.svg'
 
@@ -20,6 +21,9 @@ export default function Header({toggleMenu, isMenuOpen}){
                     <div className={`${styles.bar} ${isMenuOpen ? styles.barActive : ''}`}></div>
                     <div className={`${styles.bar} ${isMenuOpen ? styles.barActive : ''}`}></div>
                 </div>
+                <Link to={"/"} className={styles.logoMobile}>
+                    <img src={libreriaLogo}/>
+                </Link>
                 <SearchContent/>
             </div>
             <div className={styles.opciones_usuario}>

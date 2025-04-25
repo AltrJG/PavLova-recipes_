@@ -15,6 +15,10 @@
     transition: background 0.3s ease;
     z-index: 2;
   }
+
+  .logoMobile{
+    display: none;
+  }
   
   .main_content_user {
     display: flex;
@@ -174,5 +178,19 @@
       align-items: center;
       justify-content: center;
       padding: .5rem 1rem .5rem 1rem;
+    }
+
+    .hamburgerMenu{
+      display: none;
+    }
+
+    .logoMobile{
+      display: block;
+      width: 4.5rem;
+      margin-right: .5rem;
+    }
+
+    .logoMobile img{
+      width: 100%;
     }
   }

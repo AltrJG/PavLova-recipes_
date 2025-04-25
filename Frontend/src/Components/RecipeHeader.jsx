@@ -54,7 +54,9 @@ export default function RecipeHeader(){
                     <p className={styles.recipeTag}>Economico</p>
                     <p className={styles.recipeTag}>Economico</p>
                 </div>
+                <div className='mobileSpaceProcess'>
                 <RecipePreparation/>
+                </div>
             </div>
         </div>
     )

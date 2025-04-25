@@ -184,4 +184,28 @@
   .dynamic_content{
     padding: 1rem;
   }
+  .logo,
+  .sidebarClose,
+  .sidebarFilterOpen{
+    display: none;
+  }
+  .sidebar{
+    width: 100%;
+    overflow: visible;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+  }
+  .sidebar,
+  .sidebarCloseActive{
+    height: 6rem;
+    bottom: 0;
+    left: 0%;
+  }
+
+  .sidebar ul{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 6rem;
+  }
 }

@@ -229,6 +229,7 @@ export default function CrearReceta() {
       <div className={styles.createButtonCenter}>
         <MainButton action={createReceta} disabled={false} type={'button'} icon={"restaurant"} iconSize={"4.5"} fontSize={"3"} color={"primary"} borderRadius={'1'} text={"Crear Receta"}/>
       </div>
+      <div className='mobileSpace'></div>
     </div>
   );
 }

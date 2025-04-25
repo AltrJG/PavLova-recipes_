@@ -105,6 +105,7 @@ export default function ManageUsers(){
                 <div className='usersContent'>
                     { users.map(user => <UserCard key={user.id} user={user} changeUserPermissions={isSuperUser}/>) }
                 </div>
+                <div className='mobileSpace'>
                 <Pagination
                     action={getUsers}    
                     next={nextPage} 
@@ -112,6 +113,7 @@ export default function ManageUsers(){
                     count={count} 
                     currentPage={currentPage} 
                     text="Mostrando usuarios {start}-{end} de {count}" />
+                </div>
                 </>}
             </div>
         </>

@@ -108,6 +108,12 @@ body{
   margin: 2rem 0;
 }
 
+@media(max-width: 37.5em){
+  .mobileSpace{
+    padding-bottom: 10rem;
+  }
+}
+
 @media(max-width: 34.375em){
   .recipesContent,
   .ingredientsContent{

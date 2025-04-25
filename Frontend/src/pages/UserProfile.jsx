@@ -60,6 +60,7 @@ export default function UserProfile(){
                 <RecipesProfile/>
             </div></>
             }
+            <div className='mobileSpace'></div>
         </>
     )
 }
