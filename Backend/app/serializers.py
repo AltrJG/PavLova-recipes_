@@ -1,4 +1,4 @@
-from .models import User, PasswordResetToken, Ingrediente, Categoria, Etiqueta
+from .models import User, PasswordResetToken, Ingrediente, Categoria, Etiqueta, Receta, RecetaIngrediente
 from rest_framework import serializers
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -272,3 +272,75 @@ class EtiquetaSerializer(serializers.ModelSerializer):
 
     def validate_nombre(self, value):
         return sanitize_input(value)
+    
+class RecetaIngredienteSerializer(serializers.ModelSerializer):
+    ingrediente_id = serializers.PrimaryKeyRelatedField(
+        queryset=Ingrediente.objects.all(), source='ingrediente', write_only=True
+    )
+    ingrediente = IngredienteSerializer(read_only=True)
+
+    class Meta:
+        model = RecetaIngrediente
+        fields = ['id', 'ingrediente_id', 'ingrediente', 'cantidad', 'unidad']
+
+class UsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'name']
+
+class RecetaSerializer(serializers.ModelSerializer):
+    ingredientes = RecetaIngredienteSerializer(source="receta_ingredientes", many=True)
+    etiquetas = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Etiqueta.objects.all(), write_only=True
+    )
+    etiquetas_info = EtiquetaSerializer(source='etiquetas', many=True, read_only=True)
+
+    categoria = serializers.PrimaryKeyRelatedField(
+        queryset=Categoria.objects.all(), allow_null=True, write_only=True
+    )
+    categoria_info = CategoriaSerializer(source='categoria', read_only=True)
+    creador = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    creador_info = UsuarioSerializer(source='creador', read_only=True)
+
+    class Meta:
+        model = Receta
+        fields = [
+            'id', 'nombre', 'porciones', 'frase', 'foto_receta', 'procedimiento',
+            'tiempo_preparacion', 'tiempo_coccion', 'categoria', 'categoria_info',
+            'etiquetas', 'etiquetas_info', 'ingredientes', 'creador', 'creador_info'
+        ]
+
+    def validate_ingredientes(self, value):
+        if not value:
+            raise serializers.ValidationError("La receta debe tener al menos un ingrediente.")
+        return value
+
+    def create(self, validated_data):
+        ingredientes_data = validated_data.pop('ingredientes')
+        etiquetas = validated_data.pop('etiquetas')
+        receta = Receta.objects.create(**validated_data)
+        receta.etiquetas.set(etiquetas)
+
+        for item in ingredientes_data:
+            RecetaIngrediente.objects.create(receta=receta, **item)
+
+        return receta
+
+    def update(self, instance, validated_data):
+        ingredientes_data = validated_data.pop('ingredientes', None)
+        etiquetas = validated_data.pop('etiquetas', None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+
+        if etiquetas is not None:
+            instance.etiquetas.set(etiquetas)
+
+        if ingredientes_data is not None:
+            instance.receta_ingredientes.all().delete()
+            for item in ingredientes_data:
+                RecetaIngrediente.objects.create(receta=instance, **item)
+
+        return instance
