@@ -19,7 +19,7 @@
   
   /* Estilo base del campo */
   .inputField {
-    background: white;
+    background: rgba(255, 255, 255, 0.841);
     border-radius: 1rem;
     width: 100%;
     padding: 1rem;

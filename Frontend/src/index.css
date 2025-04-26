@@ -10,7 +10,7 @@ svg{
 }
 
 :root{
-  --clr: rgb(246, 243, 239);
+  --clr: #fff8ed;
 }
 body{
   min-height: 100vh;

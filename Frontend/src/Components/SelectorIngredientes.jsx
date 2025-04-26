@@ -48,7 +48,7 @@ export default function SelectorIngredientes({ingredientes, porciones, setPorcio
 
     return(
         <div className={styles.selectorIngredientesContainer}>
-            <Select value={activeIngredients} onChange={handleChange} components={{ Option: CustomOption }} styles={customStyles} noOptionsMessage={() => "No hay ingredientes disponibles"} classNamePrefix="selectorMulti" unstyled isMulti className={'selectorMulti'} options={ingredientesDisponibles}/>
+            <Select placeholder={"Elige los ingredientes..."} value={activeIngredients} onChange={handleChange} components={{ Option: CustomOption }} styles={customStyles} noOptionsMessage={() => "No hay ingredientes disponibles"} classNamePrefix="selectorMulti" unstyled isMulti className={'selectorMulti'} options={ingredientesDisponibles}/>
             <div className={styles.portionSliderContainer}>
                 <p className={styles.portionSliderText}>Porciones: <span className={styles.portionSliderValue}>{porciones}</span></p>
                 <input

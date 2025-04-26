@@ -3,6 +3,7 @@
     perspective: 1000px;
     position: relative;
     transition: .3s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     border-radius: 1rem;
 }
 
@@ -69,7 +70,7 @@
 }
 
 .ingredientFrontFace {
-    background: white;
+    background-color: #ffffff8d;
     transition: .3s;
 }
 
