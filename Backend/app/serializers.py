@@ -316,14 +316,15 @@ class RecetaSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        ingredientes_data = validated_data.pop('ingredientes')
+        print(validated_data)
+        ingredientes_data = validated_data.pop('receta_ingredientes')
         etiquetas = validated_data.pop('etiquetas')
         receta = Receta.objects.create(**validated_data)
         receta.etiquetas.set(etiquetas)
-
+ 
         for item in ingredientes_data:
             RecetaIngrediente.objects.create(receta=receta, **item)
-
+ 
         return receta
 
     def update(self, instance, validated_data):

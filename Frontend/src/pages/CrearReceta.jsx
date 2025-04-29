@@ -147,37 +147,33 @@ export default function CrearReceta() {
 
   const createReceta = async e => {
     e.preventDefault();
+    console.log("i exist");
     setLoading(true);
     //let errors = validateUserData(userData);
     //setErrorsHandler(errors);
     //if(Object.keys(errors).length === 0){
         try{
-            //const response = await backendAPI.post('user/update_profile/', userData);
-            let formData = new FormData();
-            formData.append('nombre', generalRecipeData.nombre);
-            formData.append('frase', generalRecipeData.frase);
-            formData.append('tiempo_preparado', generalRecipeData.tiempo_preparado);
-            formData.append('tiempo_cocinado', generalRecipeData.tiempo_cocinado);
-            formData.append('imagen_receta', imagen[0]);
-            let ingredientes = activeIngredientOptions.map(ingrediente => {
-              return{
-                id: ingrediente.id,
-                cantidad: ingrediente.cantidad,
-                tipo_metrica: ingrediente.tipoMetrica
-              }
-            });
-            formData.append('porciones', porciones);
-            formData.append('ingredientes', ingredientes);
-            formData.append('categoria', activeCategoria);
-            formData.append('etiquetas', etiquetas);
-            formData.append('procedimiento', JSON.stringify(richTextRecipe));
-            for (const value of formData.values()) {
-              console.log(value);
-            }
+            const recetaPayload = {
+              nombre: generalRecipeData.nombre,
+              frase: generalRecipeData.frase,
+              tiempo_preparado: generalRecipeData.tiempo_preparado,
+              tiempo_cocinado: generalRecipeData.tiempo_cocinado,
+              porciones: porciones,
+              ingredientes: activeIngredientOptions.map(ingrediente => ({
+                  ingrediente_id: ingrediente.id,
+                  cantidad: ingrediente.cantidad,
+                  unidad: ingrediente.tipoMetrica
+              })),
+              categoria: activeCategoria,
+              etiquetas: etiquetas,
+              procedimiento: JSON.stringify(richTextRecipe),
+          };
+            const response = await backendAPI.post('recetas/', recetaPayload);
+            console.log(response.data);
             Swal.fire({
                 icon: "success",
-                title: "Informacion Modificada",
-                text: "Ye",
+                title: "Receta Creada",
+                text: `Se ha creado la receta '${generalRecipeData.nombre}' con exito!`,
                 showConfirmButton: true,
                 customClass: {
                     title: "swal_title",
@@ -188,9 +184,9 @@ export default function CrearReceta() {
             });
         } catch(error){
             console.log(error);
-            //if(error.response?.status == 401){
-            //    await refreshAccessToken(handleChangeInformation, e);
-            //}
+            if(error.response?.status == 401){
+                await refreshAccessToken(createReceta, e);
+            }
         } finally{
             setLoading(false);
         }
