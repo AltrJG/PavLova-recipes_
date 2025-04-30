@@ -68,7 +68,7 @@ export default function SelectorIngredientes({ingredientes, porciones, setPorcio
                             <p className={styles.ingredientName}>{activeIngredient.label}<span><button type='button' onClick={() => removeIngredient(activeIngredient.id)}><ReactSVG src={`${icon}`}/></button></span></p>
                             <div className={styles.ingredientInputs}>
                                 <input placeholder='Cantidad:' onChange={el => handleFormChange(activeIngredient.id, 'cantidad', el.target.value)} type='number' className={styles.ingredientInput}/>
-                                <select onChange={el => handleFormChange(activeIngredient.id, 'tipoMetrica', el.target.value)} className={styles.ingredientUnitSelect}>
+                                <select defaultValue={'numerica'} onChange={el => handleFormChange(activeIngredient.id, 'tipoMetrica', el.target.value)} className={styles.ingredientUnitSelect}>
                                     <option value="taza">Taza</option>
                                     <option value="cucharada">Cucharada (cda.)</option>
                                     <option value="cucharadita">Cucharadita (cdta.)</option>

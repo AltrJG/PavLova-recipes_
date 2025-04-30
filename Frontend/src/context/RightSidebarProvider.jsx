@@ -1,4 +1,4 @@
-import { act, createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useReducer } from "react";
 
 const RightSidebarContext = createContext();
 

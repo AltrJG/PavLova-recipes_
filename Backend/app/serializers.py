@@ -286,7 +286,7 @@ class RecetaIngredienteSerializer(serializers.ModelSerializer):
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'profile_picture']
 
 class RecetaSerializer(serializers.ModelSerializer):
     ingredientes = RecetaIngredienteSerializer(source="receta_ingredientes", many=True)

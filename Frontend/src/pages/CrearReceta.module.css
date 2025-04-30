@@ -22,6 +22,11 @@
     padding-bottom: 2rem;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
+}
+
+.createButtonCenter button{
+    margin-top: 1rem;
 }
 
 .formInfoGeneral{

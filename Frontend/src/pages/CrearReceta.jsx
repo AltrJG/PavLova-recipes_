@@ -7,6 +7,7 @@ import Help from '../Components/Help';
 import MainButton from '../Components/MainButton';
 import { useNavigate } from 'react-router-dom';
 import tempImage from '../assets/manzana_test.png';
+import { validateRecetaData } from '../Components/utils/validators';
 import EnrichedTextRecipe from '../Components/EnrichedTextRecipe';
 import RecetaCategoriaForm from '../Components/RecetaCategoriaForm';
 import backendAPI from '../api/axiosConfig';
@@ -14,16 +15,19 @@ import SelectorIngredientes from '../Components/SelectorIngredientes';
 import { FadeLoader } from 'react-spinners';
 import { useAuth } from '../context/AuthProvider';
 import Swal from 'sweetalert2';
+import RightSidebarErrors from '../Components/RightSidebarErrors';
 
 export default function CrearReceta() {
 
   const [active, setActive] = useState('info');
   const { refreshAccessToken, user, isStaff, isSuperUser } = useAuth();
   const [ loading, setLoading ] = useState(true);
+  const [ loadingRequest, setLoadingRequest ] = useState(false);
   const [ ingredientOptions, setIngredientOptions ] = useState([]);
   const [ categorias, setCategorias ] = useState([]);
   const [ etiquetasOptions, setEtiquetasOptions ] = useState([]);
   const [ activeIngredientOptions, setActiveIngredientOptions ] = useState([]);
+  const [ errorsHandler, setErrorsHandler ] = useState([]);
   const navigate = useNavigate();
 
   const [generalRecipeData, setGeneralRecipeData] = useState({
@@ -33,28 +37,6 @@ export default function CrearReceta() {
     tiempo_cocinado: '',
     imagenReceta: null
   });
-
-  const datosDummy = [
-    { id: 1, nombre: "Comida Frita", imagen: tempImage },
-    { id: 2, nombre: "Postre", imagen: tempImage },
-    { id: 3, nombre: "Arroz", imagen: tempImage },
-    { id: 4, nombre: "Ensalada", imagen: tempImage },
-    { id: 5, nombre: "Espagueti", imagen: tempImage },
-    { id: 6, nombre: "Sopa", imagen: tempImage },
-  ];
-
-  const etiquetasRecetas = [
-    { id: 1, nombre: "Económico" },
-    { id: 2, nombre: "Vegano" },
-    { id: 3, nombre: "Sin Gluten" },
-    { id: 4, nombre: "Bajo en Calorías" },
-    { id: 5, nombre: "Rápido" },
-    { id: 6, nombre: "Fácil" },
-    { id: 7, nombre: "Saludable" },
-    { id: 8, nombre: "Sin Lactosa" },
-    { id: 9, nombre: "Bajo en Carbohidratos" },
-    { id: 10, nombre: "Postre" }
-];
 
   const [ richTextRecipe, setRichTextRecipe ] = useState([
     {
@@ -147,29 +129,31 @@ export default function CrearReceta() {
 
   const createReceta = async e => {
     e.preventDefault();
-    console.log("i exist");
-    setLoading(true);
-    //let errors = validateUserData(userData);
-    //setErrorsHandler(errors);
-    //if(Object.keys(errors).length === 0){
+    setLoadingRequest(true);
+
+    // Preparar los datos para su analisis
+    const recetaPayload = {
+        nombre: generalRecipeData.nombre,
+        frase: generalRecipeData.frase,
+        tiempo_preparado: generalRecipeData.tiempo_preparado,
+        tiempo_cocinado: generalRecipeData.tiempo_cocinado,
+        porciones: porciones,
+        ingredientes: activeIngredientOptions.map(ingrediente => ({
+            ingrediente_id: ingrediente.id,
+            cantidad: ingrediente.cantidad,
+            unidad: ingrediente.tipoMetrica
+        })),
+        categoria: activeCategoria,
+        etiquetas: etiquetas,
+        procedimiento: JSON.stringify(richTextRecipe),
+    };
+
+    let errors = validateRecetaData(recetaPayload);
+    setErrorsHandler(errors);
+    if(Object.keys(errors).length === 0){
+        setErrorsHandler({});
         try{
-            const recetaPayload = {
-              nombre: generalRecipeData.nombre,
-              frase: generalRecipeData.frase,
-              tiempo_preparado: generalRecipeData.tiempo_preparado,
-              tiempo_cocinado: generalRecipeData.tiempo_cocinado,
-              porciones: porciones,
-              ingredientes: activeIngredientOptions.map(ingrediente => ({
-                  ingrediente_id: ingrediente.id,
-                  cantidad: ingrediente.cantidad,
-                  unidad: ingrediente.tipoMetrica
-              })),
-              categoria: activeCategoria,
-              etiquetas: etiquetas,
-              procedimiento: JSON.stringify(richTextRecipe),
-          };
             const response = await backendAPI.post('recetas/', recetaPayload);
-            console.log(response.data);
             Swal.fire({
                 icon: "success",
                 title: "Receta Creada",
@@ -182,16 +166,17 @@ export default function CrearReceta() {
                     confirmButton: "swal_confirm"
                 }
             });
+            navigate('/mis_recetas');
         } catch(error){
             console.log(error);
             if(error.response?.status == 401){
                 await refreshAccessToken(createReceta, e);
             }
         } finally{
-            setLoading(false);
+            setLoadingRequest(false);
         }
-    //}
-    setLoading(false);
+    }
+    setLoadingRequest(false);
 }
 
   if(loading) return <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>;
@@ -223,7 +208,8 @@ export default function CrearReceta() {
         </div>
       </div>
       <div className={styles.createButtonCenter}>
-        <MainButton action={createReceta} disabled={false} type={'button'} icon={"restaurant"} iconSize={"4.5"} fontSize={"3"} color={"primary"} borderRadius={'1'} text={"Crear Receta"}/>
+        <RightSidebarErrors errors={errorsHandler} />
+        <MainButton action={createReceta} disabled={loadingRequest} type={'button'} icon={"restaurant"} iconSize={"4.5"} fontSize={"3"} color={"primary"} borderRadius={'1'} text={loadingRequest ? "Creando" : "Crear Receta"}/>
       </div>
       <div className='mobileSpace'></div>
     </div>

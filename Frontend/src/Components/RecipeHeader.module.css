@@ -92,6 +92,7 @@
     margin-top: 2rem;
     align-items: center; /* Aligns image and text vertically */
     gap: 0.8rem; /* Adds spacing between image and text */
+    text-decoration: none;
 }
 
 .recipeHeaderCreator img {

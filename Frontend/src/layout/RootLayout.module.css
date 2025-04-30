@@ -51,6 +51,7 @@
     color: white;
     text-rendering: optimizeLegibility;
     font-feature-settings: 'liga' 1, 'calt' 1, 'swsh' 1, 'salt' 1, 'smcp' 1;
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.887);
   }
 
   .logo_link{

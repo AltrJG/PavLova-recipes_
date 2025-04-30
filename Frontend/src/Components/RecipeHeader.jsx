@@ -8,14 +8,36 @@ import RecipeNutritionalFacts from "./RecipeNutritionalFacts";
 import RecipePreparation from "./RecipePreparation";
 import { ReactSVG } from "react-svg";
 import RecipeComments from "./RecipeComments";
+import { Link, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import backendAPI from "../api/axiosConfig";
+import { FadeLoader } from "react-spinners";
+import { useNutritionalDataRecipeProvider } from "../context/NutritionalDataRecipeProvider";
 
 export default function RecipeHeader(){
+
+    let { recipe_id } = useParams();
+    const [ receta, setReceta ] = useState({});
+    const [ loading, setLoading ] = useState(true);
+    console.log("we're going to croak it");
+
+    useEffect(() => {
+        const getReceta = async () => {
+            const receta = await backendAPI(`recetas/${recipe_id}/`);
+            setReceta(receta.data);
+            setLoading(false);
+        };
+        setLoading(true);
+        getReceta();
+    }, []);
+
+    if (loading) return <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
 
     return(
         <div className={styles.recipeHeaderContainer}>
             <div className={styles.recipeHeaderDataContainer}>
                 <div className={styles.recipeHeaderData}>
-                    <h3 className={styles.recipeHeaderName}>Pavlova suprema mexicana global mundial</h3>
+                    <h3 className={styles.recipeHeaderName}>{receta.nombre}</h3>
                     <p className={styles.recipeHeaderType}>Postre</p>
                     <div className={styles.recipeHeaderRating}>
                         <div className={styles.recipeHeaderStars}>
@@ -27,16 +49,16 @@ export default function RecipeHeader(){
                         </div>
                         <p className={styles.recipeRatingText}>Promedio: 4.5 (10)</p>
                     </div>
-                    <div className={styles.recipeHeaderCreator}>
-                        <img src={tempUser}/>
-                        <p className={styles.recipeHeaderCreatorName}>Brandon Yahir Castañeda Godinez</p>
-                    </div>
-                    <p className={styles.recipeHeaderQuote}>La supremacia de las pavlovas ha llegado a la pagina web, esta es una receta que talvez no conozcas, pero no te arrepentiras de cocinarla.</p>
+                    <Link to={`/user/${receta.creador_info.id}`} className={styles.recipeHeaderCreator}>
+                        <img src={receta.creador_info.profile_picture}/>
+                        <p className={styles.recipeHeaderCreatorName}>{receta.creador_info.name}</p>
+                    </Link>
+                    <p className={styles.recipeHeaderQuote}>{receta.frase}</p>
                     <div className={styles.recipeHeaderActions}>
                         <CircleButton iconName={"heart-outline"} iconSize="3.5rem"/>
                     </div>
                 </div>
-                <RecipeContents/>
+                <RecipeContents recipe={receta}/>
                 <RecipeNutritionalFacts/>
                 <div className={styles.recipeHeaderShowTwo}>
                     <RecipeRating/>
@@ -46,13 +68,7 @@ export default function RecipeHeader(){
             <div className={styles.recipeImageTagsContainer}>
                 <img className={styles.recipeHeaderImage} src={tempImg}/>
                 <div className={styles.recipeTags}>
-                    <p className={styles.recipeTag}>Economico</p>
-                    <p className={styles.recipeTag}>Economico</p>
-                    <p className={styles.recipeTag}>Economico</p>
-                    <p className={styles.recipeTag}>Economico</p>
-                    <p className={styles.recipeTag}>Economico</p>
-                    <p className={styles.recipeTag}>Economico</p>
-                    <p className={styles.recipeTag}>Economico</p>
+                    {receta.etiquetas_info.map(etiqueta => <p key={etiqueta.id} className={styles.recipeTag}>{etiqueta.nombre}</p>)}
                 </div>
                 <div className='mobileSpaceProcess'>
                 <RecipePreparation/>

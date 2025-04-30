@@ -236,3 +236,66 @@ export const validateEtiquetaCategoriaData = (categoriaEtiqueta) => {
 
     return errors;
 };
+
+export const validateRecetaData = (recetaData) => {
+    let errors = {};
+
+    // Validar que los campos tengan texto y no contengan codigo malicioso
+    const sanitizedName = DOMPurify.sanitize(recetaData.nombre);
+    const sanitizedPhrase = DOMPurify.sanitize(recetaData.frase);
+    if(recetaData.nombre !== sanitizedName){
+        errors.nombre = "El Nombre contiene codigo no permitido.";
+    } else if(recetaData.nombre == ""){
+        errors.nombre = "El Nombre no puede ir vacio"
+    }
+    if(recetaData.frase !== sanitizedPhrase){
+        errors.frase = "La frase contiene codigo no permitido.";
+    } else if(recetaData.frase == ""){
+        errors.frase = "La frase no puede ir vacia."
+    }
+    // Validar que los tiempos sean validos
+    if(isNaN(recetaData.tiempo_preparado) || recetaData.tiempo_preparado <= 0){
+        errors.tiempo_preparado = "El tiempo de preparado debe ser mayor a 0";
+    }
+    if(isNaN(recetaData.tiempo_preparado) || recetaData.tiempo_cocinado <= 0){
+        errors.tiempo_cocinado = "El tiempo de cocinado debe ser mayor a 0";
+    }
+    if(isNaN(recetaData.porciones) || recetaData.porciones <= 0){
+        errors.tiempo_cocinado = "Las porciones debe ser mayor a 0";
+    }
+    // Validar que se haya seleccionado al menos una categoria y una etiqueta
+    if(recetaData.categoria == "" || DOMPurify.sanitize(recetaData.categoria) != recetaData.categoria){
+        errors.categoria = "Tienes que escoger una categoria";
+    }
+    if(recetaData.etiquetas.length == 0){
+        errors.etiqueta = "Tienes que escoger al menos una etiqueta";
+    }
+    // Validar que haya ingredientes y estos tengan valores positivos
+    if(Object.keys(recetaData.ingredientes).length == 0){
+        errors.ingredientes = "Tienes que colocar al menos un ingrediente";
+    } else if(recetaData.ingredientes.some(ingrediente => isNaN(ingrediente.cantidad) || ingrediente.cantidad <= 0)){
+        errors.ingredientes = "Todos los ingredientes deben tener una cantidad mayor a 0";
+    }
+    // Validar que el procedimiento no tenga intentos de inyectado de codigo
+    const sanitizedProcedimiento = DOMPurify.sanitize(recetaData.procedimiento);
+    if(recetaData.procedimiento !== sanitizedProcedimiento){
+        errors.procedimiento = "El Procedimiento contiene codigo no permitido.";
+    } else if(!tieneTexto(recetaData.procedimiento)){
+        errors.procedimiento = "El Procedimiento no puede ir vacio.";
+    }
+
+    return errors;
+}
+
+function tieneTexto(textoString){
+    try {
+        const parsed = JSON.parse(textoString);
+        return parsed.some(block =>
+          block.children?.some(child =>
+            typeof child.text === 'string' && child.text.trim() !== ''
+          )
+        );
+      } catch (e) {
+        return false;
+      }
+}

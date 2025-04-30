@@ -1,18 +1,21 @@
+import { useNutritionalDataRecipeProvider } from '../context/NutritionalDataRecipeProvider';
 import NutritionalBadge from './NutritionalBadge';
 import NutritionalTable from './NutritionalTable';
 import styles from './RecipeNutritionalFacts.module.css';
 
 export default function RecipeNutritionalFacts(){
 
+    const { nutritionalValues } = useNutritionalDataRecipeProvider();
+
     const nutritionalData = {
-        Calorias: `50 Kcal`,
-        Carbohidratos: `50g`,
-        Proteinas: `50g`,
-        'Grasas Saturadas': `50g`,
-        'Grasas Insaturadas': `50g`,
-        'Grasas Trans': `50g`,
-        Sodio: `50mg`
-    }
+        Calorias: `${nutritionalValues.calorias.toFixed(2)} Kcal`,
+        Carbohidratos: `${nutritionalValues.carbohidratos.toFixed(2)}g`,
+        Proteinas: `${nutritionalValues.proteina.toFixed(2)}g`,
+        'Grasas Saturadas': `${nutritionalValues.grasas_saturadas.toFixed(2)}g`,
+        'Grasas Insaturadas': `${nutritionalValues.grasas_insaturadas.toFixed(2)}g`,
+        'Grasas Trans': `${nutritionalValues.grasas_trans.toFixed(2)}g`,
+        Sodio: `${nutritionalValues.sodio.toFixed(2)}mg`
+    };
 
     const nutritionalBadges = [
         { title: "Grasa saturada", unit: "Cal/kcal", value: 20, isNumber: false },
