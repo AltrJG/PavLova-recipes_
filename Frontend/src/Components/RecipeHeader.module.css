@@ -20,7 +20,7 @@
     border-radius: 2rem;
     padding: 1.5rem;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.525);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     height: max-content;
 }
@@ -120,7 +120,7 @@
     margin-top: 2rem;
     padding: 1.5rem;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.525);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     height: max-content;
     width: 100%;

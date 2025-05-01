@@ -71,7 +71,7 @@ export default function RecipeHeader(){
                     {receta.etiquetas_info.map(etiqueta => <p key={etiqueta.id} className={styles.recipeTag}>{etiqueta.nombre}</p>)}
                 </div>
                 <div className='mobileSpaceProcess'>
-                <RecipePreparation/>
+                <RecipePreparation procedimiento={JSON.parse(receta.procedimiento)}/>
                 </div>
             </div>
         </div>

@@ -8,13 +8,13 @@ export default function RecipeNutritionalFacts(){
     const { nutritionalValues } = useNutritionalDataRecipeProvider();
 
     const nutritionalData = {
-        Calorias: `${nutritionalValues.calorias.toFixed(2)} Kcal`,
-        Carbohidratos: `${nutritionalValues.carbohidratos.toFixed(2)}g`,
-        Proteinas: `${nutritionalValues.proteina.toFixed(2)}g`,
-        'Grasas Saturadas': `${nutritionalValues.grasas_saturadas.toFixed(2)}g`,
-        'Grasas Insaturadas': `${nutritionalValues.grasas_insaturadas.toFixed(2)}g`,
-        'Grasas Trans': `${nutritionalValues.grasas_trans.toFixed(2)}g`,
-        Sodio: `${nutritionalValues.sodio.toFixed(2)}mg`
+        Calorias: `${nutritionalValues?.calorias?.toFixed(2)} Kcal`,
+        Carbohidratos: `${nutritionalValues?.carbohidratos?.toFixed(2)}g`,
+        Proteinas: `${nutritionalValues?.proteina?.toFixed(2)}g`,
+        'Grasas Saturadas': `${nutritionalValues?.grasas_saturadas?.toFixed(2)}g`,
+        'Grasas Insaturadas': `${nutritionalValues?.grasas_insaturadas?.toFixed(2)}g`,
+        'Grasas Trans': `${nutritionalValues?.grasas_trans?.toFixed(2)}g`,
+        Sodio: `${nutritionalValues?.sodio?.toFixed(2)}mg`
     };
 
     const nutritionalBadges = [
