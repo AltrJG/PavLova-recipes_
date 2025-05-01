@@ -1,6 +1,5 @@
 import styles from "./RecipeHeader.module.css";
 import tempImg from '../assets/receta_test.jpg';
-import tempUser from '../assets/smile.png';
 import CircleButton from "./CircleButton";
 import RecipeRating from "./RecipeRating";
 import RecipeContents from "./RecipeContents";
@@ -12,7 +11,6 @@ import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import backendAPI from "../api/axiosConfig";
 import { FadeLoader } from "react-spinners";
-import { useNutritionalDataRecipeProvider } from "../context/NutritionalDataRecipeProvider";
 
 export default function RecipeHeader(){
 

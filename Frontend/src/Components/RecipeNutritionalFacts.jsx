@@ -1,11 +1,14 @@
+import { useEffect, useState } from 'react';
 import { useNutritionalDataRecipeProvider } from '../context/NutritionalDataRecipeProvider';
 import NutritionalBadge from './NutritionalBadge';
 import NutritionalTable from './NutritionalTable';
 import styles from './RecipeNutritionalFacts.module.css';
+import { calcularNutrienteAporteCalorias } from './utils/calculadorNutrientes';
 
 export default function RecipeNutritionalFacts(){
 
     const { nutritionalValues } = useNutritionalDataRecipeProvider();
+    const [ nutritionalPercentages, setNutritionalPercentages ] = useState({});
 
     const nutritionalData = {
         Calorias: `${nutritionalValues?.calorias?.toFixed(2)} Kcal`,
@@ -17,12 +20,16 @@ export default function RecipeNutritionalFacts(){
         Sodio: `${nutritionalValues?.sodio?.toFixed(2)}mg`
     };
 
+    useEffect(() => {
+        setNutritionalPercentages(calcularNutrienteAporteCalorias(nutritionalValues));
+    }, [nutritionalValues]);
+
     const nutritionalBadges = [
-        { title: "Grasa saturada", unit: "Cal/kcal", value: 20, isNumber: false },
-        { title: "Otras grasas", unit: "Cal/kcal", value: 15, isNumber: false },
-        { title: "Azúcares totales", unit: "Cal/kcal", value: 30, isNumber: false },
-        { title: "Sodio", unit: "mg/g", value: 12, isNumber: false },
-        { title: "Energía", unit: "Cal/kcal", value: 40, isNumber: true },
+        { title: "Grasa saturada", unit: "Cal/kcal", value: nutritionalPercentages.grasas_saturadas, isNumber: false },
+        { title: "Grasa insaturada", unit: "Cal/kcal", value: nutritionalPercentages.grasas_insaturadas, isNumber: false },
+        { title: "Grasa Trans", unit: "Cal/kcal", value: nutritionalPercentages.grasas_trans, isNumber: false },
+        { title: "Proteina", unit: "mg/g", value: nutritionalPercentages.proteina, isNumber: false },
+        { title: "Carbohi dratos", unit: "Cal/kcal", value: nutritionalPercentages.carbohidratos, isNumber: false },
       ];
 
     return(
