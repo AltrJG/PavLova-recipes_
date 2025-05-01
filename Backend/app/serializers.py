@@ -328,7 +328,7 @@ class RecetaSerializer(serializers.ModelSerializer):
         return receta
 
     def update(self, instance, validated_data):
-        ingredientes_data = validated_data.pop('ingredientes', None)
+        ingredientes_data = validated_data.pop('receta_ingredientes', None)
         etiquetas = validated_data.pop('etiquetas', None)
 
         for attr, value in validated_data.items():

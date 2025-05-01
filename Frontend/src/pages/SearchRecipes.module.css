@@ -13,11 +13,22 @@
     width: 100%;
 }
 
+.usersNotFound{
+    font-size: 3rem;
+    color: #23130d;
+    text-align: center;
+    margin-top: 3rem;
+    font-family: "Oswald", sans-serif;
+}
+
 @media(max-width: 31.25em){
     .filterOptionsContainer{
         flex-direction: column-reverse;
     }
     .filterOptions{
         margin-top: 1rem;
+    }
+    .usersNotFound{
+        font-size: 2rem;
     }
 }

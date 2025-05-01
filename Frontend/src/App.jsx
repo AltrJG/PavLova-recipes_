@@ -42,6 +42,7 @@ function App() {
                   <Route element={<ProtectedRoute/>}>
                     <Route path='mi-perfil' element={<MyProfile/>}/>
                     <Route path='ingredientes' element={<UserIngredients/>}/>
+                    <Route path='/mis_recetas' element={<UserRecipes/>}/>
                     <Route path='crear-receta' element={<CrearReceta/>}/>
                   </Route>
                   <Route element={<RestrictedRoute isStaffAllowed={true} isSuperUserAllowed={true}/>}>
@@ -52,7 +53,6 @@ function App() {
                   <Route path='user/:user_id' element={<UserProfile/>}/>
                   <Route path='verify_email/:token' element={<VerifyEmail/>}/>
                   <Route path="/" element={<SearchRecipes/>}/>
-                  <Route path='/mis_recetas' element={<UserRecipes/>}/>
                   <Route path='*' element={<NotFound404/>}/>
                 </Route>
               </Routes>

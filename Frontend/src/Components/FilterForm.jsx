@@ -14,7 +14,17 @@ export default function FilterForm({setCurrentPage, filterOptions, setData, data
                                     <option key={option} value={option}>{option}</option>
                                 ))}
                             </select>
-                        ) : (
+                        ) : filter.type == 'number' ? ((
+                            <input
+                                type={filter.type}
+                                name={filter.name}
+                                placeholder={filter.placeholder}
+                                value={data[filter.name]}
+                                onChange={e => setData(filters => ({...filters, [e.target.name]: e.target.value}))}
+                                min={filter.minNumber}
+                                max={filter.maxNumber}
+                            />
+                        )) : (
                             <input
                                 type={filter.type}
                                 name={filter.name}

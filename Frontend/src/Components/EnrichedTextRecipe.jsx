@@ -19,7 +19,7 @@ const HOTKEYS = {
 
 const LIST_TYPES = ["numbered-list", "bulleted-list"];
 
-const EnrichedTextRecipe = ({ recetaProceso, setRecetaProceso }) => {
+const EnrichedTextRecipe = ({ recetaProceso, setRecetaProceso, isUpdateActive }) => {
   const [value, setValue] = useState(recetaProceso || [
     {
       type: "paragraph",
@@ -34,6 +34,19 @@ const EnrichedTextRecipe = ({ recetaProceso, setRecetaProceso }) => {
   useEffect(() => {
     setRecetaProceso(value);
   }, [value]);
+
+  useEffect(() => {
+    if (isUpdateActive && recetaProceso && Array.isArray(recetaProceso)) {
+      // Remove all existing nodes
+      Transforms.removeNodes(editor, {
+        at: [],
+        match: n => Editor.isBlock(editor, n),
+      });
+
+      // Insert new content
+      Transforms.insertNodes(editor, recetaProceso, { at: [0] });
+    }
+  }, [isUpdateActive]);
 
   if (!value || !Array.isArray(value)) {
     return <div>Cargando editor...</div>;

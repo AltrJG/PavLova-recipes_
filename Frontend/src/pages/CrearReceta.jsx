@@ -5,7 +5,7 @@ import styles from './CrearReceta.module.css';
 import RecetaInfoGeneralForm from '../Components/RecetaInfoGeneralForm';
 import Help from '../Components/Help';
 import MainButton from '../Components/MainButton';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import tempImage from '../assets/manzana_test.png';
 import { validateRecetaData } from '../Components/utils/validators';
 import EnrichedTextRecipe from '../Components/EnrichedTextRecipe';
@@ -20,8 +20,10 @@ import RightSidebarErrors from '../Components/RightSidebarErrors';
 export default function CrearReceta() {
 
   const [active, setActive] = useState('info');
+  const [ searchParams ] = useSearchParams();
   const { refreshAccessToken, user, isStaff, isSuperUser } = useAuth();
   const [ loading, setLoading ] = useState(true);
+  const [ isUpdateActive, setIsUpdateActive ] = useState(false);
   const [ loadingRequest, setLoadingRequest ] = useState(false);
   const [ ingredientOptions, setIngredientOptions ] = useState([]);
   const [ categorias, setCategorias ] = useState([]);
@@ -29,6 +31,8 @@ export default function CrearReceta() {
   const [ activeIngredientOptions, setActiveIngredientOptions ] = useState([]);
   const [ errorsHandler, setErrorsHandler ] = useState([]);
   const navigate = useNavigate();
+
+  const recetaEditar = searchParams.get("recetaEditar");
 
   const [generalRecipeData, setGeneralRecipeData] = useState({
     nombre: '',
@@ -67,6 +71,41 @@ export default function CrearReceta() {
 
   useEffect(() => {
     setLoading(true);
+    const obtenerRecetaActualizar = async () => {
+      try{
+        const recetaActualizar = await backendAPI.get(`/recetas/${recetaEditar}`);
+        console.log(recetaActualizar.data);
+        setRichTextRecipe(JSON.parse(recetaActualizar.data.procedimiento));
+        const ingredientesUpdate = recetaActualizar.data.ingredientes.map(ingrediente => {
+            return {
+                value: ingrediente.ingrediente.nombre,
+                label: ingrediente.ingrediente.nombre,
+                image: ingrediente.ingrediente.foto_ingrediente,
+                consistencia: ingrediente.ingrediente.consistencia,
+                id: ingrediente.ingrediente.id,
+                cantidad: ingrediente.cantidad,
+                tipoMetrica: ingrediente.unidad
+            }
+        });
+        setGeneralRecipeData({
+          nombre: recetaActualizar.data.nombre,
+          frase: recetaActualizar.data.frase,
+          tiempo_preparado: recetaActualizar.data.tiempo_preparacion,
+          tiempo_cocinado: recetaActualizar.data.tiempo_coccion,
+          imagenReceta: null
+        });
+        const etiquetasSeleccionadas = recetaActualizar.data.etiquetas_info.map(etiqueta => etiqueta.id);
+        setEtiquetas(etiquetasSeleccionadas);
+        setActiveCategoria(recetaActualizar.data.categoria_info.id);
+        handleIngredientesSeleccionados(ingredientesUpdate);
+        setPorciones(recetaActualizar.data.porciones);
+        setIsUpdateActive(true);
+      } catch(error){
+        if(error.response?.status == 401){
+          await refreshAccessToken(obtenerRecetaActualizar);
+        }
+      }
+    }
     const obtenerInformacion = async () => {
       try{
         const ingredientes = await backendAPI.get('/ingredientes');
@@ -86,6 +125,11 @@ export default function CrearReceta() {
     }
     };
     obtenerInformacion();
+    if(recetaEditar != null){
+      setLoading(true);
+      obtenerRecetaActualizar();
+      setLoading(false);
+    }
   }, []);
 
   const handleIngredientesSeleccionados = ingredientesActivos => {
@@ -97,8 +141,8 @@ export default function CrearReceta() {
           image: ingrediente.image,
           consistencia: ingrediente.consistencia,
           id: ingrediente.id,
-          cantidad: 0,
-          tipoMetrica: 'numerica'
+          cantidad: ingrediente.cantidad,
+          tipoMetrica: ingrediente.tipoMetrica
         }
       }
       return null;
@@ -135,8 +179,8 @@ export default function CrearReceta() {
     const recetaPayload = {
         nombre: generalRecipeData.nombre,
         frase: generalRecipeData.frase,
-        tiempo_preparado: generalRecipeData.tiempo_preparado,
-        tiempo_cocinado: generalRecipeData.tiempo_cocinado,
+        tiempo_preparacion: generalRecipeData.tiempo_preparado,
+        tiempo_coccion: generalRecipeData.tiempo_cocinado,
         porciones: porciones,
         ingredientes: activeIngredientOptions.map(ingrediente => ({
             ingrediente_id: ingrediente.id,
@@ -153,11 +197,11 @@ export default function CrearReceta() {
     if(Object.keys(errors).length === 0){
         setErrorsHandler({});
         try{
-            const response = await backendAPI.post('recetas/', recetaPayload);
+            const response = recetaEditar != null ? await backendAPI.put(`recetas/${recetaEditar}/`, recetaPayload) : await backendAPI.post('recetas/', recetaPayload);
             Swal.fire({
                 icon: "success",
-                title: "Receta Creada",
-                text: `Se ha creado la receta '${generalRecipeData.nombre}' con exito!`,
+                title: recetaEditar ? "Actualizada" : "Receta Creada",
+                text: `Se ha ${recetaEditar ? "actualizado" : "creado"} la receta '${generalRecipeData.nombre}' con exito!`,
                 showConfirmButton: true,
                 customClass: {
                     title: "swal_title",
@@ -179,12 +223,12 @@ export default function CrearReceta() {
     setLoadingRequest(false);
 }
 
-  if(loading) return <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>;
-
   return (
     <div className={styles.container}>
       <BurbujaCanvas />
-      <Help title={"Crear o Editar receta"} description={"Crea o modifica la receta seleccionada"}>
+      {loading 
+      ? <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
+      : <><Help title={"Crear o Editar receta"} description={"Crea o modifica la receta seleccionada"}>
         <MainButton action={volver} disabled={false} type={'button'} icon={"arrow-back-circle"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Volver Atras"}/>
       </Help>
       <div className={styles.crearRecetaOptions}>
@@ -203,15 +247,15 @@ export default function CrearReceta() {
           </div>
           <div className={`${styles.section} ${active === "proced" ? styles.activeSection : ""}`}>
             <h2 className={styles.formInfoGeneral}>Procedimiento</h2>
-            <EnrichedTextRecipe recetaProceso={richTextRecipe} setRecetaProceso={setRichTextRecipe}/>
+            <EnrichedTextRecipe recetaProceso={richTextRecipe} setRecetaProceso={setRichTextRecipe} isUpdateActive={isUpdateActive}/>
           </div>
         </div>
       </div>
       <div className={styles.createButtonCenter}>
         <RightSidebarErrors errors={errorsHandler} />
-        <MainButton action={createReceta} disabled={loadingRequest} type={'button'} icon={"restaurant"} iconSize={"4.5"} fontSize={"3"} color={"primary"} borderRadius={'1'} text={loadingRequest ? "Creando" : "Crear Receta"}/>
+        <MainButton action={createReceta} disabled={loadingRequest} type={'button'} icon={"restaurant"} iconSize={"4.5"} fontSize={"3"} color={"primary"} borderRadius={'1'} text={loadingRequest ? (recetaEditar != null ? "Actualizando..." : "Creando...") : (recetaEditar ? "Actualizar Receta" : "Crear Receta")}/>
       </div>
-      <div className='mobileSpace'></div>
+      <div className='mobileSpace'></div></>}
     </div>
   );
 }

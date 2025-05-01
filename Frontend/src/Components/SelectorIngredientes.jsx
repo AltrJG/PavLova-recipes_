@@ -31,6 +31,7 @@ export default function SelectorIngredientes({ingredientes, porciones, setPorcio
     );
 
     const [ ingredientesDisponibles, setIngredientesDisponibles ] = useState([]);
+
     useEffect(() => {
         const options = ingredientes.map(ingrediente => {
             return {
@@ -62,12 +63,12 @@ export default function SelectorIngredientes({ingredientes, porciones, setPorcio
             </div>
             <div className={styles.recipeIngredientSetup}>
                 { activeIngredients?.length != 0 
-                    ? activeIngredients.map(activeIngredient => <div key={activeIngredient.id} className={styles.activeIngredientPicker}>
+                    ? activeIngredients.map(activeIngredient => <div key={`${activeIngredient.id}-active`} className={styles.activeIngredientPicker}>
                         <div className={styles.ingredientImage}><img src={activeIngredient.image}/></div>
                         <div className={styles.ingredientSettings}>
                             <p className={styles.ingredientName}>{activeIngredient.label}<span><button type='button' onClick={() => removeIngredient(activeIngredient.id)}><ReactSVG src={`${icon}`}/></button></span></p>
                             <div className={styles.ingredientInputs}>
-                                <input placeholder='Cantidad:' onChange={el => handleFormChange(activeIngredient.id, 'cantidad', el.target.value)} type='number' className={styles.ingredientInput}/>
+                                <input value={activeIngredient.cantidad} placeholder='Cantidad:' onChange={el => handleFormChange(activeIngredient.id, 'cantidad', el.target.value)} type='number' className={styles.ingredientInput}/>
                                 <select defaultValue={'numerica'} onChange={el => handleFormChange(activeIngredient.id, 'tipoMetrica', el.target.value)} className={styles.ingredientUnitSelect}>
                                     <option value="taza">Taza</option>
                                     <option value="cucharada">Cucharada (cda.)</option>

@@ -11,6 +11,10 @@
     color: #23130d;
 }
 
+p:empty::before {
+    content: "\00a0";
+  }
+
 .italic {
     font-style: italic;
     color: rgb(80, 80, 80);

@@ -2,24 +2,28 @@ import styles from "./Recipe.module.css";
 import temporaryImage from "../assets/receta_test.jpg";
 import { ReactSVG } from "react-svg";
 import CardButton from "./CardButton";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function Recipe({ isModificationAllowed = false }){
+export default function Recipe({ isModificationAllowed = false, recipe, deleteAction }){
+
+    const navigate = useNavigate();
+
     return(
         <div className={styles.recipeContainer}>
-            <div className={styles.recipeImageContent}>
-                <img className={styles.recipeImage} src={temporaryImage}/>
+            <Link to={`/receta/${recipe?.id}`} style={isModificationAllowed ? { pointerEvents: "none" } : {}} className={styles.recipeImageContent}>
+                <img className={styles.recipeImage} src={recipe?.foto_receta}/>
                 <div className={styles.recipeRating}><ReactSVG src={`/src/assets/Iconos/star.svg`}/>4.9</div>
-            </div>
-            <div className={styles.recipeData}>
-                <h4 className={styles.recipeName}>Supreme Pavlova Mexicana Global Mundial</h4>
-                <p className={styles.recipeCategoria}>Postre</p>
-                <p className={styles.recipeAuthor}>Brandon Yahir Castañeda Godinez</p>
-                <div className={styles.recipeTime}><ReactSVG src={`/src/assets/Iconos/timer.svg`}/> 20 Minutos</div>
-                <div className={styles.recipeDifficulty}><ReactSVG src={`/src/assets/Iconos/flame.svg`}/> 150 Minutos</div>
-            </div>
+            </Link>
+            <Link to={`/receta/${recipe?.id}`} className={styles.recipeData}>
+                <h4 className={styles.recipeName}>{recipe?.nombre}</h4>
+                <p className={styles.recipeCategoria}>{recipe?.categoria_info?.nombre}</p>
+                <p className={styles.recipeAuthor}>{recipe?.creador_info?.name}</p>
+                <div className={styles.recipeTime}><ReactSVG src={`/src/assets/Iconos/timer.svg`}/> {` ${recipe?.tiempo_preparacion} Minutos`}</div>
+                <div className={styles.recipeDifficulty}><ReactSVG src={`/src/assets/Iconos/flame.svg`}/> {` ${recipe?.tiempo_coccion} Minutos`}</div>
+            </Link>
             { isModificationAllowed && <CardButton
-                text="Ver Detalles"
-                hoverWidth="12rem"
+                text="Cambiar Visibilidad"
+                hoverWidth="16rem"
                 top={.5}
                 left={2}
                 icon="eye"
@@ -31,7 +35,7 @@ export default function Recipe({ isModificationAllowed = false }){
                 top={4.5}
                 left={2}
                 icon="create"
-                onClick={() => console.log("Me clickearon")}
+                onClick={() => navigate(`/crear-receta?recetaEditar=${recipe.id}`)}
             /> }
             { isModificationAllowed && <CardButton
                 text="Eliminar"
@@ -40,7 +44,7 @@ export default function Recipe({ isModificationAllowed = false }){
                 left={80}
                 showRight={true}
                 icon="trash"
-                onClick={() => console.log("Me clickearon")}
+                onClick={() => deleteAction(recipe)}
             /> }
         </div>
     )

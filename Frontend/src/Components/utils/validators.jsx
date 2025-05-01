@@ -254,10 +254,10 @@ export const validateRecetaData = (recetaData) => {
         errors.frase = "La frase no puede ir vacia."
     }
     // Validar que los tiempos sean validos
-    if(isNaN(recetaData.tiempo_preparado) || recetaData.tiempo_preparado <= 0){
+    if(isNaN(recetaData.tiempo_preparacion) || recetaData.tiempo_preparacion <= 0){
         errors.tiempo_preparado = "El tiempo de preparado debe ser mayor a 0";
     }
-    if(isNaN(recetaData.tiempo_preparado) || recetaData.tiempo_cocinado <= 0){
+    if(isNaN(recetaData.tiempo_coccion) || recetaData.tiempo_coccion <= 0){
         errors.tiempo_cocinado = "El tiempo de cocinado debe ser mayor a 0";
     }
     if(isNaN(recetaData.porciones) || recetaData.porciones <= 0){
