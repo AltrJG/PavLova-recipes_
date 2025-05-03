@@ -6,7 +6,7 @@ export default function RecipeInstructions({recipeProcess}){
         <div className={styles.RecipeInstructionsContainer}>
             { 
                 recipeProcess.map(content => (content.type === "bulleted-list" || content.type === "numbered-list") 
-                ? <ul className={styles[content.type]}>{content.children.map(content2 => content2.children.map(content3 => <li key={content3.text} className={`${content3.code ? styles.code : ""} ${content3.italic ? styles.italic : ""} ${content3.underline ? styles.underline : ""} ${content3.bold ? styles.bold : ""}`}>{content3.text}</li>) )}</ul>
+                ? <ul key={content.type} className={styles[content.type]}>{content.children.map(content2 => content2.children.map(content3 => <li key={content3.text} className={`${content3.code ? styles.code : ""} ${content3.italic ? styles.italic : ""} ${content3.underline ? styles.underline : ""} ${content3.bold ? styles.bold : ""}`}>{content3.text}</li>) )}</ul>
                 : (content.type === "image") 
                 ? <img key={content.url} className={styles.recipe_description_img} src={content.url} />
                 : <p className={styles[content.type]}>

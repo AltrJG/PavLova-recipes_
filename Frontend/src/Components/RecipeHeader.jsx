@@ -11,19 +11,28 @@ import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import backendAPI from "../api/axiosConfig";
 import { FadeLoader } from "react-spinners";
+import { useAuth } from "../context/AuthProvider";
+import { generarRecetaPDF } from "./utils/PDFDataGenerator";
 
 export default function RecipeHeader(){
 
     let { recipe_id } = useParams();
+    const { refreshAccessToken } = useAuth();
     const [ receta, setReceta ] = useState({});
     const [ loading, setLoading ] = useState(true);
-    console.log("we're going to croak it");
 
     useEffect(() => {
         const getReceta = async () => {
-            const receta = await backendAPI(`recetas/${recipe_id}/`);
-            setReceta(receta.data);
-            setLoading(false);
+            try{
+                const receta = await backendAPI(`recetas/${recipe_id}/`);
+                setReceta(receta.data);
+            } catch(error){
+                if(error.response?.status == 401){
+                    await refreshAccessToken(getReceta);
+                }
+            } finally{
+                setLoading(false);
+            }
         };
         setLoading(true);
         getReceta();
@@ -36,7 +45,7 @@ export default function RecipeHeader(){
             <div className={styles.recipeHeaderDataContainer}>
                 <div className={styles.recipeHeaderData}>
                     <h3 className={styles.recipeHeaderName}>{receta.nombre}</h3>
-                    <p className={styles.recipeHeaderType}>Postre</p>
+                    <p className={styles.recipeHeaderType}>{receta.categoria_info.nombre}</p>
                     <div className={styles.recipeHeaderRating}>
                         <div className={styles.recipeHeaderStars}>
                             <ReactSVG src={`/src/assets/Iconos/star.svg`}/>
@@ -47,13 +56,14 @@ export default function RecipeHeader(){
                         </div>
                         <p className={styles.recipeRatingText}>Promedio: 4.5 (10)</p>
                     </div>
-                    <Link to={`/user/${receta.creador_info.id}`} className={styles.recipeHeaderCreator}>
-                        <img src={receta.creador_info.profile_picture}/>
-                        <p className={styles.recipeHeaderCreatorName}>{receta.creador_info.name}</p>
+                    <Link to={`/user/${receta?.creador_info?.id}`} className={styles.recipeHeaderCreator}>
+                        <img src={receta.creador_info?.profile_picture}/>
+                        <p className={styles.recipeHeaderCreatorName}>{receta.creador_info?.name}</p>
                     </Link>
                     <p className={styles.recipeHeaderQuote}>{receta.frase}</p>
                     <div className={styles.recipeHeaderActions}>
                         <CircleButton iconName={"heart-outline"} iconSize="3.5rem"/>
+                        <CircleButton action={generarRecetaPDF} args={[receta]} text="Descargar PDF" iconName={"document-attach"} iconSize="3.5rem"/>
                     </div>
                 </div>
                 <RecipeContents recipe={receta}/>

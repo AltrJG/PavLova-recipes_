@@ -84,9 +84,9 @@ const Tooltip = styled.span`
   }
 `;
 
-const CircleButton = ({ iconName = "heart-outline", iconSize = "3rem", text = "Agregar a favoritos", top = false }) => {
+const CircleButton = ({ iconName = "heart-outline", iconSize = "3rem", text = "Agregar a favoritos", top = false, action = null, args = null }) => {
   return (
-    <ActionButton $iconSize={iconSize} $top={top}>
+    <ActionButton onClick={() => action != null && action(...args)} $iconSize={iconSize} $top={top}>
       <ReactSVG src={`/src/assets/Iconos/${iconName}.svg`}/>
       <Tooltip $top={top}>{text}</Tooltip>
     </ActionButton>
