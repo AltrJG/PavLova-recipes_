@@ -1,0 +1,142 @@
+.planAlimenticioSeparation{
+    display: grid;
+    grid-template-columns: 1fr 40rem;
+    grid-gap: 1rem;
+}
+
+.planMainContent{
+    margin-top: 1rem;
+}
+
+.planImportantData{
+    margin-right: 1rem;
+}
+
+.daysContainer{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0 1rem;
+    background-color: rgba(255, 255, 255, 0.505);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 2rem;
+    max-width: max-content;
+}
+
+.dias{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: .5rem 0;
+    border-radius: 2rem;
+    cursor: pointer;
+    padding: 0 1.5rem;
+    transition: .3s;
+}
+
+.dias:hover{
+    background-color: rgb(214, 214, 214);
+    transform: scale(1.03);
+}
+
+.diaNumero{
+    font-family: 'Oswald', sans-serif;
+    font-size: 2.5rem;
+}
+
+.diaTexto{
+    margin-left: .8rem;
+    font-family: 'Lato', sans-serif;
+    font-size: 2rem;
+}
+
+.activeDay.dias{
+    box-shadow: 0 1px 8px rgba(255, 123, 0, 0.648);
+    color: white;
+    transform: scale(1.03);
+    background: rgb(241,180,52);
+    background: -moz-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: -webkit-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#f1b434",endColorstr="#fc7302",GradientType=1); 
+}
+
+.recipeAddIcon svg{
+    width: 5rem;
+    height: 5rem;
+}
+
+.addRecipes{
+    cursor: pointer;
+    padding: 2rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    border: .4rem dashed orange;
+    color: rgb(255, 140, 0);
+    background-color: rgba(255, 190, 70, 0.193);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    border-radius: 2rem;
+    font-size: 2rem;
+    transition: .3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.addRecipes:hover{
+    transform: scale(1.03);
+    box-shadow: 0 4px 8px rgba(255, 111, 0, 0.507);
+    background-color: orange;
+    color: white;
+}
+
+.recipeNutritionTable{
+    padding: 1rem;
+    background: rgb(241,180,52);
+    background: -moz-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: -webkit-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#f1b434",endColorstr="#fc7302",GradientType=1);
+    border-radius: 2rem;
+}
+
+.headerInfoNutricional{
+    font-size: 2rem;
+    font-family: 'Oswald', sans-serif;
+    text-align: center;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+@media(max-width: 75em){
+    .planAlimenticioSeparation{
+        grid-template-columns: 1fr;
+    }
+    .daysContainer{
+        justify-self: center;
+    }
+}
+
+@media(max-width: 46.9375em){
+    .diaNumero{
+        font-size: 2rem;
+    }
+    .diaTexto{
+        font-size: 1.5rem;
+    }
+    .dias{
+        margin: .3rem 0;
+        padding: 0 1rem;
+    }
+    .addRecipes{
+        font-size: 1.6rem;
+    }
+}
+
+@media(max-width: 34.375em){
+    .planImportantData{
+        margin-right: 0;
+    }
+}

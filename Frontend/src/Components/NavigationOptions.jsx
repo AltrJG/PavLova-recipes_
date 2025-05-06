@@ -31,7 +31,7 @@ export default function NavigationOptions(){
                     <LinkSidebar action={toggleMenu} text={"Mis Ingredientes"} iconWhenActive={"list"} icon={"list-outline"} linkActiveText={["/extraOptions"]} redirectTo={"/extraOptions"}/>
                 </div>
                 <div className={`${styles.moreOptions} ${extraMenu ? styles.moreOptionsActive : ""}`}>
-                    <LinkSidebar extraMenuRight={true} text={"Plan Alimenticio"} iconWhenActive={"calendar"} icon={"calendar-outline"} linkActiveText={["/yes"]} redirectTo={"/yes"}/>
+                    <LinkSidebar extraMenuRight={true} text={"Plan Alimenticio"} iconWhenActive={"calendar"} icon={"calendar-outline"} linkActiveText={["/plan-alimenticio"]} redirectTo={"/plan-alimenticio"}/>
                     <LinkSidebar extraMenuRight={true} text={"Perfil"} iconWhenActive={"person"} icon={"person-outline"} linkActiveText={["/mi-perfil"]} redirectTo={"/mi-perfil"}/>
                     {(isSuperUser || isStaff) && <LinkSidebar extraMenuRight={true} text={isSuperUser ? "Categorias y Etiquetas" : "Gestionar Etiquetas"} iconWhenActive={"bookmarks"} icon={"bookmarks-outline"} linkActiveText={["/etiquetas"]} redirectTo={"/etiquetas"}/> }
                 </div>

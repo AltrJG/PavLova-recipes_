@@ -42,3 +42,30 @@ export const calcularNutrienteAporteCalorias = (informacionNutrimental) =>{
     console.log(porcentajesNutrimentales)
     return porcentajesNutrimentales;
 }
+
+export const calcularPorcentajesVDR = (informacionNutrimental) => {
+    // Valores diarios recomendados aproximados (pueden ajustarse según la fuente oficial)
+    const VDR = {
+      calorias: 2000,               // kcal
+      proteina: 50,                 // g
+      carbohidratos: 275,          // g
+      grasas_saturadas: 20,        // g
+      grasas_insaturadas: 44,      // g (ejemplo para grasas saludables)
+      grasas_trans: 2              // g (máximo tolerado)
+    };
+  
+    const calcularPorcentaje = (valor, referencia) =>
+      ((valor / referencia) * 100).toFixed(2);
+  
+    const porcentajesVDR = {
+      proteina: calcularPorcentaje(informacionNutrimental.proteina, VDR.proteina),
+      carbohidratos: calcularPorcentaje(informacionNutrimental.carbohidratos, VDR.carbohidratos),
+      grasas_saturadas: calcularPorcentaje(informacionNutrimental.grasas_saturadas, VDR.grasas_saturadas),
+      grasas_insaturadas: calcularPorcentaje(informacionNutrimental.grasas_insaturadas, VDR.grasas_insaturadas),
+      grasas_trans: calcularPorcentaje(informacionNutrimental.grasas_trans, VDR.grasas_trans),
+      calorias: calcularPorcentaje(informacionNutrimental.calorias, VDR.calorias)
+    };
+  
+    console.log(porcentajesVDR);
+    return porcentajesVDR;
+  };

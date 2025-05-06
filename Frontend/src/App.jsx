@@ -22,6 +22,7 @@ import CrearReceta from './pages/CrearReceta'
 import SearchRecipes from './pages/SearchRecipes'
 import UserRecipes from './pages/UserRecipes'
 import { NutritionalDataRecipeProvider } from './context/NutritionalDataRecipeProvider'
+import PlanAlimenticio from './pages/PlanAlimenticio'
 
 function App() {
 
@@ -44,6 +45,7 @@ function App() {
                     <Route path='ingredientes' element={<UserIngredients/>}/>
                     <Route path='/mis_recetas' element={<UserRecipes/>}/>
                     <Route path='crear-receta' element={<CrearReceta/>}/>
+                    <Route path='plan-alimenticio' element={<PlanAlimenticio/>}/>
                   </Route>
                   <Route element={<RestrictedRoute isStaffAllowed={true} isSuperUserAllowed={true}/>}>
                     <Route path='etiquetas' element={<EtiquetaCategoria/>}/>

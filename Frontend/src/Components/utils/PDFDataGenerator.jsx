@@ -1,6 +1,7 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import templatePdf from '../../assets/recetas_plantilla.pdf';
 import { saveAs } from 'file-saver';
+import { calcularNutrientes, calcularNutrienteAporteCalorias, calcularPorcentajesVDR } from './calculadorNutrientes';
 
 export async function generarRecetaPDF(recetaData) {
   const existingPdfBytes = await fetch(templatePdf).then(res => res.arrayBuffer());
@@ -17,6 +18,7 @@ export async function generarRecetaPDF(recetaData) {
   const addTemplatePage2 = async () => {
     let currentIndex = pdfDoc.getPages().indexOf(page);
     currentIndex == 0 && currentIndex++;
+    currentIndex == 1 && currentIndex++;
     if(currentIndex >= paginasGeneradas[paginasGeneradas.length -1]){
         const [copiedPage] = await pdfDoc.copyPages(pdfDoc, [1]);
         let newPage = pdfDoc.addPage(copiedPage);
@@ -111,6 +113,39 @@ export async function generarRecetaPDF(recetaData) {
     page.drawText("Error al leer procedimiento", { x: 230, y: yProceso, size: 10, font });
   }
 
+  // Agregar copia de la pagina de informacion nutricional
+  const [nutritionalPage] = await pdfDoc.copyPages(pdfDoc, [2]);
+  pdfDoc.addPage(nutritionalPage);
+  page = nutritionalPage;
+
+  // Calcular Valores nutricionales
+  let nutrientes = calcularNutrientes(recetaData.ingredientes, recetaData.porciones, 1);
+  let porcentajePorCalorias = calcularNutrienteAporteCalorias(nutrientes);
+  let porcentajeNutricionalDiario = calcularPorcentajesVDR(nutrientes);
+
+  // Llenar los campos con la informacion nutricional
+  page.drawText((`${nutrientes.calorias.toFixed(2)} g`), { x: 375, y: height - 120, size: 20, font, maxWidth: 300 });
+  page.drawText((`${nutrientes.carbohidratos.toFixed(2)} g`), { x: 375, y: height - 160, size: 20, font, maxWidth: 300 });
+  page.drawText((`${nutrientes.proteina.toFixed(2)} g`), { x: 375, y: height - 200, size: 20, font, maxWidth: 300 });
+  page.drawText((`${nutrientes.grasas_saturadas.toFixed(2)} g`), { x: 375, y: height - 240, size: 20, font, maxWidth: 300 });
+  page.drawText((`${nutrientes.grasas_insaturadas.toFixed(2)} g`), { x: 375, y: height - 280, size: 20, font, maxWidth: 300 });
+  page.drawText((`${nutrientes.grasas_trans.toFixed(2)} g`), { x: 375, y: height - 320, size: 20, font, maxWidth: 300 });
+  page.drawText((`${nutrientes.sodio.toFixed(2)} g`), { x: 375, y: height - 360, size: 20, font, maxWidth: 300 });
+
+  page.drawText((`${porcentajePorCalorias.grasas_saturadas}%`), { x: 60, y: height - 541, size: 16, font, maxWidth: 300 });
+  page.drawText((`${porcentajePorCalorias.grasas_insaturadas}%`), { x: 172, y: height - 541, size: 16, font, maxWidth: 300 });
+  page.drawText((`${porcentajePorCalorias.grasas_trans}%`), { x: 284, y: height - 541, size: 16, font, maxWidth: 300 });
+  page.drawText((`${porcentajePorCalorias.proteina}%`), { x: 396, y: height - 541, size: 16, font, maxWidth: 300 });
+  page.drawText((`${porcentajePorCalorias.carbohidratos}%`), { x: 496, y: height - 541, size: 16, font, maxWidth: 300 });
+
+  page.drawText((`${porcentajeNutricionalDiario.grasas_saturadas}%`), { x: 50, y: height - 733, size: 16, font, maxWidth: 300 });
+  page.drawText((`${porcentajeNutricionalDiario.grasas_insaturadas}%`), { x: 145, y: height - 733, size: 16, font, maxWidth: 300 });
+  page.drawText((`${porcentajeNutricionalDiario.grasas_trans}%`), { x: 235, y: height - 733, size: 16, font, maxWidth: 300 });
+  page.drawText((`${porcentajeNutricionalDiario.proteina}%`), { x: 330, y: height - 733, size: 16, font, maxWidth: 300 });
+  page.drawText((`${porcentajeNutricionalDiario.carbohidratos}%`), { x: 415, y: height - 733, size: 16, font, maxWidth: 300 });
+  page.drawText((`${porcentajeNutricionalDiario.calorias}%`), { x: 510, y: height - 733, size: 16, font, maxWidth: 300 });
+
+  pdfDoc.removePage(1);
   pdfDoc.removePage(1);
 
   const pdfBytes = await pdfDoc.save();
