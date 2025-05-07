@@ -29,6 +29,7 @@
     "react-select": "^5.10.1",
     "react-spinners": "^0.15.0",
     "react-svg": "^16.3.0",
+    "recharts": "^2.15.3",
     "slate": "^0.112.0",
     "slate-history": "^0.113.1",
     "slate-react": "^0.112.1",

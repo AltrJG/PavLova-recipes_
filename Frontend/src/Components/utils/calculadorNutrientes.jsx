@@ -10,8 +10,10 @@ export const calcularNutrientes = (ingredientes, porcionInicial, porcionFinal) =
         grasas_trans: 0,
         sodio: 0
     }
+    console.log(ingredientes);
     ingredientes.map(ingredient => {
-        let conversion = (ingredient.cantidad/porcionInicial) * (porcionFinal);
+        let metrica = ingredient.unidad == 'cucharadita' ? 5 : (ingredient.unidad == 'cucharada' ? 15 : (ingredient.unidad == 'taza' ? 250 : 1));
+        let conversion = ((ingredient.cantidad*metrica)/porcionInicial) * (porcionFinal);
         informacionNutrimental.calorias += (ingredient.ingrediente.calorias * (conversion));
         informacionNutrimental.proteina += (ingredient.ingrediente.proteinas * (conversion));
         informacionNutrimental.carbohidratos += (ingredient.ingrediente.carbohidratos * (conversion));

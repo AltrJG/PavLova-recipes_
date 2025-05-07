@@ -130,7 +130,7 @@ export async function generarRecetaPDF(recetaData) {
   page.drawText((`${nutrientes.grasas_saturadas.toFixed(2)} g`), { x: 375, y: height - 240, size: 20, font, maxWidth: 300 });
   page.drawText((`${nutrientes.grasas_insaturadas.toFixed(2)} g`), { x: 375, y: height - 280, size: 20, font, maxWidth: 300 });
   page.drawText((`${nutrientes.grasas_trans.toFixed(2)} g`), { x: 375, y: height - 320, size: 20, font, maxWidth: 300 });
-  page.drawText((`${nutrientes.sodio.toFixed(2)} g`), { x: 375, y: height - 360, size: 20, font, maxWidth: 300 });
+  page.drawText((`${nutrientes.sodio.toFixed(2)} mg`), { x: 375, y: height - 360, size: 20, font, maxWidth: 300 });
 
   page.drawText((`${porcentajePorCalorias.grasas_saturadas}%`), { x: 60, y: height - 541, size: 16, font, maxWidth: 300 });
   page.drawText((`${porcentajePorCalorias.grasas_insaturadas}%`), { x: 172, y: height - 541, size: 16, font, maxWidth: 300 });

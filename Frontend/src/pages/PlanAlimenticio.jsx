@@ -1,15 +1,51 @@
 import { useState } from 'react';
 import BurbujaCanvas from '../Components/BurbujaCanvas';
 import Help from '../Components/Help';
+import ShowImage from '../components/ShowImage';
 import styles from './PlanAlimenticio.module.css';
 import Recipe from '../Components/Recipe';
 import PlusIcon from '../assets/Iconos/add-circle-outline.svg';
+import CalendarIcon from '../assets/Iconos/calendar-outline.svg';
 import { ReactSVG } from 'react-svg';
 import NutritionalTable from '../Components/NutritionalTable';
+import tempImg from '../assets/manzana_test.png';
+import PieChartComponent from '../Components/PieChart';
+import RadialChartComponent from '../Components/RadialChart';
 
 export default function PlanAlimenticio(){
 
     const [ activeDay, setActiveDay ] = useState(1);
+    const [ nutritionalObjectives, setNutritionalObjectives ] = useState({
+        calorias: 2000,               // kcal
+        proteina: 50,                 // g
+        carbohidratos: 275,          // g
+        grasas_saturadas: 20,        // g
+        grasas_insaturadas: 44,      // g
+        grasas_trans: 2,             // g
+        sodio: 2300                  // mg
+    });
+    const [ currentNutritionalValues, setCurrentNutritionalValues ] = useState({
+        calorias: 800,               // kcal
+        proteina: 35,                 // g
+        carbohidratos: 100,          // g
+        grasas_saturadas: 5,        // g
+        grasas_insaturadas: 12,      // g
+        grasas_trans: 1,             // g
+        sodio: 1000                  // mg
+    });
+
+    const changeTemp = () => {
+        setCurrentNutritionalValues(nutritionalObjectives);
+    }
+
+    const nutrientesPorCalorias = [
+        { name: 'Grasas Saturadas', value: 23.44 },
+        { name: 'Grasas Insaturadas', value: 12.46 },
+        { name: 'Grasas Trans', value: 1.02 },
+        { name: 'Proteina', value: 4.04 },
+        { name: 'Carbohidratos', value: 58.76 },
+      ];
+
     const days = [
         { value: 1, day: 'dayOne' },
         { value: 2, day: 'dayTwo' },
@@ -18,7 +54,34 @@ export default function PlanAlimenticio(){
         { value: 5, day: 'dayFive' },
         { value: 6, day: 'daySix' },
         { value: 7, day: 'daySeven' }
-    ]
+    ];
+
+    const ingredientesView = [
+        {
+          text: "1 taza de Harina de Trigo",
+          image: null
+        },
+        {
+          text: "2 cucharadas de Azúcar Morena",
+          image: tempImg
+        },
+        {
+          text: "3 huevos grandes",
+          image: tempImg
+        },
+        {
+          text: "100 ml de Leche Entera",
+          image: null
+        },
+        {
+          text: "Una pizca de sal fina",
+          image: null
+        },
+        {
+          text: "1 cucharadita de extracto de vainilla natural",
+          image: tempImg
+        }
+      ];
 
     const nutritionalData = {
         Calorias: `50 Kcal`,
@@ -28,7 +91,7 @@ export default function PlanAlimenticio(){
         'Grasas Insaturadas': `50g`,
         'Grasas Trans': `50g`,
         Sodio: `50mg`
-    }
+    };
 
     return(
         <section className={styles.planAlimenticioContainer}>
@@ -47,11 +110,25 @@ export default function PlanAlimenticio(){
                             <button className={styles.addRecipes}><span className={styles.recipeAddIcon}><ReactSVG src={PlusIcon}/></span>Agregar Recetas...</button>
                         </div>
                     </div>
+                    <div className={styles.objectiveCharts}>
+                        {Object.keys(nutritionalObjectives).map(key => <div className={styles.objectiveChartSingle}><h4>{key.toUpperCase().replace('_', ' ')}</h4><RadialChartComponent data={[{name: `Objetivo: ${nutritionalObjectives[key]}`, uv: nutritionalObjectives[key], fill: '#FF9900'},{name: `Meta: ${currentNutritionalValues[key]}`, uv: currentNutritionalValues[key], fill: '#FF5E00'}]}/></div>)}
+                        <button className={styles.addRecipes}><span className={styles.recipeAddIcon}><ReactSVG src={CalendarIcon}/></span>Cambiar Objetivos...</button>
+                    </div>
                 </div>
-                <div className={styles.planImportantData}>
+                <div onClick={() => changeTemp()} className={styles.planImportantData}>
                     <div className={styles.recipeNutritionTable}>
                         <h5 className={styles.headerInfoNutricional}>Informacion Nutricional</h5>
                         <NutritionalTable nutritionalData={nutritionalData}/>
+                    </div>
+                    <div className={styles.recipeContentsUsefulData}>
+                        <h4 className={styles.recipeContentsText}>Ingredientes:</h4>
+                        <div className={styles.ingredientsContainer}>
+                            { ingredientesView.map(ingredient => <ShowImage key={ingredient.text} text={ingredient.text} position={ingredient.text.length > 20 ? 'Top' : 'Right'} width={'17'} height={'12'} hasImage={ingredient.image != null} image={ingredient.image}/>)}
+                        </div>
+                    </div>
+                    <div className={styles.recipeNutrientsPerCalories}>
+                        <h4 className={styles.recipeNutrientsPerCaloriesHeader}>Nutrientes Por Calorias:</h4>
+                        <PieChartComponent data={nutrientesPorCalorias}/>
                     </div>
                 </div>
             </div>
