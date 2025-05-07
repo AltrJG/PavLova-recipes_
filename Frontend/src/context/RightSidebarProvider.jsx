@@ -12,7 +12,9 @@ const initialState = {
     categoriaEtiquetaForm: false,
     categoriaModify: false,
     etiquetaModify: false,
-    categoriaEtiquetaModify: null
+    categoriaEtiquetaModify: null,
+    nutritionalObjectivesForm: false,
+    nutritionalObjectives: {}
 }
 
 function reducer(state, action){
@@ -22,13 +24,13 @@ function reducer(state, action){
         case 'rightSidebar/close':
             return { ...state, isOpen: false }
         case 'rightSidebar/openModifyProfile':
-            return { ...state, modifyProfile: true, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null }
+            return { ...state, modifyProfile: true, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {} }
         case 'rightSidebar/openUpdatePermissions':
-            return { ...state, modifyProfile: false, updatePermissions: true, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null }
+            return { ...state, modifyProfile: false, updatePermissions: true, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {} }
         case 'rightSidebar/openIngredientForm':
-            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: true, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null }
+            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: true, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {} }
         case 'rightSidebar/openCategoriaEtiquetaForm':
-            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: true, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null }
+            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: true, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {} }
         case 'rightSidebar/setUserModify':
             return { ...state, userModify: action.payload }
         case 'rightSidebar/setCategoriaModify':
@@ -37,11 +39,13 @@ function reducer(state, action){
             return { ...state, categoriaModify: false, etiquetaModify: true, categoriaEtiquetaModify: action.payload }
         case 'rightSidebar/setIngredientModify':
             return { ...state, ingredientModify: action.payload }
+        case 'rightSidebar/openNutritionalObjectivesForm':
+            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: true, nutritionalObjectives: action.payload  }
     }
 }
 
 const RightSidebarProvider = ({ children }) => {
-    const [{ isOpen, updatePermissions, modifyProfile, userModify, ingredientForm, ingredientModify, categoriaEtiquetaForm, categoriaEtiquetaModify, categoriaModify, etiquetaModify }, dispatch] = useReducer(reducer, initialState);
+    const [{ isOpen, updatePermissions, modifyProfile, userModify, ingredientForm, ingredientModify, categoriaEtiquetaForm, categoriaEtiquetaModify, categoriaModify, etiquetaModify, nutritionalObjectivesForm }, dispatch] = useReducer(reducer, initialState);
 
     function openRightSidebar(){
         dispatch({type: 'rightSidebar/open'});
@@ -74,6 +78,11 @@ const RightSidebarProvider = ({ children }) => {
         (categoriaEtiqueta != null && type != null) && (type == 'Categoria' ? dispatch({type: 'rightSidebar/setCategoriaModify', payload: categoriaEtiqueta}) : dispatch({type: 'rightSidebar/setEtiquetaModify', payload: categoriaEtiqueta}) )
     }
 
+    function openNutritionalObjectivesForm(objectives = null){
+        openRightSidebar();
+        dispatch({type: 'rightSidebar/openNutritionalObjectivesForm', payload: objectives});
+    }
+
     return (
         <RightSidebarContext.Provider value={{
             isOpen,
@@ -86,11 +95,13 @@ const RightSidebarProvider = ({ children }) => {
             categoriaEtiquetaModify,
             categoriaModify,
             etiquetaModify,
+            nutritionalObjectivesForm,
             openModifyProfile,
             openUpdatePermissions,
             closeRightSidebar,
             openIngredientModify,
-            openCategoriaEtiquetaForm
+            openCategoriaEtiquetaForm,
+            openNutritionalObjectivesForm
         }}>
             {children}
         </RightSidebarContext.Provider>

@@ -11,6 +11,7 @@ const initialState = {
     updatedEtiqueta: {},
     createdCategoria: {},
     updatedCategoria: {},
+    updatedObjectives: {}
 }
 
 function reducer(state, action){
@@ -39,11 +40,15 @@ function reducer(state, action){
             return { ...state, updatedEtiqueta: {}, createdEtiqueta: {}}
         case 'updateData/resetCategoriaState':
             return { ...state, updatedCategoria: {}, createdCategoria: {}}
+        case 'updateData/setNewObjectives':
+            return { ...state, updatedObjectives: action.payload }
+        case 'updateData/resetNewObjectives':
+            return { ...state, updatedObjectives: {}}
     }
 }
 
 const UpdateDataProvider = ({ children }) => {
-    const [{ updatedUser, disabledUser, createdIngredient, updatedIngredient, createdEtiqueta, updatedEtiqueta, createdCategoria, updatedCategoria }, dispatch] = useReducer(reducer, initialState);
+    const [{ updatedUser, disabledUser, createdIngredient, updatedIngredient, createdEtiqueta, updatedEtiqueta, createdCategoria, updatedCategoria, updatedObjectives }, dispatch] = useReducer(reducer, initialState);
 
     function setUpdatedUser(user){
         dispatch({type: 'updateData/updateUser', payload: user});
@@ -90,6 +95,14 @@ const UpdateDataProvider = ({ children }) => {
         dispatch({type: "updateData/resetCategoriaState"});
     }
 
+    function setNewObjectives(objectives = null){
+        dispatch({type: "updateData/setNewObjectives", payload: objectives});
+    }
+
+    function resetNewObjectives(){
+        dispatch({type: "updateData/resetNewObjectives"});
+    }
+
     return (
         <UpdateDataContext.Provider value={{
             updatedUser,
@@ -100,6 +113,7 @@ const UpdateDataProvider = ({ children }) => {
             updatedEtiqueta,
             createdCategoria,
             updatedCategoria,
+            updatedObjectives,
             setUpdatedUser,
             setDisabledUser,
             setCreatedIngredient,
@@ -110,7 +124,9 @@ const UpdateDataProvider = ({ children }) => {
             setUpdatedCategoria,
             resetUserState,
             resetIngredientState,
-            resetCategoriaEtiquetaState
+            resetCategoriaEtiquetaState,
+            setNewObjectives,
+            resetNewObjectives
         }}>
             {children}
         </UpdateDataContext.Provider>

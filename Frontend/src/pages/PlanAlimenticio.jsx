@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BurbujaCanvas from '../Components/BurbujaCanvas';
 import Help from '../Components/Help';
 import ShowImage from '../components/ShowImage';
@@ -11,9 +11,14 @@ import NutritionalTable from '../Components/NutritionalTable';
 import tempImg from '../assets/manzana_test.png';
 import PieChartComponent from '../Components/PieChart';
 import RadialChartComponent from '../Components/RadialChart';
+import MainButton from "../Components/MainButton";
+import { useRightSidebar } from '../context/RightSidebarProvider';
+import { useUpdateData } from '../context/UpdateDataProvider';
 
 export default function PlanAlimenticio(){
 
+    const { openNutritionalObjectivesForm } = useRightSidebar();
+    const { updatedObjectives, resetNewObjectives } = useUpdateData();
     const [ activeDay, setActiveDay ] = useState(1);
     const [ nutritionalObjectives, setNutritionalObjectives ] = useState({
         calorias: 2000,               // kcal
@@ -93,10 +98,27 @@ export default function PlanAlimenticio(){
         Sodio: `50mg`
     };
 
+    useEffect(() => {
+        if(Object.keys(updatedObjectives).length != 0){
+            setNutritionalObjectives({
+                calorias: updatedObjectives.calorias,               
+                proteina: updatedObjectives.proteina,                 
+                carbohidratos: updatedObjectives.carbohidratos,          
+                grasas_saturadas: updatedObjectives.grasas_saturadas,        
+                grasas_insaturadas: updatedObjectives.grasas_insaturadas,      
+                grasas_trans: updatedObjectives.grasas_trans,             
+                sodio: updatedObjectives.sodio                  
+            });
+            resetNewObjectives();
+        }
+    }, [updatedObjectives]);
+
     return(
         <section className={styles.planAlimenticioContainer}>
             <BurbujaCanvas/>
-            <Help title={'Plan alimenticio'} description={'Crea tu plan alimenticio'}></Help>
+            <Help title={'Plan alimenticio'} description={'Crea tu plan alimenticio'}>
+                <MainButton disabled={false} type="button" icon="settings" iconSize="3" fontSize="2.5" color="primary" borderRadius="1.5" text={"Plan AI"}/>
+            </Help>
             <div className={styles.planAlimenticioSeparation}>
                 <div className={styles.planMainContent}>
                     <div className={styles.daysContainer}>
@@ -112,7 +134,7 @@ export default function PlanAlimenticio(){
                     </div>
                     <div className={styles.objectiveCharts}>
                         {Object.keys(nutritionalObjectives).map(key => <div className={styles.objectiveChartSingle}><h4>{key.toUpperCase().replace('_', ' ')}</h4><RadialChartComponent data={[{name: `Objetivo: ${nutritionalObjectives[key]}`, uv: nutritionalObjectives[key], fill: '#FF9900'},{name: `Meta: ${currentNutritionalValues[key]}`, uv: currentNutritionalValues[key], fill: '#FF5E00'}]}/></div>)}
-                        <button className={styles.addRecipes}><span className={styles.recipeAddIcon}><ReactSVG src={CalendarIcon}/></span>Cambiar Objetivos...</button>
+                        <button onClick={() => openNutritionalObjectivesForm(nutritionalObjectives)} className={styles.addRecipes}><span className={styles.recipeAddIcon}><ReactSVG src={CalendarIcon}/></span>Cambiar Objetivos...</button>
                     </div>
                 </div>
                 <div onClick={() => changeTemp()} className={styles.planImportantData}>
