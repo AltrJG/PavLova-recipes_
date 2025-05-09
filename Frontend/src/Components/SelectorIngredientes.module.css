@@ -17,14 +17,16 @@
 
 .activeIngredientPicker{
   display: flex;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  background-color: #ffffffca;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  background-color: #ffffff9c;
   border-radius: 1rem;
   margin: 1rem 0 0 0;
   padding: 1rem;
   justify-content: center;
   align-self: stretch;
   transition: .3s;
+  backdrop-filter: blur( 3px );
+  -webkit-backdrop-filter: blur( 3px );
 }
 
 .textStart{

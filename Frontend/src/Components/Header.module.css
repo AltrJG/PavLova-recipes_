@@ -197,4 +197,10 @@
     .logoMobile img{
       width: 100%;
     }
+    .logInText{
+      font-size: 1rem;
+    }
+    .opciones_usuario{
+      width: 12rem;
+    }
   }

@@ -6,8 +6,8 @@
 
 .cardContainer{
     transition: all 0.2s;
-    background-color: rgba(255, 255, 255, 0.539);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    background-color: rgba(255, 255, 255, 0.342);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.076);
     border-radius: 1rem;
 }
 

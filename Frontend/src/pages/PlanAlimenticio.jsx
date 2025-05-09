@@ -14,11 +14,14 @@ import RadialChartComponent from '../Components/RadialChart';
 import MainButton from "../Components/MainButton";
 import { useRightSidebar } from '../context/RightSidebarProvider';
 import { useUpdateData } from '../context/UpdateDataProvider';
+import RecipePlanPicker from '../Components/RecipePlanPicker';
 
 export default function PlanAlimenticio(){
 
     const { openNutritionalObjectivesForm } = useRightSidebar();
     const { updatedObjectives, resetNewObjectives } = useUpdateData();
+    const [ activePicker, setActivePicker ] = useState(false);
+    const [ personas, setPersonas ] = useState(1);
     const [ activeDay, setActiveDay ] = useState(1);
     const [ nutritionalObjectives, setNutritionalObjectives ] = useState({
         calorias: 2000,               // kcal
@@ -109,6 +112,7 @@ export default function PlanAlimenticio(){
                 grasas_trans: updatedObjectives.grasas_trans,             
                 sodio: updatedObjectives.sodio                  
             });
+            setPersonas(updatedObjectives.personas);
             resetNewObjectives();
         }
     }, [updatedObjectives]);
@@ -116,24 +120,25 @@ export default function PlanAlimenticio(){
     return(
         <section className={styles.planAlimenticioContainer}>
             <BurbujaCanvas/>
+            <RecipePlanPicker activePicker={activePicker} setActivePicker={setActivePicker}/>
             <Help title={'Plan alimenticio'} description={'Crea tu plan alimenticio'}>
                 <MainButton disabled={false} type="button" icon="settings" iconSize="3" fontSize="2.5" color="primary" borderRadius="1.5" text={"Plan AI"}/>
             </Help>
             <div className={styles.planAlimenticioSeparation}>
                 <div className={styles.planMainContent}>
                     <div className={styles.daysContainer}>
-                        { days.map(day => <div onClick={() => setActiveDay(day.value)} key={day.value} className={`${styles.dias} ${activeDay == day.value ? styles.activeDay : ""}`}><div className={styles.diaNumero}>{day.value}</div><p className={styles.diaTexto}>Dia</p></div>) }
+                        { days.map(day => <div onClick={() => setActiveDay(day.value)} key={day.value} className={`${styles.dias} ${activeDay == day.value ? styles.activeDay : ""}`}><div key={day.value} className={styles.diaNumero}>{day.value}</div><p className={styles.diaTexto}>Dia</p></div>) }
                     </div>
                     <div className={styles.selectedRecipes}>
                         <div className="recipesContent">
-                            <Recipe/>
-                            <Recipe/>
-                            <Recipe/>
-                            <button className={styles.addRecipes}><span className={styles.recipeAddIcon}><ReactSVG src={PlusIcon}/></span>Agregar Recetas...</button>
+                            <Recipe cristal={true}/>
+                            <Recipe cristal={true}/>
+                            <Recipe cristal={true}/>
+                            <button onClick={() => setActivePicker(true)} className={styles.addRecipes}><span className={styles.recipeAddIcon}><ReactSVG src={PlusIcon}/></span>Agregar Recetas...</button>
                         </div>
                     </div>
                     <div className={styles.objectiveCharts}>
-                        {Object.keys(nutritionalObjectives).map(key => <div className={styles.objectiveChartSingle}><h4>{key.toUpperCase().replace('_', ' ')}</h4><RadialChartComponent data={[{name: `Objetivo: ${nutritionalObjectives[key]}`, uv: nutritionalObjectives[key], fill: '#FF9900'},{name: `Meta: ${currentNutritionalValues[key]}`, uv: currentNutritionalValues[key], fill: '#FF5E00'}]}/></div>)}
+                        {Object.keys(nutritionalObjectives).map(key => <div key={key} className={styles.objectiveChartSingle}><h4>{key.toUpperCase().replace('_', ' ')}</h4><RadialChartComponent data={[{name: `Objetivo: ${nutritionalObjectives[key]*personas}`, uv: nutritionalObjectives[key]*personas, fill: '#FF9900'},{name: `Meta: ${currentNutritionalValues[key]}`, uv: currentNutritionalValues[key], fill: '#FF5E00'}]}/></div>)}
                         <button onClick={() => openNutritionalObjectivesForm(nutritionalObjectives)} className={styles.addRecipes}><span className={styles.recipeAddIcon}><ReactSVG src={CalendarIcon}/></span>Cambiar Objetivos...</button>
                     </div>
                 </div>

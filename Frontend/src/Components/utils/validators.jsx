@@ -299,3 +299,13 @@ function tieneTexto(textoString){
         return false;
       }
 }
+
+export function checkNutritionalObjectives(objectivesData){
+    let errors = {};
+    Object.keys(objectivesData).forEach(objective => {
+        if(isNaN(objectivesData[objective]) || objectivesData[objective] <= 0){
+            errors[objective] = `${objective.replace('_', ' ').toUpperCase()} debe ser un numero mayor a 0`;
+        }
+    });
+    return errors;
+}

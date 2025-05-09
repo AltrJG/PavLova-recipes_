@@ -5,7 +5,7 @@ import MainButton from "./MainButton";
 import OptionButton from "./OptionButton";
 import SubidaImagenes from "./SubidaImagenes";
 import { useAuth } from "../context/AuthProvider";
-import { validateMailData, validateUserData, validatePasswordData } from "./utils/validators";
+import { checkNutritionalObjectives } from "./utils/validators";
 import backendAPI from "../api/axiosConfig";
 import RightSidebarErrors from "./RightSidebarErrors";
 import Swal from "sweetalert2";
@@ -41,7 +41,25 @@ export default function ObjectivesForm(){
 
     const handleChangeInformation = e => {
         e.preventDefault();
-        setNewObjectives(nutritionalObjectives);
+        let newObjectives = nutritionalObjectives;
+        newObjectives.personas = personas;
+        let errors = checkNutritionalObjectives(newObjectives);
+        setErrorsHandler(errors);
+        if(Object.keys(errors).length == 0){
+            setNewObjectives(nutritionalObjectives);
+            Swal.fire({
+                icon: "success",
+                title: "Objetivos actualizados",
+                text: 'Se han actualizado los objetivos con exito',
+                showConfirmButton: true,
+                customClass: {
+                    title: "swal_title",
+                    icon: "swal_icon",
+                    htmlContainer: "swal_text",
+                    confirmButton: "swal_confirm"
+                }
+            });
+        }
     };
 
     return(
@@ -61,7 +79,7 @@ export default function ObjectivesForm(){
                     className={styles.portionSlider}
                     />
                 </div>
-                <MainButton disabled={loading} type="submit" icon="settings" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={loading ? "Cambiando..." : "Cambiar Objetivos"} />
+                <MainButton disabled={loading} type="submit" icon="flame" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={loading ? "Cambiando..." : "Cambiar Objetivos"} />
             </RightSidebarForms> 
         </div>
     )

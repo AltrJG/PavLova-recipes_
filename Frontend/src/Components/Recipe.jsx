@@ -4,17 +4,17 @@ import { ReactSVG } from "react-svg";
 import CardButton from "./CardButton";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function Recipe({ isModificationAllowed = false, recipe, deleteAction }){
+export default function Recipe({ isModificationAllowed = false, recipe, deleteAction, cristal = false }){
 
     const navigate = useNavigate();
 
     return(
-        <div className={styles.recipeContainer}>
+        <div className={`${styles.recipeContainer}  ${cristal ? styles.cristal : ""}`}>
             <Link to={`/receta/${recipe?.id}`} style={isModificationAllowed ? { pointerEvents: "none" } : {}} className={styles.recipeImageContent}>
                 <img className={styles.recipeImage} src={recipe?.foto_receta}/>
                 <div className={styles.recipeRating}><ReactSVG src={`/src/assets/Iconos/star.svg`}/>4.9</div>
             </Link>
-            <Link to={`/receta/${recipe?.id}`} className={styles.recipeData}>
+            <Link to={`/receta/${recipe?.id}`} className={`${styles.recipeData}`}>
                 <h4 className={styles.recipeName}>{recipe?.nombre}</h4>
                 <p className={styles.recipeCategoria}>{recipe?.categoria_info?.nombre}</p>
                 <p className={styles.recipeAuthor}>{recipe?.creador_info?.name}</p>
