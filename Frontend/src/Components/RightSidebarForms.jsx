@@ -65,6 +65,37 @@ export default function RightSidebarForms({twoOnOne = false, action, formOptions
                             </textarea>
                             :( formInput.type === 'imageSingle' 
                                 ? <SubidaImagenes key={formInput.name} thumb={formInput.name == 'imagenCategoria' ? thumbCategoria : thumb} thumbInner={formInput.name == 'imagenCategoria' ? thumbInnerCategoria : thumbInner} files={formInput.imageData} setFiles={formInput.setImageData}/> 
+                                : (formInput.type == 'slider' 
+                                ? <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                    <input
+                                        id={formInput.name}
+                                        type="range"
+                                        name={formInput.name}
+                                        min={formInput.min}
+                                        max={formInput.max}
+                                        value={data[formInput.name] ?? formInput.defaultValue}
+                                        onChange={e =>
+                                            setData(formInputs => ({
+                                                ...formInputs,
+                                                [e.target.name]: Number(e.target.value)
+                                            }))
+                                        }
+                                    />
+                                    {formInput.showInput && (
+                                        <input
+                                            type="number"
+                                            min={formInput.min}
+                                            max={formInput.max}
+                                            value={data[formInput.name] ?? formInput.defaultValue}
+                                            onChange={e =>
+                                                setData(formInputs => ({
+                                                    ...formInputs,
+                                                    [formInput.name]: Number(e.target.value)
+                                                }))
+                                            }
+                                        />
+                                    )}
+                                </div> 
                                 : <input
                                 id={formInput.name}
                                 type={formInput.type}
@@ -72,7 +103,7 @@ export default function RightSidebarForms({twoOnOne = false, action, formOptions
                                 value={data[formInput.name]}
                                 onChange={e => setData(formInputs => ({...formInputs, [e.target.name]: e.target.value}))}
                             />
-                        ))}
+                        )))}
                     </div>
                 ))}
             </div>

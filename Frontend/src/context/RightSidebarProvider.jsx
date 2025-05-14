@@ -7,6 +7,8 @@ const initialState = {
     updatePermissions: false,
     modifyProfile: false,
     ingredientForm: false,
+    recipeAdvanceFiltersForm: false,
+    recipeAdvanceFilters: {},
     userModify: {},
     ingredientModify: null,
     categoriaEtiquetaForm: false,
@@ -41,11 +43,13 @@ function reducer(state, action){
             return { ...state, ingredientModify: action.payload }
         case 'rightSidebar/openNutritionalObjectivesForm':
             return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: true, nutritionalObjectives: action.payload  }
-    }
+        case 'rightSidebar/openRecipesAdvanceFilters':
+            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {}, recipeAdvanceFiltersForm: true, recipeAdvanceFilters: action.payload }
+        }
 }
 
 const RightSidebarProvider = ({ children }) => {
-    const [{ isOpen, updatePermissions, modifyProfile, userModify, ingredientForm, ingredientModify, categoriaEtiquetaForm, categoriaEtiquetaModify, categoriaModify, etiquetaModify, nutritionalObjectivesForm }, dispatch] = useReducer(reducer, initialState);
+    const [{ isOpen, updatePermissions, modifyProfile, userModify, ingredientForm, ingredientModify, categoriaEtiquetaForm, categoriaEtiquetaModify, categoriaModify, etiquetaModify, nutritionalObjectivesForm, recipeAdvanceFiltersForm, recipeAdvanceFilters }, dispatch] = useReducer(reducer, initialState);
 
     function openRightSidebar(){
         dispatch({type: 'rightSidebar/open'});
@@ -83,6 +87,11 @@ const RightSidebarProvider = ({ children }) => {
         dispatch({type: 'rightSidebar/openNutritionalObjectivesForm', payload: objectives});
     }
 
+    function openRecipesAdvanceFilters(filters = null){
+        openRightSidebar();
+        dispatch({type: 'rightSidebar/openRecipesAdvanceFilters', payload: filters});
+    }
+
     return (
         <RightSidebarContext.Provider value={{
             isOpen,
@@ -96,12 +105,15 @@ const RightSidebarProvider = ({ children }) => {
             categoriaModify,
             etiquetaModify,
             nutritionalObjectivesForm,
+            recipeAdvanceFiltersForm,
+            recipeAdvanceFilters,
             openModifyProfile,
             openUpdatePermissions,
             closeRightSidebar,
             openIngredientModify,
             openCategoriaEtiquetaForm,
-            openNutritionalObjectivesForm
+            openNutritionalObjectivesForm,
+            openRecipesAdvanceFilters
         }}>
             {children}
         </RightSidebarContext.Provider>

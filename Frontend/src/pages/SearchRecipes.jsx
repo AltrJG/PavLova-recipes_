@@ -8,8 +8,11 @@ import FilterForm from '../Components/FilterForm';
 import Recipe from '../Components/Recipe';
 import OptionButton from '../Components/OptionButton';
 import Pagination from '../Components/Pagination';
+import { useRightSidebar } from '../context/RightSidebarProvider';
 
 export default function SearchRecipes(){
+
+    const { openRecipesAdvanceFilters } = useRightSidebar();
 
     const [ activeCategoria, setActiveCategoria ] = useState('');
     const [ loading, setLoading ] = useState(true);
@@ -49,6 +52,10 @@ export default function SearchRecipes(){
     const getRecipes = () => {
 
     }
+
+    const openAdvanceFilters = () => {
+        openRecipesAdvanceFilters({});
+    }
     
     return(
         <>
@@ -57,7 +64,7 @@ export default function SearchRecipes(){
                     <div className={styles.filterOptions}>
                         { searchOptions.map(option => <OptionButton key={option.label} option={option} active={searchOption} setData={setSearchOption} icon={option.icon} makeRowOnMobile={false}/>)}
                     </div>
-                    <MainButton disabled={false} type={'button'} icon={"filter-circle"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Filtros avanzados"}/>
+                    <MainButton action={openAdvanceFilters} disabled={false} type={'button'} icon={"filter-circle"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Filtros avanzados"}/>
                 </div>
             </Help>
             <div className={styles.searchRecipesContainer}>
