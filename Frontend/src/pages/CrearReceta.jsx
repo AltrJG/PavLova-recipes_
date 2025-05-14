@@ -16,12 +16,15 @@ import { FadeLoader } from 'react-spinners';
 import { useAuth } from '../context/AuthProvider';
 import Swal from 'sweetalert2';
 import RightSidebarErrors from '../Components/RightSidebarErrors';
+import RotatingBall from '../Components/RotatingBall';
+import { useUpdateData } from '../context/UpdateDataProvider';
 
 export default function CrearReceta() {
 
   const [active, setActive] = useState('info');
   const [ searchParams ] = useSearchParams();
   const { refreshAccessToken, user, isStaff, isSuperUser } = useAuth();
+  const { createdIngredient, resetIngredientState } = useUpdateData();
   const [ loading, setLoading ] = useState(true);
   const [ isUpdateActive, setIsUpdateActive ] = useState(false);
   const [ loadingRequest, setLoadingRequest ] = useState(false);
@@ -132,6 +135,17 @@ export default function CrearReceta() {
     }
   }, []);
 
+  useEffect(() => {
+    const updateIngredientOptions = async () => {
+      if(Object.keys(createdIngredient).length != 0){
+        const ingredientes = await backendAPI.get('/ingredientes');
+        setIngredientOptions(ingredientes.data.results);
+        resetIngredientState();
+      }
+    }
+    updateIngredientOptions();
+  }, [createdIngredient]);
+
   const handleIngredientesSeleccionados = ingredientesActivos => {
     let newIngredients = ingredientesActivos.map(ingrediente => {
       if(activeIngredientOptions.findIndex(ingred => ingred.id == ingrediente.id) == -1){
@@ -226,6 +240,7 @@ export default function CrearReceta() {
   return (
     <div className={styles.container}>
       <BurbujaCanvas />
+      <RotatingBall />
       {loading 
       ? <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
       : <><Help title={"Crear o Editar receta"} description={"Crea o modifica la receta seleccionada"}>

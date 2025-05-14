@@ -3,8 +3,11 @@ import styles from './SelectorIngredientes.module.css';
 import { useEffect, useState } from 'react';
 import icon from '../assets/Iconos/trash.svg'
 import { ReactSVG } from 'react-svg';
+import { useRightSidebar } from '../context/RightSidebarProvider';
 
 export default function SelectorIngredientes({ingredientes, porciones, setPorciones, handleChange, handleFormChange, activeIngredients, removeIngredient}){
+
+    const { openIngredientModify } = useRightSidebar();
 
     const customStyles = {
         noOptionsMessage: (base) => ({
@@ -49,6 +52,7 @@ export default function SelectorIngredientes({ingredientes, porciones, setPorcio
 
     return(
         <div className={styles.selectorIngredientesContainer}>
+            <p className={styles.createIngredientContainer}>No encuentras un ingrediente? <button onClick={() => openIngredientModify(null)} className={styles.createIngredientButton}>Crear Ingrediente</button></p>
             <Select placeholder={"Elige los ingredientes..."} value={activeIngredients} onChange={handleChange} components={{ Option: CustomOption }} styles={customStyles} noOptionsMessage={() => "No hay ingredientes disponibles"} classNamePrefix="selectorMulti" unstyled isMulti className={'selectorMulti'} options={ingredientesDisponibles}/>
             <div className={styles.portionSliderContainer}>
                 <p className={styles.portionSliderText}>Porciones: <span className={styles.portionSliderValue}>{porciones}</span></p>

@@ -39,3 +39,19 @@
         margin-bottom: 1rem;
     }
 }
+
+@media(max-width: 31.25em){
+    .title,
+    .description{
+        text-align: center;
+    }
+    .help{
+        width: 100%;
+    }
+    .changeUserData{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

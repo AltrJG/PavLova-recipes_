@@ -1,5 +1,5 @@
 .selectorMulti {
-    background: white;
+    background: rgba(255, 255, 255, 0);
     border-radius: 1rem;
     width: 100%;
     padding: 1rem;
@@ -121,10 +121,12 @@
 .portionSliderContainer{
   display: flex;
   align-items: center;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.53);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   border-radius: 1rem;
   margin: 1rem 0 0 0;
   padding: .5rem 1rem;
+  backdrop-filter: blur(3px);
 }
 
 .portionSliderText{
@@ -137,10 +139,33 @@
   font-size: 1.6rem;
   font-weight: 900;
   margin-right: 1rem;
+  color: orange;
 }
 
 .portionSlider{
   width: 40% !important;
+}
+
+.createIngredientContainer{
+  font-size: 1.6rem;
+  font-family: 'Lato', sans-serif;
+  margin-bottom: 1rem;
+}
+
+.createIngredientButton{
+  background-color: rgba(255, 208, 122, 0.637);
+  border: none;
+  border-radius: 1rem;
+  padding: .3rem 1rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.createIngredientButton:hover{
+  background-color: orange;
+  color: white;
 }
 
 @media(max-width: 31.25em){

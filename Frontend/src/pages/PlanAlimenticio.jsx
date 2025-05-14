@@ -15,6 +15,10 @@ import MainButton from "../Components/MainButton";
 import { useRightSidebar } from '../context/RightSidebarProvider';
 import { useUpdateData } from '../context/UpdateDataProvider';
 import RecipePlanPicker from '../Components/RecipePlanPicker';
+import RotatingBall from '../Components/RotatingBall';
+import CircleButton from '../Components/CircleButton';
+import flameIcon from '../assets/Iconos/flame.svg';
+import timeIcon from '../assets/Iconos/timer.svg';
 
 export default function PlanAlimenticio(){
 
@@ -120,14 +124,19 @@ export default function PlanAlimenticio(){
     return(
         <section className={styles.planAlimenticioContainer}>
             <BurbujaCanvas/>
+            <RotatingBall/>
             <RecipePlanPicker activePicker={activePicker} setActivePicker={setActivePicker}/>
             <Help title={'Plan alimenticio'} description={'Crea tu plan alimenticio'}>
                 <MainButton disabled={false} type="button" icon="settings" iconSize="3" fontSize="2.5" color="primary" borderRadius="1.5" text={"Plan AI"}/>
             </Help>
             <div className={styles.planAlimenticioSeparation}>
                 <div className={styles.planMainContent}>
-                    <div className={styles.daysContainer}>
-                        { days.map(day => <div onClick={() => setActiveDay(day.value)} key={day.value} className={`${styles.dias} ${activeDay == day.value ? styles.activeDay : ""}`}><div key={day.value} className={styles.diaNumero}>{day.value}</div><p className={styles.diaTexto}>Dia</p></div>) }
+                    <div className={styles.pdfDaysContainer}>
+                        <div className={styles.daysContainer}>
+                            { days.map(day => <div onClick={() => setActiveDay(day.value)} key={day.value} className={`${styles.dias} ${activeDay == day.value ? styles.activeDay : ""}`}><div key={day.value} className={styles.diaNumero}>{day.value}</div><p className={styles.diaTexto}>Dia</p></div>) }                        
+                        </div>
+                        <CircleButton text="Descargar PDF de este dia" iconName={"document-attach"} iconSize="3rem"/>
+                        <CircleButton text="Descargar PDF del Plan" iconName={"folder-with-document"} iconSize="3rem"/>
                     </div>
                     <div className={styles.selectedRecipes}>
                         <div className="recipesContent">
@@ -151,6 +160,13 @@ export default function PlanAlimenticio(){
                         <h4 className={styles.recipeContentsText}>Ingredientes:</h4>
                         <div className={styles.ingredientsContainer}>
                             { ingredientesView.map(ingredient => <ShowImage key={ingredient.text} text={ingredient.text} position={ingredient.text.length > 20 ? 'Top' : 'Right'} width={'17'} height={'12'} hasImage={ingredient.image != null} image={ingredient.image}/>)}
+                        </div>
+                    </div>
+                    <div className={styles.planTimesContainer}>
+                        <h5 className={styles.planTimesDescription}>Tiempos:</h5>
+                        <div className={styles.planTimes}>
+                            <div className={styles.timePreparation}><ReactSVG src={timeIcon}/> {`10 Minutos`}</div>
+                            <div className={styles.timePreparation}><ReactSVG src={flameIcon}/> {`10 Minutos`}</div>
                         </div>
                     </div>
                     <div className={styles.recipeNutrientsPerCalories}>

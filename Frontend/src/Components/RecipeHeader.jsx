@@ -9,6 +9,8 @@ import { ReactSVG } from "react-svg";
 import RecipeComments from "./RecipeComments";
 import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import flameIcon from '../assets/Iconos/flame.svg';
+import timeIcon from '../assets/Iconos/timer.svg';
 import backendAPI from "../api/axiosConfig";
 import { FadeLoader } from "react-spinners";
 import { useAuth } from "../context/AuthProvider";
@@ -60,6 +62,10 @@ export default function RecipeHeader(){
                         <img src={receta.creador_info?.profile_picture}/>
                         <p className={styles.recipeHeaderCreatorName}>{receta.creador_info?.name}</p>
                     </Link>
+                    <div className={styles.timesContainer}>
+                        <div className={styles.timePreparation}><ReactSVG src={timeIcon}/> {`${receta.tiempo_preparacion} Minutos`}</div>
+                        <div className={styles.timePreparation}><ReactSVG src={flameIcon}/> {`${receta.tiempo_coccion} Minutos`}</div>
+                    </div>
                     <p className={styles.recipeHeaderQuote}>{receta.frase}</p>
                     <div className={styles.recipeHeaderActions}>
                         <CircleButton iconName={"heart-outline"} iconSize="3.5rem"/>

@@ -25,6 +25,12 @@
     -webkit-backdrop-filter: blur( 3px );
 }
 
+.pdfDaysContainer{
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
 .dias{
     display: flex;
     align-items: center;
@@ -120,7 +126,8 @@
     margin-top: 1rem;
 }
 
-.recipeContentsUsefulData{
+.recipeContentsUsefulData,
+.planTimesContainer{
     margin-top: 2rem;
     background-color: rgba(255, 255, 255, 0.297);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -131,7 +138,8 @@
 }
 
 .recipeContentsText,
-.recipeNutrientsPerCaloriesHeader{
+.recipeNutrientsPerCaloriesHeader,
+.planTimesDescription{
     font-size: 2rem;
     font-family: 'Oswald', sans-serif;
     font-weight: 500;
@@ -182,6 +190,32 @@
     border-radius: 2rem;
 }
 
+.timePreparation{
+    display: flex;
+    align-items: center;
+    font-size: 1.6rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: 600;
+    gap: .5rem;
+}
+
+.timePreparation svg{
+    width: 2.5rem;
+    height: 2.5rem;
+    fill: #ff9500;
+}
+
+.timePreparation:nth-child(1) svg{
+    fill: #f1b434;
+}
+
+.planTimes{
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+
+
 @media(max-width: 75em){
     .planAlimenticioSeparation{
         grid-template-columns: 1fr;
@@ -205,6 +239,9 @@
     .recipeNutritionTable{
         align-self: stretch;
         height: 100%;
+        margin-top: 0;
+    }
+    .planTimesContainer{
         margin-top: 0;
     }
 }
@@ -232,6 +269,9 @@
     }
     .addRecipes{
         font-size: 1.6rem;
+    }
+    .pdfDaysContainer{
+        justify-content: center;
     }
 }
 

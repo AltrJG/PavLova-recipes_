@@ -139,6 +139,31 @@
     border-radius: 2rem;
 }
 
+.timesContainer{
+    margin-top: 1rem;
+    display: flex;
+    gap: 2rem;
+}
+
+.timePreparation{
+    display: flex;
+    align-items: center;
+    font-size: 1.6rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: 600;
+    gap: .5rem;
+}
+
+.timePreparation svg{
+    width: 2.5rem;
+    height: 2.5rem;
+    fill: #ff9500;
+}
+
+.timePreparation:nth-child(1) svg{
+    fill: #f1b434;
+}
+
 @media(max-width: 68.75em){
     .recipeHeaderContainer{
         position: relative;
