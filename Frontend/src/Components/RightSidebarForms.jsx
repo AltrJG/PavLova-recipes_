@@ -66,10 +66,12 @@ export default function RightSidebarForms({twoOnOne = false, action, formOptions
                             :( formInput.type === 'imageSingle' 
                                 ? <SubidaImagenes key={formInput.name} thumb={formInput.name == 'imagenCategoria' ? thumbCategoria : thumb} thumbInner={formInput.name == 'imagenCategoria' ? thumbInnerCategoria : thumbInner} files={formInput.imageData} setFiles={formInput.setImageData}/> 
                                 : (formInput.type == 'slider' 
-                                ? <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                ? <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: "100%" }}>
                                     <input
                                         id={formInput.name}
+                                        style={{width: '100%'}}
                                         type="range"
+                                        step={formInput.step}
                                         name={formInput.name}
                                         min={formInput.min}
                                         max={formInput.max}
@@ -86,6 +88,7 @@ export default function RightSidebarForms({twoOnOne = false, action, formOptions
                                             type="number"
                                             min={formInput.min}
                                             max={formInput.max}
+                                            step={formInput.step}
                                             value={data[formInput.name] ?? formInput.defaultValue}
                                             onChange={e =>
                                                 setData(formInputs => ({

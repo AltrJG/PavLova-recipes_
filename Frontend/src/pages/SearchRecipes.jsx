@@ -3,18 +3,21 @@ import MainButton from '../Components/MainButton';
 import styles from './SearchRecipes.module.css';
 import tempImage from '../assets/manzana_test.png';
 import CategoriaSlider from '../Components/CategoriaSlider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FilterForm from '../Components/FilterForm';
 import Recipe from '../Components/Recipe';
 import OptionButton from '../Components/OptionButton';
 import Pagination from '../Components/Pagination';
 import { useRightSidebar } from '../context/RightSidebarProvider';
+import backendAPI from '../api/axiosConfig';
 
 export default function SearchRecipes(){
 
     const { openRecipesAdvanceFilters } = useRightSidebar();
 
     const [ activeCategoria, setActiveCategoria ] = useState('');
+    const [ etiquetasOptions, setEtiquetasOptions ] = useState([]);
+    const [ categoriasOptions, setCategoriasOptions ] = useState([]);
     const [ loading, setLoading ] = useState(true);
     const [ nextPage, setNextPage ] = useState(null);
     const [ previousPage, setPreviousPage ] = useState(null);
@@ -49,12 +52,32 @@ export default function SearchRecipes(){
         { type: 'Filtros', icon: 'restaurant', label: 'Filtros' }
     ];
 
+    useEffect(() => {
+        setLoading(true);
+        const obtenerInformacion = async () => {
+            try{
+                const etiquetas = await backendAPI.get("/etiquetas/");
+                const categorias = await backendAPI.get("/categorias/");
+                setEtiquetasOptions(etiquetas.data.results);
+                setCategoriasOptions(categorias.data.results);
+            } catch(e){
+
+            } finally{
+                setLoading(false);
+            }
+        }
+        obtenerInformacion(); 
+    }, []);
+
     const getRecipes = () => {
 
     }
 
     const openAdvanceFilters = () => {
-        openRecipesAdvanceFilters({});
+        console.log(etiquetasOptions)
+        openRecipesAdvanceFilters({
+            etiquetas: etiquetasOptions
+        });
     }
     
     return(
@@ -69,7 +92,7 @@ export default function SearchRecipes(){
             </Help>
             <div className={styles.searchRecipesContainer}>
                 {searchOption == "Filtros" && <FilterForm setCurrentPage={setCurrentPage} action={getRecipes} filterOptions={filterOptions} data={recipeFilters} setData={setRecipeFilters}/> }
-                {searchOption == "Categorias" && <CategoriaSlider categorias={datosDummy} setActiveCategoria={setActiveCategoria} activeCategoria={activeCategoria} isFilter={true}/>}
+                {searchOption == "Categorias" && <CategoriaSlider categorias={categoriasOptions} setActiveCategoria={setActiveCategoria} activeCategoria={activeCategoria} isFilter={true}/>}
                 <div className="recipesContent">
                     <Recipe/>
                     <Recipe/>

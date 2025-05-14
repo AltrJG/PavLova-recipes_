@@ -29,7 +29,7 @@ const Button = styled.button`
     &:hover {
         color: white;
         background-color: ${({ disabled, $color }) => (disabled ? "gray" : colors[$color])};
-        ${({ disabled }) => !disabled && "transform: scale(1.07); box-shadow: 0px 7px 13px -7px rgba(0,0,0,0.75);"}
+        ${({ disabled, $color }) => !disabled && (`transform: scale(1.07); box-shadow: 0px 7px 13px -7px ` + colors[$color] + 'a1;')}
     }
 
     &:active {
