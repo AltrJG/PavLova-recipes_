@@ -1,0 +1,57 @@
+.preconfiguracionContainer{
+    padding: 1rem;
+    border-radius: 1rem;
+    color: white;
+    transition: .3s;
+    cursor: pointer;
+}
+
+.preconfiguracionContainer:hover{
+    background-color: rgb(103, 48, 0);
+}
+
+.title{
+    font-size: 1.8rem;
+    font-family: 'Oswald', sans-serif;
+}
+.description{
+    font-size: 1.4rem;
+    font-family: 'Lato', sans-serif;
+}
+
+.preconfiguracionPorcentajes{
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.preconfiguracionPorcentaje span,
+.preconfiguracionPorcentajes{
+    display: flex;
+    gap: 1rem;
+    font-size: 1.6rem;
+    text-align: center;
+    font-family: 'Oswald', sans-serif;
+}
+
+.preconfiguracionPorcentaje{
+    font-size: 1.6rem;
+    background-color: rgb(103, 48, 0);
+    padding: .2rem .5rem;
+    border-radius: 1rem;
+}
+
+.activeSetting{
+    background: rgb(241,180,52);
+    background: -moz-linear-gradient(135deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: -webkit-linear-gradient(135deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: linear-gradient(135deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#f1b434",endColorstr="#fc7302",GradientType=1);  
+    box-shadow: 0 4px 12px rgba(255, 166, 0, 0.708);
+    transform: translateY(-2px);
+}
+
+.activeSetting .preconfiguracionPorcentaje{
+    background-color: rgb(255, 123, 0);
+}

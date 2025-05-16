@@ -9,6 +9,7 @@ import Pagination from '../Components/Pagination';
 import { useUpdateData } from '../context/UpdateDataProvider';
 import { FadeLoader } from 'react-spinners';
 import { useSearchParams } from 'react-router-dom';
+import FondoPavlova from '../Components/FondoPavlova';
 
 export default function ManageUsers(){
 

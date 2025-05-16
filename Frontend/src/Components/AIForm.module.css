@@ -1,0 +1,31 @@
+.preconfiguracionesContainer{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.formDescription{
+    font-size: 2.3rem;
+    margin: 0;
+    color: white;
+    font-family: "Oswald", sans-serif;
+    margin: 2rem 2rem 1rem 2rem;
+}
+
+.formOptions{
+    display: flex;
+    justify-content: flex-start;
+    margin: 2rem 1rem 0 1rem;
+    
+}
+
+.preconfiguracionesMainContainer{
+    margin: 0 2rem;
+}
+
+@media(max-width: 31.25em){
+    .preconfiguracionesContainer{
+        grid-template-columns: 1fr;
+    }
+}

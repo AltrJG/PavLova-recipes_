@@ -6,7 +6,7 @@
 
 .cardContainer{
     transition: all 0.2s;
-    background-color: rgba(255, 255, 255, 0.342);
+    background-color: rgba(255, 255, 255, 0.353);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.076);
     border-radius: 1rem;
 }
@@ -14,7 +14,7 @@
 .cardContainer:hover {
     box-shadow: 0 4px 12px rgba(255, 165, 0, 0.4); /* Soft shadow instead of border */
     transform: scale(1.02); /* Less dramatic scaling */
-    background-color: rgb(255, 240, 221);
+    background-color: rgb(255, 252, 247);
 }
 
 /* Image Styling */

@@ -11,7 +11,14 @@ const initialState = {
     updatedEtiqueta: {},
     createdCategoria: {},
     updatedCategoria: {},
-    updatedObjectives: {}
+    updatedObjectives: {},
+    recipeFilters: {
+        tiempo_preparacion: 360,
+        tiempo_coccion: 360,
+        rating: 0,
+        show_recipes_score: 'Todas',
+        selected_etiquetas: []
+    }
 }
 
 function reducer(state, action){
@@ -44,11 +51,15 @@ function reducer(state, action){
             return { ...state, updatedObjectives: action.payload }
         case 'updateData/resetNewObjectives':
             return { ...state, updatedObjectives: {}}
+        case 'updateData/setRecipeFilters':
+            return { ...state, recipeFilters: action.payload }
+        case 'updateData/resetRecipeFilters':
+            return { ...state, recipeFilters: { tiempo_preparacion: 360, tiempo_coccion: 360, rating: 0, show_recipes_score: 'Todas', selected_etiquetas: []} }
     }
 }
 
 const UpdateDataProvider = ({ children }) => {
-    const [{ updatedUser, disabledUser, createdIngredient, updatedIngredient, createdEtiqueta, updatedEtiqueta, createdCategoria, updatedCategoria, updatedObjectives }, dispatch] = useReducer(reducer, initialState);
+    const [{ updatedUser, disabledUser, createdIngredient, updatedIngredient, createdEtiqueta, updatedEtiqueta, createdCategoria, updatedCategoria, updatedObjectives, recipeFilters }, dispatch] = useReducer(reducer, initialState);
 
     function setUpdatedUser(user){
         dispatch({type: 'updateData/updateUser', payload: user});
@@ -103,6 +114,14 @@ const UpdateDataProvider = ({ children }) => {
         dispatch({type: "updateData/resetNewObjectives"});
     }
 
+    function setRecipeFilters(filters){
+        dispatch({type: "updateData/setRecipeFilters", payload: filters});
+    }
+
+    function resetRecipeFilters(){
+        dispatch({type: "updateData/resetRecipeFilters"});
+    }
+
     return (
         <UpdateDataContext.Provider value={{
             updatedUser,
@@ -114,6 +133,7 @@ const UpdateDataProvider = ({ children }) => {
             createdCategoria,
             updatedCategoria,
             updatedObjectives,
+            recipeFilters,
             setUpdatedUser,
             setDisabledUser,
             setCreatedIngredient,
@@ -126,7 +146,9 @@ const UpdateDataProvider = ({ children }) => {
             resetIngredientState,
             resetCategoriaEtiquetaState,
             setNewObjectives,
-            resetNewObjectives
+            resetNewObjectives,
+            setRecipeFilters,
+            resetRecipeFilters
         }}>
             {children}
         </UpdateDataContext.Provider>

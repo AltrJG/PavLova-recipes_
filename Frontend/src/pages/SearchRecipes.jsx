@@ -10,6 +10,10 @@ import OptionButton from '../Components/OptionButton';
 import Pagination from '../Components/Pagination';
 import { useRightSidebar } from '../context/RightSidebarProvider';
 import backendAPI from '../api/axiosConfig';
+import closeSVG from '../assets/Iconos/close.svg'
+import { ReactSVG } from 'react-svg';
+import FondoPavlova from '../Components/FondoPavlova';
+import { useUpdateData } from '../context/UpdateDataProvider';
 
 export default function SearchRecipes(){
 
@@ -18,11 +22,13 @@ export default function SearchRecipes(){
     const [ activeCategoria, setActiveCategoria ] = useState('');
     const [ etiquetasOptions, setEtiquetasOptions ] = useState([]);
     const [ categoriasOptions, setCategoriasOptions ] = useState([]);
+    const [ removeFilters, setRemoveFilters ] = useState(false);
     const [ loading, setLoading ] = useState(true);
     const [ nextPage, setNextPage ] = useState(null);
     const [ previousPage, setPreviousPage ] = useState(null);
     const [ count, setCount ] = useState(0);
     const [ currentPage, setCurrentPage ] = useState(1);
+    const { recipeFilters: advanceFilters, resetRecipeFilters } = useUpdateData();
 
     const [ recipeFilters, setRecipeFilters ] = useState({
         nombre: name != null ? name : "",
@@ -31,15 +37,6 @@ export default function SearchRecipes(){
     });
 
     const [ searchOption, setSearchOption ] = useState('Categorias');
-
-    const datosDummy = [
-        { id: 1, nombre: "Comida Frita", imagen: tempImage },
-        { id: 2, nombre: "Postre", imagen: tempImage },
-        { id: 3, nombre: "Arroz", imagen: tempImage },
-        { id: 4, nombre: "Ensalada", imagen: tempImage },
-        { id: 5, nombre: "Espagueti", imagen: tempImage },
-        { id: 6, nombre: "Sopa", imagen: tempImage },
-      ];
       
     const filterOptions = [
         { type: "text", name: "nombre", placeholder: "Filtrar por nombre..."},
@@ -74,17 +71,49 @@ export default function SearchRecipes(){
     }
 
     const openAdvanceFilters = () => {
-        console.log(etiquetasOptions)
         openRecipesAdvanceFilters({
             etiquetas: etiquetasOptions
         });
     }
+
+    const deleteFilters = () => {
+        setRecipeFilters({
+            nombre: "",
+            correo: "",
+            tipoUsuario: "Todos"
+        });
+        setActiveCategoria('');
+        resetRecipeFilters();
+    }
+
+    useEffect(() => {
+        let isFilterActive = false;
+        Object.keys(recipeFilters).forEach(filter => {
+            if(filter == 'tipoUsuario'){
+                recipeFilters[filter] != 'Todos' && (isFilterActive = true);
+            } else{
+                recipeFilters[filter] != '' && (isFilterActive = true);
+            }
+        });
+        activeCategoria != "" && (isFilterActive = true);
+        advanceFilters.tiempo_preparacion != 360 && (isFilterActive = true);
+        advanceFilters.tiempo_coccion != 360 && (isFilterActive = true);
+        advanceFilters.rating != 0 && (isFilterActive = true);
+        advanceFilters.show_recipes_score != 'Todas' && (isFilterActive = true);
+        advanceFilters.selected_etiquetas.length != 0 && (isFilterActive = true);
+        if(isFilterActive){
+            setRemoveFilters(true);
+        } else{
+            setRemoveFilters(false);
+        }
+    }, [recipeFilters, activeCategoria, advanceFilters])
     
     return(
         <>
             <Help title={"Buscar recetas."} description={"Encuentra tu siguiente receta favorita."}>
                 <div className={styles.filterOptionsContainer}>
                     <div className={styles.filterOptions}>
+                        {removeFilters && <div onClick={() => deleteFilters()} className={styles.closeFilters}><ReactSVG src={closeSVG}/></div>}
                         { searchOptions.map(option => <OptionButton key={option.label} option={option} active={searchOption} setData={setSearchOption} icon={option.icon} makeRowOnMobile={false}/>)}
                     </div>
                     <MainButton action={openAdvanceFilters} disabled={false} type={'button'} icon={"filter-circle"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Filtros avanzados"}/>

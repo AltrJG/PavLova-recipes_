@@ -5,6 +5,7 @@
 .filterOptions{
     display: flex;
     margin-right: 1rem;
+    align-items: center;
 }
 
 .filterOptionsContainer{
@@ -19,6 +20,30 @@
     text-align: center;
     margin-top: 3rem;
     font-family: "Oswald", sans-serif;
+}
+
+.closeFilters{
+    transition: .2s;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: min-content;
+}
+
+.closeFilters svg{
+    width: 4rem;
+    fill: #a18a81;
+    height: 4rem;
+    cursor: pointer;
+}
+
+.closeFilters:hover{
+    background-color: #23130d;
+}
+
+.closeFilters:hover svg{
+    fill: #ff710c;
 }
 
 @media(max-width: 31.25em){

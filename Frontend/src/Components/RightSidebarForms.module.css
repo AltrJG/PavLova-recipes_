@@ -80,6 +80,13 @@
     }
 }
 
+.sliderValue{
+    font-size: 2rem;
+    color: white;
+    font-family: 'Oswald', sans-serif;
+    color: orange;
+}
+
 .inputImage{
     grid-column: 1 / 3;
 }

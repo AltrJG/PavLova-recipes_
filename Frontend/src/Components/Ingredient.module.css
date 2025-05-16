@@ -70,7 +70,7 @@
 }
 
 .ingredientFrontFace {
-    background-color: #ffffff8d;
+    background-color: #ffffff64;
     transition: .3s;
 }
 
@@ -139,7 +139,7 @@
 }
 
 .ingredientContainer:hover .ingredientFrontFace{
-    background-color: rgb(255, 240, 221);
+    background-color: rgb(255, 247, 242);
 }
 
 .ingredientContainer:hover .ingredientType{

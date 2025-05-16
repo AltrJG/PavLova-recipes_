@@ -17,16 +17,17 @@ export default function RecipeAdvanceFilters(){
     const [ errorsHandler, setErrorsHandler ] = useState({});
     const [ selectedEtiquetas, setSelectedEtiquetas ] = useState([]);
     const { isSuperUser, isStaff } = useAuth();
-    const { recipeAdvanceFilters } = useRightSidebar();
+    const { recipeAdvanceFilters, closeRightSidebar } = useRightSidebar();
+    const { recipeFilters, setRecipeFilters } = useUpdateData();
 
     const ManageIngredientsFormOptions = [
         { type: "slider", step: "1", name: "tiempo_preparacion", label: "Tiempo de Preparacion maximo (Minutos)", defaultValue: 360, max: 360, min: 0, showInput: true},
         { type: "slider", step: "1", name: "tiempo_coccion", label: "Tiempo de Coccion maximo (Minutos)", defaultValue: 360, max: 360, min: 0, showInput: true},
-        { type: "slider", step: "0.2", name: "rating", label: "Rating Minimo", defaultValue: '0.0', max: '5.0', min: 0, showInput: true },
+        { type: "slider", step: "0.1", name: "rating", label: "Rating Minimo", defaultValue: '0.0', max: '5.0', min: 0, showInput: true },
         { type: "select", name: "show_recipes_score", label: "Visibilidad de recetas",  defaultOption: "Todas", options: ["Recetas con puntuacion de salud", "Recetas sin puntuacion de salud", "Todas"]},
     ];
 
-    const [ ingredientData, setIngredientData ] = useState({
+    const [ advanceFiltersData, setAdvanceFiltersData ] = useState({
         tiempo_preparacion: 360,
         tiempo_coccion: 360,
         rating: 0,
@@ -126,8 +127,25 @@ export default function RecipeAdvanceFilters(){
 
     const handleChangeInformation = e => {
         e.preventDefault()
-        console.log(ingredientData)
+        setRecipeFilters({
+            tiempo_preparacion: advanceFiltersData.tiempo_preparacion, 
+            tiempo_coccion: advanceFiltersData.tiempo_coccion,
+            rating: advanceFiltersData.rating,
+            show_recipes_score: advanceFiltersData.show_recipes_score,
+            selected_etiquetas: selectedEtiquetas
+        });
+        closeRightSidebar();
     }
+
+    useEffect(() => {
+        setSelectedEtiquetas(recipeFilters.selected_etiquetas);
+        setAdvanceFiltersData({
+            tiempo_preparacion: recipeFilters.tiempo_preparacion,
+            tiempo_coccion: recipeFilters.tiempo_coccion,
+            rating: recipeFilters.rating,
+            show_recipes_score: recipeFilters.show_recipes_score,
+        })
+    }, [recipeFilters]);
 
     return(
         <div className={styles.changeProfileForm}>
@@ -137,7 +155,7 @@ export default function RecipeAdvanceFilters(){
 
             <RightSidebarErrors errors={errorsHandler} />
 
-            <RightSidebarForms action={handleChangeInformation} twoOnOne={false} formOptions={ManageIngredientsFormOptions} setData={setIngredientData} data={ingredientData}>
+            <RightSidebarForms action={handleChangeInformation} twoOnOne={false} formOptions={ManageIngredientsFormOptions} setData={setAdvanceFiltersData} data={advanceFiltersData}>
                 <h4 className={styles.etiquetaDesc}>Etiquetas:</h4>
                 <div className={styles.etiquetasContainer}>
                     {recipeAdvanceFilters.etiquetas.map(etiqueta => <p onClick={() => toggleEtiquetas(etiqueta.id)} key={etiqueta.id} className={`${(selectedEtiquetas.findIndex(etiq => etiq == etiqueta.id) != -1) ? styles.activeEtiqueta : ""} ${styles.etiquetaOption}`}>{etiqueta.nombre}</p>)}

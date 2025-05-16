@@ -44,7 +44,7 @@ export default function UserProfile(){
     }, []);
 
     const volver = () => {
-        navigate('/users');
+        navigate(-1);
     }
 
     if(errorPage) return <NotFound404/>

@@ -4,6 +4,7 @@
     margin-top: 2rem;
     padding: 1.5rem;
     background-color: rgba(255, 255, 255, 0.525);
+    border: .2rem solid white;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     height: max-content;
 }

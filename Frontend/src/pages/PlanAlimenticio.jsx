@@ -22,7 +22,7 @@ import timeIcon from '../assets/Iconos/timer.svg';
 
 export default function PlanAlimenticio(){
 
-    const { openNutritionalObjectivesForm } = useRightSidebar();
+    const { openNutritionalObjectivesForm, openAiForm } = useRightSidebar();
     const { updatedObjectives, resetNewObjectives } = useUpdateData();
     const [ activePicker, setActivePicker ] = useState(false);
     const [ personas, setPersonas ] = useState(1);
@@ -105,6 +105,10 @@ export default function PlanAlimenticio(){
         Sodio: `50mg`
     };
 
+    const handleOpenAiForm = () => {
+        openAiForm()
+    }
+
     useEffect(() => {
         if(Object.keys(updatedObjectives).length != 0){
             setNutritionalObjectives({
@@ -127,7 +131,7 @@ export default function PlanAlimenticio(){
             <RotatingBall/>
             <RecipePlanPicker activePicker={activePicker} setActivePicker={setActivePicker}/>
             <Help title={'Plan alimenticio'} description={'Crea tu plan alimenticio'}>
-                <MainButton disabled={false} type="button" icon="settings" iconSize="3" fontSize="2.5" color="primary" borderRadius="1.5" text={"Plan AI"}/>
+                <MainButton action={handleOpenAiForm} disabled={false} type="button" icon="hardware-chip" iconSize="3" fontSize="2.5" color="primary" borderRadius="1.5" text={"Plan AI"}/>
             </Help>
             <div className={styles.planAlimenticioSeparation}>
                 <div className={styles.planMainContent}>

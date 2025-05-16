@@ -83,7 +83,7 @@ export default function RightSidebarForms({twoOnOne = false, action, formOptions
                                             }))
                                         }
                                     />
-                                    {formInput.showInput && (
+                                    {formInput.showInput ? (
                                         <input
                                             type="number"
                                             min={formInput.min}
@@ -97,7 +97,7 @@ export default function RightSidebarForms({twoOnOne = false, action, formOptions
                                                 }))
                                             }
                                         />
-                                    )}
+                                    ) : <p className={styles.sliderValue}>{data[formInput.name]}%</p>}
                                 </div> 
                                 : <input
                                 id={formInput.name}

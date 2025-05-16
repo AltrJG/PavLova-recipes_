@@ -1,7 +1,6 @@
 import styles from './RecipeInstructions.module.css';
 
 export default function RecipeInstructions({recipeProcess}){
-    if(recipeProcess == null) return <p>njola</p>
     return(
         <div className={styles.RecipeInstructionsContainer}>
             { 

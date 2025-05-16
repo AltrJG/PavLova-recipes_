@@ -1,3 +1,4 @@
+import FondoPavlova from '../Components/FondoPavlova';
 import RecipeHeader from '../Components/RecipeHeader';
 import styles from './RecipeDetails.module.css';
 
