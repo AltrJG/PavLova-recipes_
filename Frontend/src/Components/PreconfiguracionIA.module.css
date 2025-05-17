@@ -3,11 +3,22 @@
     border-radius: 1rem;
     color: white;
     transition: .3s;
+    position: relative;
     cursor: pointer;
 }
 
 .preconfiguracionContainer:hover{
     background-color: rgb(103, 48, 0);
+}
+
+.preconfiguracionContainer button{
+    opacity: 0;
+    visibility: hidden;
+}
+
+.preconfiguracionContainer:hover button{
+    opacity: 1;
+    visibility: visible;
 }
 
 .title{
@@ -54,4 +65,33 @@
 
 .activeSetting .preconfiguracionPorcentaje{
     background-color: rgb(255, 123, 0);
+}
+
+.preconfiguracionNoFormContainer{
+    background: rgba( 255, 255, 255, 0.35 );
+    box-shadow: 0px 4px 12px rgb(0, 0, 0, .05);
+    height: 100%;
+    transition: .3s ease-in-out;
+}
+
+.preconfiguracionNoFormContainer .title,
+.preconfiguracionNoFormContainer .description{
+    color: #23130d;
+}
+
+.preconfiguracionNoFormContainer:hover{
+    background-color: rgb(255, 252, 248);
+    box-shadow: 0 4px 12px rgba(255, 165, 0, 0.4);
+    transform: scale(1.03);   
+    padding-left: 5.5rem;
+}
+
+@media(max-width: 78.125em){
+    .preconfiguracionNoFormContainer{
+        padding-left: 5.5rem;
+    }
+    .preconfiguracionNoFormContainer button{
+        opacity: 1;
+        visibility: visible;
+    }
 }

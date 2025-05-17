@@ -23,6 +23,7 @@ import SearchRecipes from './pages/SearchRecipes'
 import UserRecipes from './pages/UserRecipes'
 import { NutritionalDataRecipeProvider } from './context/NutritionalDataRecipeProvider'
 import PlanAlimenticio from './pages/PlanAlimenticio'
+import AISettings from './pages/AISettings'
 
 function App() {
 
@@ -49,6 +50,7 @@ function App() {
                   </Route>
                   <Route element={<RestrictedRoute isStaffAllowed={true} isSuperUserAllowed={true}/>}>
                     <Route path='etiquetas' element={<EtiquetaCategoria/>}/>
+                    <Route path='configuracion-ia' element={<AISettings/>}/>
                   </Route>
                   <Route path='users' element={<ManageUsers/>}/>
                   <Route path='receta/:recipe_id' element={<RecipeDetails/>}/>

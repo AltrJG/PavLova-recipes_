@@ -34,6 +34,7 @@ export default function NavigationOptions(){
                     <LinkSidebar extraMenuRight={true} text={"Plan Alimenticio"} iconWhenActive={"calendar"} icon={"calendar-outline"} linkActiveText={["/plan-alimenticio"]} redirectTo={"/plan-alimenticio"}/>
                     <LinkSidebar extraMenuRight={true} text={"Perfil"} iconWhenActive={"person"} icon={"person-outline"} linkActiveText={["/mi-perfil"]} redirectTo={"/mi-perfil"}/>
                     {(isSuperUser || isStaff) && <LinkSidebar extraMenuRight={true} text={isSuperUser ? "Categorias y Etiquetas" : "Gestionar Etiquetas"} iconWhenActive={"bookmarks"} icon={"bookmarks-outline"} linkActiveText={["/etiquetas"]} redirectTo={"/etiquetas"}/> }
+                    {(isSuperUser || isStaff) && <LinkSidebar extraMenuRight={true} text={"Gestionar IA"} iconWhenActive={"hardware-chip"} icon={"hardware-chip-outline"} linkActiveText={["/configuracion-ia"]} redirectTo={"/configuracion-ia"}/> }
                 </div>
             </> }
         </>

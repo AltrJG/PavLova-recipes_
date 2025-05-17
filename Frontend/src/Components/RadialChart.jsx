@@ -7,7 +7,8 @@ const style = {
   transform: 'translate(0, -50%)',
   lineHeight: '24px',
   fontFamily: 'Oswald',
-  fontSize: '5rem'
+  fontSize: '5rem',
+  fontWeight: '500'
 };
 
 const RadialChartComponent = ({data}) => {

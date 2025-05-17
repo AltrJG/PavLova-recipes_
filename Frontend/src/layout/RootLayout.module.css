@@ -6,6 +6,14 @@
   font-display: swap;
 }
 
+@font-face{
+  font-family: 'Oswald';
+  src: url('../assets/Tipografias/Oswald-VariableFont_wght.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 .main_content{
     display: grid;
     grid-template-columns: auto 1fr;
@@ -39,7 +47,6 @@
     background: -moz-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
     background: -webkit-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
     background: linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
-  
   }
 
   .logo_text{
@@ -63,6 +70,8 @@
     width: 6.1rem;
     object-fit: contain; 
     margin-right: 2rem;
+    height: auto;
+    flex-shrink: 0;
   }
   .logo_text:link, .logo_text:visited{
     font-size: 2.5rem;
@@ -73,7 +82,7 @@
     text-decoration: none !important;
   }
   .sidebar ul .logo{
-    margin-bottom: 5rem;
+    margin-bottom: 3rem;
     padding-top: 1rem;
     padding-bottom: 1rem;
   }
