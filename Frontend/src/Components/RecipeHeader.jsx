@@ -7,7 +7,7 @@ import RecipeNutritionalFacts from "./RecipeNutritionalFacts";
 import RecipePreparation from "./RecipePreparation";
 import { ReactSVG } from "react-svg";
 import RecipeComments from "./RecipeComments";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import flameIcon from '../assets/Iconos/flame.svg';
 import timeIcon from '../assets/Iconos/timer.svg';
@@ -15,22 +15,27 @@ import backendAPI from "../api/axiosConfig";
 import { FadeLoader } from "react-spinners";
 import { useAuth } from "../context/AuthProvider";
 import { generarRecetaPDF } from "./utils/PDFDataGenerator";
+import NotFound404 from "../pages/NotFound404";
 
 export default function RecipeHeader(){
 
     let { recipe_id } = useParams();
-    const { refreshAccessToken } = useAuth();
+    const { refreshAccessToken, isSuperUser, isStaff, user } = useAuth();
     const [ receta, setReceta ] = useState({});
     const [ loading, setLoading ] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const getReceta = async () => {
             try{
                 const receta = await backendAPI(`recetas/${recipe_id}/`);
                 setReceta(receta.data);
+                console.log(receta.data?.creador_info?.id);
             } catch(error){
                 if(error.response?.status == 401){
                     await refreshAccessToken(getReceta);
+                } else{
+                    console.log(error);
                 }
             } finally{
                 setLoading(false);
@@ -41,6 +46,7 @@ export default function RecipeHeader(){
     }, []);
 
     if (loading) return <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
+    if (Object.keys(receta).length == 0) return <NotFound404 text={"No se encontro la receta."}/>
 
     return(
         <div className={styles.recipeHeaderContainer}>
@@ -70,6 +76,7 @@ export default function RecipeHeader(){
                     <div className={styles.recipeHeaderActions}>
                         <CircleButton iconName={"heart-outline"} iconSize="3.5rem"/>
                         <CircleButton action={generarRecetaPDF} args={[receta]} text="Descargar PDF" iconName={"document-attach"} iconSize="3.5rem"/>
+                        { (isSuperUser || isStaff || receta?.creador_info?.id === user?.id) && <CircleButton action={navigate} args={[`/crear-receta?recetaEditar=${receta.id}`]} text="Editar Receta" iconName={"create"} iconSize="3.5rem"/> }
                     </div>
                 </div>
                 <RecipeContents recipe={receta}/>

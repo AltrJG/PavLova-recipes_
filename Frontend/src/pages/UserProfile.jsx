@@ -47,7 +47,7 @@ export default function UserProfile(){
         navigate(-1);
     }
 
-    if(errorPage) return <NotFound404/>
+    if(errorPage) return <NotFound404 text='No se encontro el usuario que buscabas.'/>
 
     return(
         <>
