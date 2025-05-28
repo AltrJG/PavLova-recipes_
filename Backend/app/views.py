@@ -14,11 +14,31 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer
 from .permissions import IsModeratorOrAdmin, IsSuperUserOrReadOnly, IsStaffOrSuperUserOrReadOnly, IsOwnerOrStaffOrSuperUser
-from .filters import UserFilter, IngredienteFilter
+from .filters import UserFilter, IngredienteFilter, EtiquetaFilter, CategoriaFilter
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from .pagination import IngredientePagination, UserPagination
+from rest_framework.decorators import action
+
+#Miscellaneous>>>>>>>>>>>>>>>>>>>
+
+def validar_archivo_imagen(file, max_size_mb=5, allowed_extensions=None, nombre_campo="archivo"):
+    if not file:
+        return Response({'error': f'No se proporcionó {nombre_campo}.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    max_size = max_size_mb * 1024 * 1024
+    if file.size > max_size:
+        return Response({'error': f'El tamaño máximo permitido es de {max_size_mb} MB.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    ext_permitidas = allowed_extensions or ['png', 'jpg', 'jpeg', 'webp']
+    file_extension = file.name.split('.')[-1].lower()
+    if file_extension not in ext_permitidas:
+        return Response({'error': f'Formato de archivo no permitido. Usa: {", ".join(ext_permitidas)}.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    return None
+
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 class RegisterView(APIView):
     def post(self, request):
@@ -372,6 +392,12 @@ class IngredienteViewSet(viewsets.ModelViewSet):
             return Ingrediente.objects.filter(creador=user) | Ingrediente.objects.filter(tipo='global')
 
         return Ingrediente.objects.all()
+    
+    @action(detail=False, methods=['get'], url_path='all', pagination_class=None)
+    def listar_sin_paginacion(self, request):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     def perform_create(self, serializer):
         user = self.request.user
@@ -417,11 +443,25 @@ class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
     permission_classes = [IsSuperUserOrReadOnly]
+    filterset_class = CategoriaFilter
+
+    @action(detail=False, methods=['get'], url_path='all', pagination_class=None)
+    def listar_sin_paginacion(self, request):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 class EtiquetaViewSet(viewsets.ModelViewSet):
     queryset = Etiqueta.objects.all()
     serializer_class = EtiquetaSerializer
     permission_classes = [IsStaffOrSuperUserOrReadOnly]
+    filterset_class = EtiquetaFilter
+
+    @action(detail=False, methods=['get'], url_path='all', pagination_class=None)
+    def listar_sin_paginacion(self, request):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 class RecetaViewSet(viewsets.ModelViewSet):
     queryset = Receta.objects.all()
@@ -436,3 +476,23 @@ class RecetaViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(creador=self.request.user)
+
+    @action(detail=True, methods=['post', 'put'], url_path='upload_imagen')
+    def upload_imagen(self, request, pk=None):
+        receta = self.get_object()
+        imagen = request.FILES.get('foto_receta')
+        if 'foto_receta' not in request.FILES:
+            return Response({'error': 'No se proporcionó imagen.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        error_response = validar_archivo_imagen(
+            imagen,
+            max_size_mb=5,
+            allowed_extensions=['png', 'jpg', 'jpeg', 'webp'],
+            nombre_campo="foto_receta"
+        )
+        if error_response:
+            return error_response
+
+        receta.foto_receta = imagen
+        receta.save(update_fields=['foto_receta'])
+        return Response({'mensaje': 'Imagen subida con éxito'}, status=status.HTTP_200_OK)

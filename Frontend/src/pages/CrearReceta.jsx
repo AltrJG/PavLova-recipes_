@@ -212,6 +212,10 @@ export default function CrearReceta() {
         setErrorsHandler({});
         try{
             const response = recetaEditar != null ? await backendAPI.put(`recetas/${recetaEditar}/`, recetaPayload) : await backendAPI.post('recetas/', recetaPayload);
+            
+            const recetaId = recetaEditar != null ? recetaEditar : response.data.id;
+
+            await subirImagenReceta(recetaId);
             Swal.fire({
                 icon: "success",
                 title: recetaEditar ? "Actualizada" : "Receta Creada",
@@ -236,6 +240,26 @@ export default function CrearReceta() {
     }
     setLoadingRequest(false);
 }
+
+const subirImagenReceta = async (recetaId) => {
+  if (imagen && imagen.length > 0) {
+    const formData = new FormData();
+    formData.append('foto_receta', imagen[0]);  // Asegúrate que imagen es un File
+
+    try {
+      await backendAPI.put(`/recetas/${recetaId}/upload_imagen/`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+    } catch (error) {
+      console.error('Error al subir imagen:', error);
+    }
+  }
+};
+
+RecetaInfoGeneralForm
+
 
   return (
     <div className={styles.container}>
