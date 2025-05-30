@@ -58,7 +58,7 @@ export default function EtiquetaCategoria(){
             if (params.toString()) {
                 url += `?${params.toString()}`;
             }
-            console.log(url);
+
             const response = await backendAPI(url);
             previous != null && setCurrentPage(currentPage-1);
             next != null && setCurrentPage(currentPage+1);

@@ -14,6 +14,7 @@ import closeSVG from '../assets/Iconos/close.svg'
 import { ReactSVG } from 'react-svg';
 import FondoPavlova from '../Components/FondoPavlova';
 import { useUpdateData } from '../context/UpdateDataProvider';
+import { FadeLoader } from 'react-spinners';
 
 export default function SearchRecipes(){
 
@@ -23,6 +24,7 @@ export default function SearchRecipes(){
     const [ etiquetasOptions, setEtiquetasOptions ] = useState([]);
     const [ categoriasOptions, setCategoriasOptions ] = useState([]);
     const [ removeFilters, setRemoveFilters ] = useState(false);
+    const [ recipes, setRecipes ] = useState([]);
     const [ loading, setLoading ] = useState(true);
     const [ nextPage, setNextPage ] = useState(null);
     const [ previousPage, setPreviousPage ] = useState(null);
@@ -32,7 +34,7 @@ export default function SearchRecipes(){
 
     const [ recipeFilters, setRecipeFilters ] = useState({
         nombre: name != null ? name : "",
-        correo: "",
+        nombre_usuario: "",
         tipoUsuario: "Todos"
     });
 
@@ -40,7 +42,7 @@ export default function SearchRecipes(){
       
     const filterOptions = [
         { type: "text", name: "nombre", placeholder: "Filtrar por nombre..."},
-        { type: "text", name: "correo", placeholder: "Filtrar por correo..."},
+        { type: "text", name: "nombre_usuario", placeholder: "Filtrar por nombre del creador..."},
         { type: "select", name: "tipoUsuario", defaultOption: "Todos", options: ["Todos", "Usuarios", "Moderadores", "Administradores"]}
     ]
 
@@ -53,12 +55,16 @@ export default function SearchRecipes(){
         setLoading(true);
         const obtenerInformacion = async () => {
             try{
-                const etiquetas = await backendAPI.get("/etiquetas/");
-                const categorias = await backendAPI.get("/categorias/");
-                setEtiquetasOptions(etiquetas.data.results);
-                setCategoriasOptions(categorias.data.results);
-            } catch(e){
-
+                const etiquetas = await backendAPI.get("/etiquetas/all");
+                const categorias = await backendAPI.get("/categorias/all");
+                setEtiquetasOptions(etiquetas.data);
+                setCategoriasOptions(categorias.data);
+                const response = await getRecipes();
+                setRecipes(response.data.results);
+            } catch(error){
+                if(error.response?.status == 401){
+                    await refreshAccessToken(getRecipes);
+                }
             } finally{
                 setLoading(false);
             }
@@ -66,8 +72,52 @@ export default function SearchRecipes(){
         obtenerInformacion(); 
     }, []);
 
-    const getRecipes = () => {
+    const getRecipes = async (previous = null, next = null, noFilters = false) => {
+        setLoading(true);
+        try{
+            let url = previous 
+            ? previous.split('app')[1] 
+            : next 
+            ? next.split('app')[1] 
+            : `/recetas/`;
 
+            if(!noFilters){
+                const params = new URLSearchParams();
+
+                Object.keys(recipeFilters).forEach(filter => {
+                    if(filter == 'tipoUsuario'){
+                        recipeFilters[filter] != 'Todos' && (params.append(`${filter}`, recipeFilters[filter]));
+                    } else{
+                        recipeFilters[filter] != '' && (params.append(`${filter}`, recipeFilters[filter]));
+                    }
+                });        
+                activeCategoria != "" && params.append('categoria', activeCategoria);
+                advanceFilters.tiempo_preparacion != 360 && params.append('tiempo_preparacion', advanceFilters.tiempo_preparacion);
+                advanceFilters.tiempo_coccion != 360 && params.append('tiempo_coccion', advanceFilters.tiempo_preparacion);;
+                advanceFilters.rating != 0 && params.append('rating', advanceFilters.rating);
+                advanceFilters.show_recipes_score != 'Todas' && params.append('recipes_score_visibility', advanceFilters.show_recipes_score.replaceAll(' ', '_'));
+                advanceFilters.selected_etiquetas.length != 0 && advanceFilters.selected_etiquetas.map(etiqueta => params.append('etiquetas', etiqueta));
+
+                // Append query parameters if they exist
+                if (params.toString()) {
+                    url += `?${params.toString()}`;
+                }
+            }
+            console.log(url);
+            const response = await backendAPI(url);
+            previous != null && setCurrentPage(currentPage-1);
+            next != null && setCurrentPage(currentPage+1);
+            setCount(response.data.count);
+            setNextPage(response.data.next);
+            setPreviousPage(response.data.previous);
+            setRecipes(response.data.results);
+        } catch(error){
+            if(error.response?.status == 401){
+                await refreshAccessToken(getRecipes);
+            }
+        } finally{
+            setLoading(false);
+        }
     }
 
     const openAdvanceFilters = () => {
@@ -76,7 +126,7 @@ export default function SearchRecipes(){
         });
     }
 
-    const deleteFilters = () => {
+    const deleteFilters = async () => {
         setRecipeFilters({
             nombre: "",
             correo: "",
@@ -84,7 +134,15 @@ export default function SearchRecipes(){
         });
         setActiveCategoria('');
         resetRecipeFilters();
+        await getRecipes(null, null, true);
     }
+
+    useEffect(() => {
+        const triggerUpdateRecipes = async () => {
+            await getRecipes();
+        }
+        triggerUpdateRecipes();
+    }, [ activeCategoria, advanceFilters ]);
 
     useEffect(() => {
         let isFilterActive = false;
@@ -122,27 +180,23 @@ export default function SearchRecipes(){
             <div className={styles.searchRecipesContainer}>
                 {searchOption == "Filtros" && <FilterForm setCurrentPage={setCurrentPage} action={getRecipes} filterOptions={filterOptions} data={recipeFilters} setData={setRecipeFilters}/> }
                 {searchOption == "Categorias" && <CategoriaSlider categorias={categoriasOptions} setActiveCategoria={setActiveCategoria} activeCategoria={activeCategoria} isFilter={true}/>}
-                <div className="recipesContent">
-                    <Recipe/>
-                    <Recipe/>
-                    <Recipe/>
-                    <Recipe/>
-                    <Recipe/>
-                    <Recipe/>
-                    <Recipe/>
-                    <Recipe/>
-                    <Recipe/>
-                    <Recipe/>
+                { loading 
+                ? <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
+                : recipes.length == 0 
+                ? <p className={styles.usersNotFound}>No se encontraron clasificaciones con los filtros colocados, prueba modificando los filtros</p>
+                : <><div className="recipesContent">
+                    {recipes.map(recipe => <Recipe recipe={recipe}/>)}
                 </div>
                 <div className='mobileSpace'>
                     <Pagination               
-                        next={'tgwgfw'} 
-                        previous={'wrw'} 
-                        count={15} 
-                        currentPage={5} 
+                        action={getRecipes}
+                        next={nextPage} 
+                        previous={previousPage} 
+                        count={count} 
+                        currentPage={currentPage} 
                         text="Mostrando Recetas {start}-{end} de {count}"
                     />
-                </div>
+                </div></>}
             </div>
         </>
     )

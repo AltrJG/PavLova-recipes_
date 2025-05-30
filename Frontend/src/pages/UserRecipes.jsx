@@ -28,13 +28,13 @@ export default function UserRecipes(){
 
     const [ recipeFilters, setRecipeFilters ] = useState({
         nombre: "",
-        autor: "",
+        nombre_usuario: "",
         rating: ''
     });
       
     const filterOptions = [
         { type: "text", name: "nombre", placeholder: "Filtrar por nombres..."},
-        { type: "text", name: "autor", placeholder: "Filtrar por autores..."},
+        { type: "text", name: "nombre_usuario", placeholder: "Filtrar por nombre de creador..."},
         { type: "number", name: "rating", placeholder: "Calificacion minima...", minNumber: 0, maxNumber: 5}
     ]
 
@@ -55,8 +55,8 @@ export default function UserRecipes(){
             const params = new URLSearchParams();
 
             if (recipeFilters.nombre.trim() && previous == null && next == null) params.append("nombre", recipeFilters.nombre);
-            if (recipeFilters.autor.trim() && previous == null && next == null) params.append("autor", recipeFilters.autor);
-            if (!isNaN(recipeFilters.rating) && recipeFilters.rating > 0 && recipeFilters.rating <= 5 && previous == null && next == null) params.append("autor", recipeFilters.rating);
+            if (recipeFilters.nombre_usuario.trim() && previous == null && next == null) params.append("autor", recipeFilters.autor);
+            if (!isNaN(recipeFilters.rating) && recipeFilters.rating > 0 && recipeFilters.rating <= 5 && previous == null && next == null) params.append("rating", recipeFilters.rating);
 
             // Append query parameters if they exist
             if (params.toString()) {
@@ -69,7 +69,6 @@ export default function UserRecipes(){
             setNextPage(response.data.next);
             setPreviousPage(response.data.previous);
             setRecipes(response.data.results);
-            console.log(response.data);
         } catch(error){
             console.log(error);
             if(error.response?.status == 401){

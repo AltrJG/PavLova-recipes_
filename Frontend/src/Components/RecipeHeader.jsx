@@ -25,6 +25,10 @@ export default function RecipeHeader(){
     const [ loading, setLoading ] = useState(true);
     const navigate = useNavigate();
 
+    const navigateLogIn = () => {
+        navigate('/auth/iniciar-sesion');
+    }
+
     useEffect(() => {
         const getReceta = async () => {
             try{
@@ -53,7 +57,9 @@ export default function RecipeHeader(){
             <div className={styles.recipeHeaderDataContainer}>
                 <div className={styles.recipeHeaderData}>
                     <h3 className={styles.recipeHeaderName}>{receta.nombre}</h3>
-                    <p className={styles.recipeHeaderType}>{receta.categoria_info.nombre}</p>
+                    { receta.categoria_info?.nombre != null 
+                    ? <p className={styles.recipeHeaderType}>{receta.categoria_info?.nombre}</p>
+                    : isSuperUser && isStaff && <p className={styles.recipeHeaderTypeNoData}>Sin categoria</p> }
                     <div className={styles.recipeHeaderRating}>
                         <div className={styles.recipeHeaderStars}>
                             <ReactSVG src={`/src/assets/Iconos/star.svg`}/>
@@ -75,7 +81,7 @@ export default function RecipeHeader(){
                     <p className={styles.recipeHeaderQuote}>{receta.frase}</p>
                     <div className={styles.recipeHeaderActions}>
                         <CircleButton iconName={"heart-outline"} iconSize="3.5rem"/>
-                        <CircleButton action={generarRecetaPDF} args={[receta]} text="Descargar PDF" iconName={"document-attach"} iconSize="3.5rem"/>
+                        <CircleButton action={(Object.keys(user).length != 0) ? generarRecetaPDF : navigateLogIn} args={[receta]} text="Descargar PDF" iconName={"document-attach"} iconSize="3.5rem"/>
                         { (isSuperUser || isStaff || receta?.creador_info?.id === user?.id) && <CircleButton action={navigate} args={[`/crear-receta?recetaEditar=${receta.id}`]} text="Editar Receta" iconName={"create"} iconSize="3.5rem"/> }
                     </div>
                 </div>
@@ -87,7 +93,7 @@ export default function RecipeHeader(){
                 </div>
             </div>
             <div className={styles.recipeImageTagsContainer}>
-                <img className={styles.recipeHeaderImage} src={tempImg}/>
+                <img className={styles.recipeHeaderImage} src={receta.foto_receta}/>
                 <div className={styles.recipeTags}>
                     {receta.etiquetas_info.map(etiqueta => <p key={etiqueta.id} className={styles.recipeTag}>{etiqueta.nombre}</p>)}
                 </div>

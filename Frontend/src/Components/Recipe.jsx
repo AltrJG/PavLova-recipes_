@@ -16,7 +16,7 @@ export default function Recipe({ isModificationAllowed = false, recipe, deleteAc
             </Link>
             <Link to={`/receta/${recipe?.id}`} className={`${styles.recipeData}`}>
                 <h4 className={styles.recipeName}>{recipe?.nombre}</h4>
-                <p className={styles.recipeCategoria}>{recipe?.categoria_info?.nombre}</p>
+                {recipe?.categoria_info?.nombre != null && <p className={styles.recipeCategoria}>{recipe?.categoria_info?.nombre}</p>}
                 <p className={styles.recipeAuthor}>{recipe?.creador_info?.name}</p>
                 <div className={styles.recipeTime}><ReactSVG src={`/src/assets/Iconos/timer.svg`}/> {` ${recipe?.tiempo_preparacion} Minutos`}</div>
                 <div className={styles.recipeDifficulty}><ReactSVG src={`/src/assets/Iconos/flame.svg`}/> {` ${recipe?.tiempo_coccion} Minutos`}</div>

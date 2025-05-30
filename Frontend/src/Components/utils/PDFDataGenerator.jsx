@@ -12,6 +12,33 @@ export async function generarRecetaPDF(recetaData) {
   const { height } = page.getSize();
   const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
+  async function convertWebPToPngBytes(webpUrl) {
+    const res = await fetch(webpUrl);
+    const blob = await res.blob();
+    const bitmap = await createImageBitmap(blob);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(bitmap, 0, 0);
+
+    const dataUrl = canvas.toDataURL("image/png");
+    const base64 = dataUrl.split(",")[1];
+    const pngBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+    return pngBytes;
+  }
+
+  const pngBytes = await convertWebPToPngBytes(recetaData.foto_receta);
+  const embeddedImage = await pdfDoc.embedPng(pngBytes);
+
+  page.drawImage(embeddedImage, {
+    x: 32,
+    y: height - 285,
+    width: 250,
+    height: 160,
+  });
+
   const lineHeight = 16;
   const margin = 25;
 
@@ -94,6 +121,7 @@ export async function generarRecetaPDF(recetaData) {
   try {
     const pasos = JSON.parse(recetaData.procedimiento);
     console.log(pasos);
+    console.log(recetaData);
     for (let paso of pasos) {
       let parrafo;
       if(paso.type == 'bulleted-list' || paso.type == 'numbered-list'){
