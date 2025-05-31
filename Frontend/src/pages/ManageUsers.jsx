@@ -95,6 +95,7 @@ export default function ManageUsers(){
 
     return(
         <>
+            <FondoPavlova/>
             <Help title={"Buscar Personas"} description={"Busca perfiles de otras personas"}/>
             <div className={styles.usersContainer}>
                 <FilterForm setCurrentPage={setCurrentPage} action={getUsers} filterOptions={filterOptions} data={userFilters} setData={setUserFilters}/>

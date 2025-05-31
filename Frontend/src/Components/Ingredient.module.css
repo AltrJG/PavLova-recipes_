@@ -71,6 +71,8 @@
 
 .ingredientFrontFace {
     background-color: #ffffff64;
+    backdrop-filter: blur(4px);
+    border: .1rem solid white;
     transition: .3s;
 }
 

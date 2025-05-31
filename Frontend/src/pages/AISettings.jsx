@@ -1,3 +1,4 @@
+import FondoPavlova from "../Components/FondoPavlova";
 import Help from "../Components/Help";
 import MainButton from "../Components/MainButton";
 import PreconfiguracionIA from "../Components/PreconfiguracionIA";
@@ -79,6 +80,7 @@ export default function AISettings(){
 
     return(
         <>
+            <FondoPavlova/>
             <Help title={"Inteligencia Artificial"} description={"Gestiona las preconfiguraciones"}>
                 <MainButton action={openAiFormSettings} disabled={false} type={'button'} icon={"hardware-chip"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Gestionar IA"}/>
             </Help>

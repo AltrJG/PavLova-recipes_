@@ -11,6 +11,7 @@ import backendAPI from '../api/axiosConfig';
 import { useAuth } from '../context/AuthProvider';
 import Swal from "sweetalert2";
 import { FadeLoader } from 'react-spinners';
+import FondoPavlova from '../Components/FondoPavlova';
 
 export default function UserRecipes(){
 
@@ -131,6 +132,7 @@ export default function UserRecipes(){
     
     return(
         <>
+            <FondoPavlova/>
             <Help title={"Mis Recetas."} description={"Gestiona tus recetas y favoritos."}>
                 <div className={styles.filterOptionsContainer}>
                     <div className={styles.filterOptions}>
@@ -146,7 +148,7 @@ export default function UserRecipes(){
                 : recipes.length == 0 
                 ? <p className={styles.usersNotFound}>No se encontraron recetas con los filtros colocados, prueba modificando los filtros</p> 
                 : <><div className="recipesContent">
-                    { recipes.map(recipe => <Recipe key={recipe.id} recipe={recipe} isModificationAllowed={true} deleteAction={deleteRecetaAsk}/>) }
+                    { recipes.map(recipe => <Recipe cristal={true} key={recipe.id} recipe={recipe} isModificationAllowed={true} deleteAction={deleteRecetaAsk}/>) }
                 </div>
                 <div className='mobileSpace'>
                     <Pagination               

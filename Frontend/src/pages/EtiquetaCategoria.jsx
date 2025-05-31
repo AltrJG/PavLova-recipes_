@@ -12,6 +12,7 @@ import backendAPI from '../api/axiosConfig';
 import Categoria from "../Components/Categoria";
 import Etiqueta from "../Components/Etiqueta";
 import Swal from "sweetalert2";
+import FondoPavlova from "../Components/FondoPavlova";
 
 
 export default function EtiquetaCategoria(){
@@ -169,6 +170,7 @@ export default function EtiquetaCategoria(){
 
     return(
         <>
+            <FondoPavlova/>
             <Help title={"Categorias y Etiquetas"} description={"Gestiona las clasificaciones para todos los usuarios"}>
                 <MainButton action={registerCategoriaEtiqueta} disabled={false} type={'button'} icon={"bookmarks"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Crear Clasificacion"}/>
             </Help>

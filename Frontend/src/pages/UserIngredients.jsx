@@ -11,6 +11,7 @@ import backendAPI from "../api/axiosConfig";
 import { useAuth } from "../context/AuthProvider";
 import { useUpdateData } from "../context/UpdateDataProvider";
 import Swal from "sweetalert2";
+import FondoPavlova from "../Components/FondoPavlova";
 
 
 export default function UserIngredients(){
@@ -157,6 +158,7 @@ export default function UserIngredients(){
 
     return(
         <>
+            <FondoPavlova/>
             <Help title={"Tus ingredientes"} description={"Gestiona los ingredientes que tienes"}>
                 <MainButton action={registerIngredient} disabled={false} type={'button'} icon={"nutrition"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Crear Ingrediente"}/>
             </Help>

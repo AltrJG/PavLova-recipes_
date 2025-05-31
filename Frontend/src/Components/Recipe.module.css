@@ -12,8 +12,9 @@
 }
 
 .cristal{
-    backdrop-filter: blur( 3px );
-    -webkit-backdrop-filter: blur( 3px );
+    backdrop-filter: blur( 4px );
+    -webkit-backdrop-filter: blur( 4px );
+    border: .1rem solid white;
 }
 
 .recipeContainer button{

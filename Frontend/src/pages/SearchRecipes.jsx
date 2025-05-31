@@ -15,6 +15,7 @@ import { ReactSVG } from 'react-svg';
 import FondoPavlova from '../Components/FondoPavlova';
 import { useUpdateData } from '../context/UpdateDataProvider';
 import { FadeLoader } from 'react-spinners';
+import { useAuth } from '../context/AuthProvider';
 
 export default function SearchRecipes(){
 
@@ -31,6 +32,7 @@ export default function SearchRecipes(){
     const [ count, setCount ] = useState(0);
     const [ currentPage, setCurrentPage ] = useState(1);
     const { recipeFilters: advanceFilters, resetRecipeFilters } = useUpdateData();
+    const { refreshAccessToken } = useAuth();
 
     const [ recipeFilters, setRecipeFilters ] = useState({
         nombre: name != null ? name : "",
@@ -168,6 +170,7 @@ export default function SearchRecipes(){
     
     return(
         <>
+            <FondoPavlova/>
             <Help title={"Buscar recetas."} description={"Encuentra tu siguiente receta favorita."}>
                 <div className={styles.filterOptionsContainer}>
                     <div className={styles.filterOptions}>
@@ -185,7 +188,7 @@ export default function SearchRecipes(){
                 : recipes.length == 0 
                 ? <p className={styles.usersNotFound}>No se encontraron clasificaciones con los filtros colocados, prueba modificando los filtros</p>
                 : <><div className="recipesContent">
-                    {recipes.map(recipe => <Recipe recipe={recipe}/>)}
+                    {recipes.map(recipe => <Recipe cristal={true} recipe={recipe}/>)}
                 </div>
                 <div className='mobileSpace'>
                     <Pagination               
