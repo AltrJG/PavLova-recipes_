@@ -77,7 +77,9 @@ export default function CrearReceta() {
     const obtenerRecetaActualizar = async () => {
       try{
         const recetaActualizar = await backendAPI.get(`/recetas/${recetaEditar}`);
-        console.log(recetaActualizar.data);
+        if(!isSuperUser && !isStaff && recetaActualizar?.data?.creador_info?.id != user?.id){
+          navigate('/');
+        }
         setRichTextRecipe(JSON.parse(recetaActualizar.data.procedimiento));
         const ingredientesUpdate = recetaActualizar.data.ingredientes.map(ingrediente => {
             return {
@@ -139,8 +141,8 @@ export default function CrearReceta() {
   useEffect(() => {
     const updateIngredientOptions = async () => {
       if(Object.keys(createdIngredient).length != 0){
-        const ingredientes = await backendAPI.get('/ingredientes');
-        setIngredientOptions(ingredientes.data.results);
+        const ingredientes = await backendAPI.get('/ingredientes/all');
+        setIngredientOptions(ingredientes.data);
         resetIngredientState();
       }
     }

@@ -9,11 +9,12 @@ import { useEffect, useState } from 'react';
 import NotFound404 from '../pages/NotFound404'
 import backendAPI from '../api/axiosConfig';
 import { FadeLoader } from 'react-spinners';
+import { useAuth } from '../context/AuthProvider';
 
 export default function UserProfile(){
-    const { openModifyProfile } = useRightSidebar();
     const navigate = useNavigate();
     let { user_id } = useParams();
+    const { refreshAccessToken } = useAuth();
     const [ user, setUser ] = useState({});
     const [ loading, setLoading ] = useState(true);
     const [ errorPage, setErrorPage ] = useState(false);
@@ -34,8 +35,11 @@ export default function UserProfile(){
                 });
                 console.log(userData);
             } catch(error){
-                setErrorPage(true);
-                console.log(error);
+                if(error.response?.status == 401){
+                    await refreshAccessToken(getUserProfile);
+                } else{
+                    setErrorPage(true);
+                }
             } finally{
                 setLoading(false);
             }
@@ -53,7 +57,7 @@ export default function UserProfile(){
         <>
             { loading
             ? <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
-            :<><Help title={`Perfil de ${user.nombre.split(' ')[0]}`} description={"Aqui puedes ver los detalles de este usuario"}>
+            :<><Help title={`Perfil de ${user?.nombre?.split(' ')[0]}`} description={"Aqui puedes ver los detalles de este usuario"}>
                 <MainButton action={volver} disabled={false} type={'button'} icon={"arrow-back"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Volver"}/>
             </Help>
             <div className={styles.profileCurrentUser}>

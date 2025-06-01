@@ -4,7 +4,7 @@ import { ReactSVG } from "react-svg";
 import CardButton from "./CardButton";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function Recipe({ isModificationAllowed = false, recipe, deleteAction, cristal = false }){
+export default function Recipe({ isModificationAllowed = false, recipe, deleteAction, cristal = false, user, isSuperUser, isStaff }){
 
     const navigate = useNavigate();
 
@@ -29,7 +29,7 @@ export default function Recipe({ isModificationAllowed = false, recipe, deleteAc
                 icon="eye"
                 onClick={() => console.log("Me clickearon")}
             /> }
-            { isModificationAllowed && <CardButton
+            { isModificationAllowed && (isSuperUser || isStaff || recipe?.creador_info?.id === user?.id) && <CardButton
                 text="Editar"
                 hoverWidth="8rem"
                 top={4.5}
@@ -37,7 +37,7 @@ export default function Recipe({ isModificationAllowed = false, recipe, deleteAc
                 icon="create"
                 onClick={() => navigate(`/crear-receta?recetaEditar=${recipe.id}`)}
             /> }
-            { isModificationAllowed && <CardButton
+            { isModificationAllowed && (isSuperUser || isStaff || recipe?.creador_info?.id === user?.id) && <CardButton
                 text="Eliminar"
                 hoverWidth="10rem"
                 top={.5}

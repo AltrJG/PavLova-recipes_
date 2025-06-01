@@ -20,7 +20,7 @@ export default function UserRecipes(){
     const [ previousPage, setPreviousPage ] = useState(null);
     const [ count, setCount ] = useState(0);
     const [ currentPage, setCurrentPage ] = useState(1);
-    const { refreshAccessToken } = useAuth();
+    const { refreshAccessToken, isSuperUser, isStaff, user } = useAuth();
     const [ recipes, setRecipes ] = useState([]);
 
     const [ searchOption, setSearchOption ] = useState('mis_recetas');
@@ -148,7 +148,7 @@ export default function UserRecipes(){
                 : recipes.length == 0 
                 ? <p className={styles.usersNotFound}>No se encontraron recetas con los filtros colocados, prueba modificando los filtros</p> 
                 : <><div className="recipesContent">
-                    { recipes.map(recipe => <Recipe cristal={true} key={recipe.id} recipe={recipe} isModificationAllowed={true} deleteAction={deleteRecetaAsk}/>) }
+                    { recipes.map(recipe => <Recipe isSuperUser={isSuperUser} isStaff={isStaff} user={user} cristal={true} key={recipe.id} recipe={recipe} isModificationAllowed={true} deleteAction={deleteRecetaAsk}/>) }
                 </div>
                 <div className='mobileSpace'>
                     <Pagination               

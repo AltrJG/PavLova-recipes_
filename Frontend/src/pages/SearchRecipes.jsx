@@ -95,7 +95,7 @@ export default function SearchRecipes(){
                 });        
                 activeCategoria != "" && params.append('categoria', activeCategoria);
                 advanceFilters.tiempo_preparacion != 360 && params.append('tiempo_preparacion', advanceFilters.tiempo_preparacion);
-                advanceFilters.tiempo_coccion != 360 && params.append('tiempo_coccion', advanceFilters.tiempo_preparacion);;
+                advanceFilters.tiempo_coccion != 360 && params.append('tiempo_coccion', advanceFilters.tiempo_coccion);
                 advanceFilters.rating != 0 && params.append('rating', advanceFilters.rating);
                 advanceFilters.show_recipes_score != 'Todas' && params.append('recipes_score_visibility', advanceFilters.show_recipes_score.replaceAll(' ', '_'));
                 advanceFilters.selected_etiquetas.length != 0 && advanceFilters.selected_etiquetas.map(etiqueta => params.append('etiquetas', etiqueta));
@@ -186,7 +186,7 @@ export default function SearchRecipes(){
                 { loading 
                 ? <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
                 : recipes.length == 0 
-                ? <p className={styles.usersNotFound}>No se encontraron clasificaciones con los filtros colocados, prueba modificando los filtros</p>
+                ? <p className={styles.usersNotFound}>No se encontraron recetas con los filtros colocados, prueba modificando los filtros</p>
                 : <><div className="recipesContent">
                     {recipes.map(recipe => <Recipe cristal={true} recipe={recipe}/>)}
                 </div>
