@@ -14,7 +14,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer
 from .permissions import IsModeratorOrAdmin, IsSuperUserOrReadOnly, IsStaffOrSuperUserOrReadOnly, IsOwnerOrStaffOrSuperUser
-from .filters import UserFilter, IngredienteFilter, EtiquetaFilter, CategoriaFilter
+from .filters import UserFilter, IngredienteFilter, EtiquetaFilter, CategoriaFilter, RecetaFilter
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -466,6 +466,7 @@ class EtiquetaViewSet(viewsets.ModelViewSet):
 class RecetaViewSet(viewsets.ModelViewSet):
     queryset = Receta.objects.all()
     serializer_class = RecetaSerializer
+    filterset_class = RecetaFilter
 
     def get_permissions(self):
         if self.action == 'create':

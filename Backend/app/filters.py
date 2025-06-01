@@ -1,5 +1,5 @@
 import django_filters
-from .models import User, Ingrediente, Etiqueta, Categoria
+from .models import User, Ingrediente, Etiqueta, Categoria, Receta
 
 # Se filtra de la siguiente forma en la URL: /users/?role=<rol> | /users/?name=<nombre> | /users/?email=<correo> o cualquier combinación de estos.
 # Se combina de la siguiente forma en la URL: /users/?role=<rol>&name=<nombre>&email=<correo>
@@ -61,3 +61,29 @@ class CategoriaFilter(django_filters.FilterSet):
     class Meta:
         model = Categoria
         fields = ["nombre"]
+
+class RecetaFilter(django_filters.FilterSet):
+    nombre = django_filters.CharFilter(field_name='nombre', lookup_expr='icontains')
+    nombre_usuario = django_filters.CharFilter(field_name='creador__name', lookup_expr='icontains')
+    categoria = django_filters.NumberFilter(field_name='categoria__id')
+    tiempo_preparacion = django_filters.NumberFilter(field_name='tiempo_preparacion', lookup_expr='lte')
+    tiempo_coccion = django_filters.NumberFilter(field_name='tiempo_coccion', lookup_expr='lte')
+    rating = django_filters.NumberFilter(field_name='rating', lookup_expr='gte')
+    etiquetas = django_filters.BaseInFilter(field_name='etiquetas__id')
+    #Recipe score por implementar
+
+    tipoUsuario = django_filters.CharFilter(method='filtrar_tipo_usuario')
+
+    def filtrar_tipo_usuario(self, queryset, name, value):
+        value = value.lower()
+        if value == 'usuarios':
+            return queryset.filter(creador__is_staff=False, creador__is_superuser=False)
+        elif value == 'moderadores':
+            return queryset.filter(creador__is_staff=True, creador__is_superuser=False)
+        elif value == 'administradores':
+            return queryset.filter(creador__is_superuser=True)
+        return queryset
+
+    class Meta:
+        model = Receta
+        fields = ['nombre', 'nombre_usuario', 'categoria', 'tiempo_preparacion', 'tiempo_coccion', 'rating', 'etiquetas', 'tipoUsuario']
