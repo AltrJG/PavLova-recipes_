@@ -39,7 +39,7 @@
 .section {
     opacity: 0;
     visibility: hidden;
-    transform: translateY(20px) scale(0.80);
+    transform: translateY(20px) scale(0.60);
     transition: opacity 0.5s ease, transform 0.5s ease;
     position: absolute;
     top: 0;

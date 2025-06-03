@@ -56,7 +56,7 @@ export default function UserRecipes(){
             const params = new URLSearchParams();
 
             if (recipeFilters.nombre.trim() && previous == null && next == null) params.append("nombre", recipeFilters.nombre);
-            if (recipeFilters.nombre_usuario.trim() && previous == null && next == null) params.append("autor", recipeFilters.autor);
+            if (recipeFilters.nombre_usuario.trim() && previous == null && next == null) params.append("nombre_usuario", recipeFilters.nombre_usuario);
             if (!isNaN(recipeFilters.rating) && recipeFilters.rating > 0 && recipeFilters.rating <= 5 && previous == null && next == null) params.append("rating", recipeFilters.rating);
 
             // Append query parameters if they exist
@@ -151,7 +151,8 @@ export default function UserRecipes(){
                     { recipes.map(recipe => <Recipe isSuperUser={isSuperUser} isStaff={isStaff} user={user} cristal={true} key={recipe.id} recipe={recipe} isModificationAllowed={true} deleteAction={deleteRecetaAsk}/>) }
                 </div>
                 <div className='mobileSpace'>
-                    <Pagination               
+                    <Pagination
+                        action={getRecipes}               
                         next={nextPage} 
                         previous={previousPage} 
                         count={count} 

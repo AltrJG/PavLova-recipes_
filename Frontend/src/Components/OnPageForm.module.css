@@ -21,6 +21,7 @@
   .inputField {
     background: rgba(255, 255, 255, 0.635);
     backdrop-filter: blur( 3px );
+    border: .1rem solid white;
     -webkit-backdrop-filter: blur( 3px );
     border-radius: 1rem;
     width: 100%;

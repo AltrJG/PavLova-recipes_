@@ -82,8 +82,9 @@ export default function SearchRecipes(){
             : next 
             ? next.split('app')[1] 
             : `/recetas/`;
+            console.log(url);
 
-            if(!noFilters){
+            if(!noFilters && previous == null && next == null){
                 const params = new URLSearchParams();
 
                 Object.keys(recipeFilters).forEach(filter => {
