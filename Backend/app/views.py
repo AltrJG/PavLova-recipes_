@@ -6,13 +6,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from django.shortcuts import get_object_or_404
-from .models import User, EmailVerificationCode, Ingrediente, Categoria, Etiqueta, Receta
+from .models import User, EmailVerificationCode, Ingrediente, Categoria, Etiqueta, Receta, Comentario
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate, update_session_auth_hash
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer
+from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer, ComentarioSerializer
 from .permissions import IsModeratorOrAdmin, IsSuperUserOrReadOnly, IsStaffOrSuperUserOrReadOnly, IsOwnerOrStaffOrSuperUser
 from .filters import UserFilter, IngredienteFilter, EtiquetaFilter, CategoriaFilter, RecetaFilter
 from django.core.mail import send_mail
@@ -478,6 +478,10 @@ class RecetaViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(creador=self.request.user)
 
+    def perform_update(self, serializer):
+        instance = serializer.instance
+        serializer.save(creador=instance.creador)
+
     @action(detail=True, methods=['post', 'put'], url_path='upload_imagen')
     def upload_imagen(self, request, pk=None):
         receta = self.get_object()
@@ -497,3 +501,52 @@ class RecetaViewSet(viewsets.ModelViewSet):
         receta.foto_receta = imagen
         receta.save(update_fields=['foto_receta'])
         return Response({'mensaje': 'Imagen subida con éxito'}, status=status.HTTP_200_OK)
+
+class ComentarioViewSet(viewsets.ModelViewSet):
+    queryset = Comentario.objects.all()
+    serializer_class = ComentarioSerializer
+
+    def get_permissions(self):
+        if self.action == 'create':
+            return [IsAuthenticated()]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            return [IsOwnerOrStaffOrSuperUser()]
+        return []
+
+    def get_queryset(self):
+        queryset = Comentario.objects.all()
+        receta_id = self.request.query_params.get('receta')
+        if receta_id:
+            queryset = queryset.filter(receta_id=receta_id)
+        return queryset
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        receta_id = self.request.data.get('receta')
+
+        if not receta_id:
+            raise PermissionDenied("Debes especificar la receta.")
+
+        receta = Receta.objects.get(pk=receta_id)
+
+        if Comentario.objects.filter(receta=receta, usuario=user).exists():
+            raise PermissionDenied("Ya has comentado en esta receta.")
+
+        serializer.save(usuario=user, receta=receta)
+
+    def perform_update(self, serializer):
+        instance = serializer.instance
+        user = self.request.user
+
+        if instance.usuario != user and not (user.is_staff or user.is_superuser):
+            raise PermissionDenied("No puedes editar este comentario.")
+
+        serializer.save(usuario=instance.usuario)
+
+    def perform_destroy(self, instance):
+        user = self.request.user
+
+        if instance.usuario != user and not (user.is_staff or user.is_superuser):
+            raise PermissionDenied("No puedes borrar este comentario.")
+
+        instance.delete()

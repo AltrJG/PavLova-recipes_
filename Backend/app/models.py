@@ -316,12 +316,12 @@ class Receta(models.Model):
     frase = models.TextField()
     foto_receta = models.ImageField(upload_to=UniqueImagePath(), default='recetas/receta_placeholder.webp')
     procedimiento = models.TextField()
-    rating = models.FloatField(default=0.0) #Se le debería poner un nombre más descriptivo, el nombre es muy similar a puntuación
+    #rating = models.FloatField(default=0.0) #Se le debería poner un nombre más descriptivo, el nombre es muy similar a puntuación
     tiempo_preparacion = models.IntegerField(default=0)
     tiempo_coccion = models.IntegerField(default=0)
     visibilidad = models.BooleanField(default=True)
     verificado = models.BooleanField(default=False)
-    puntuacion = models.FloatField(default=0.0)
+    puntuacion = models.FloatField(default=0.0) # <-- IA
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True, related_name='recetas')
     ingredientes = models.ManyToManyField(Ingrediente, through='RecetaIngrediente', related_name='recetas')
     etiquetas = models.ManyToManyField(Etiqueta, related_name='recetas')
@@ -332,6 +332,11 @@ class Receta(models.Model):
         blank=True,
         related_name='recetas'
     )
+
+    @property
+    def rating_promedio(self):
+        promedio = self.comentarios.aggregate(promedio=models.Avg('puntuacion'))['promedio'] # Calcula el promedio de puntuación de los comentarios relacionados con la receta
+        return promedio or 0.0
 
     def __str__(self):
         return self.nombre
@@ -372,12 +377,19 @@ class Receta(models.Model):
 class Comentario(models.Model):
     receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name='comentarios')
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comentarios')
-    puntuacion = models.IntegerField(default=0)
+    puntuacion = models.FloatField(default=0.0)
     contenido = models.TextField()
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ('receta', 'usuario')
+
     def __str__(self):
         return f"{self.usuario.email} - {self.receta.nombre}"
+    
+    @property
+    def creador(self): # Para la función de permisos, devuelve el usuario que creó el comentario
+        return self.usuario
 
 class RecetaIngrediente(models.Model):
     receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name='receta_ingredientes')

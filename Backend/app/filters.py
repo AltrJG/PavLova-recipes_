@@ -1,4 +1,5 @@
 import django_filters
+from django.db.models import Avg
 from .models import User, Ingrediente, Etiqueta, Categoria, Receta
 
 # Se filtra de la siguiente forma en la URL: /users/?role=<rol> | /users/?name=<nombre> | /users/?email=<correo> o cualquier combinación de estos.
@@ -68,7 +69,7 @@ class RecetaFilter(django_filters.FilterSet):
     categoria = django_filters.NumberFilter(field_name='categoria__id')
     tiempo_preparacion = django_filters.NumberFilter(field_name='tiempo_preparacion', lookup_expr='lte')
     tiempo_coccion = django_filters.NumberFilter(field_name='tiempo_coccion', lookup_expr='lte')
-    rating = django_filters.NumberFilter(field_name='rating', lookup_expr='gte')
+    rating = django_filters.NumberFilter(method='filter_rating')
     etiquetas = django_filters.BaseInFilter(field_name='etiquetas__id')
     #Recipe score por implementar
 
@@ -87,3 +88,7 @@ class RecetaFilter(django_filters.FilterSet):
     class Meta:
         model = Receta
         fields = ['nombre', 'nombre_usuario', 'categoria', 'tiempo_preparacion', 'tiempo_coccion', 'rating', 'etiquetas', 'tipoUsuario']
+
+    def filter_rating(self, queryset, name, value):
+        queryset = queryset.annotate(rating_anotado=Avg('comentarios__puntuacion'))
+        return queryset.filter(rating_anotado__gte=value)

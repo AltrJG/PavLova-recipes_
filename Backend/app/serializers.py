@@ -1,4 +1,4 @@
-from .models import User, PasswordResetToken, Ingrediente, Categoria, Etiqueta, Receta, RecetaIngrediente
+from .models import User, PasswordResetToken, Ingrediente, Categoria, Etiqueta, Receta, RecetaIngrediente, Comentario
 from rest_framework import serializers
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -301,13 +301,14 @@ class RecetaSerializer(serializers.ModelSerializer):
     categoria_info = CategoriaSerializer(source='categoria', read_only=True)
     creador = serializers.HiddenField(default=serializers.CurrentUserDefault())
     creador_info = UsuarioSerializer(source='creador', read_only=True)
+    rating_promedio = serializers.FloatField(read_only=True, default=0.0)
 
     class Meta:
         model = Receta
         fields = [
             'id', 'nombre', 'porciones', 'frase', 'foto_receta', 'procedimiento',
             'tiempo_preparacion', 'tiempo_coccion', 'categoria', 'categoria_info',
-            'etiquetas', 'etiquetas_info', 'ingredientes', 'creador', 'creador_info'
+            'etiquetas', 'etiquetas_info', 'ingredientes', 'creador', 'creador_info', 'rating_promedio'
         ]
 
     def validate_ingredientes(self, value):
@@ -345,3 +346,15 @@ class RecetaSerializer(serializers.ModelSerializer):
                 RecetaIngrediente.objects.create(receta=instance, **item)
 
         return instance
+    
+class ComentarioSerializer(serializers.ModelSerializer):
+    usuario_nombre = serializers.CharField(source='usuario.name', read_only=True)
+    usuario_id = serializers.IntegerField(source='usuario.id', read_only=True)
+    
+    class Meta:
+        model = Comentario
+        fields = [
+            'id', 'usuario_id', 'usuario_nombre', 'puntuacion',
+            'contenido', 'fecha_creacion', 'receta'
+        ]
+        read_only_fields = ['id', 'fecha_creacion', 'usuario_id', 'usuario_nombre', 'receta']
