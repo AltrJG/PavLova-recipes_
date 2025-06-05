@@ -18,7 +18,7 @@ from .filters import UserFilter, IngredienteFilter, EtiquetaFilter, CategoriaFil
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from .pagination import IngredientePagination, UserPagination
+from .pagination import IngredientePagination, UserPagination, CommentPagination
 from rest_framework.decorators import action
 
 #Miscellaneous>>>>>>>>>>>>>>>>>>>
@@ -505,6 +505,7 @@ class RecetaViewSet(viewsets.ModelViewSet):
 class ComentarioViewSet(viewsets.ModelViewSet):
     queryset = Comentario.objects.all()
     serializer_class = ComentarioSerializer
+    pagination_class = CommentPagination
 
     def get_permissions(self):
         if self.action == 'create':

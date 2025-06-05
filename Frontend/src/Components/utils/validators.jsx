@@ -309,3 +309,19 @@ export function checkNutritionalObjectives(objectivesData){
     });
     return errors;
 }
+
+export const validateCommentData = (commentData) => {
+    let errors = {};
+    console.log(commentData);
+    const sanitizedContenido = DOMPurify.sanitize(commentData.contenido.trim());
+    if (sanitizedContenido !== commentData.contenido) {
+        errors.contenido = "El contenido del comentario contiene código no permitido.";
+    }
+    if(commentData.puntuacion == 0 || isNaN(commentData.puntuacion)){
+        errors.puntuacion = "La puntuacion es obligatoria";
+    }
+    if (!commentData.contenido || commentData.contenido.trim().length === 0) {
+        errors.contenido = "El contenido del comentario es obligatorio.";
+    }
+    return errors;
+};

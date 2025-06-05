@@ -22,32 +22,52 @@ export default function RecipeHeader(){
     let { recipe_id } = useParams();
     const { refreshAccessToken, isSuperUser, isStaff, user } = useAuth();
     const [ receta, setReceta ] = useState({});
+    const [ updateRecipe, setUpdateRecipe ] = useState(false);
     const [ loading, setLoading ] = useState(true);
+    const [ commentCount, setCommentCount ] = useState(0);
     const navigate = useNavigate();
 
     const navigateLogIn = () => {
         navigate('/auth/iniciar-sesion');
     }
 
-    useEffect(() => {
-        const getReceta = async () => {
-            try{
-                const receta = await backendAPI(`recetas/${recipe_id}/`);
-                setReceta(receta.data);
-                console.log(receta.data?.creador_info?.id);
-            } catch(error){
-                if(error.response?.status == 401){
-                    await refreshAccessToken(getReceta);
-                } else{
-                    console.log(error);
-                }
-            } finally{
-                setLoading(false);
+    const getReceta = async () => {
+        try{
+            const receta = await backendAPI(`recetas/${recipe_id}/`);
+            const response = await backendAPI.get(`comentarios/?receta=${recipe_id}`);
+            setCommentCount(response.data.count);
+            setReceta(receta.data);
+        } catch(error){
+            if(error.response?.status == 401){
+                await refreshAccessToken(getReceta);
+            } else{
+                console.log(error);
             }
-        };
+        } finally{
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         setLoading(true);
         getReceta();
     }, []);
+
+    useEffect(() => {
+        if(updateRecipe){
+            setLoading(true);
+            getReceta();
+        }
+    }, [updateRecipe]);
+
+    const getStarIcon = (index, value) => {
+        if (value >= index + 1) {
+          return "star";
+        } else if (value >= index + 0.5) {
+          return "star-half";
+        }
+        return "star-outline";
+      };
 
     if (loading) return <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
     if (Object.keys(receta).length == 0) return <NotFound404 text={"No se encontro la receta."}/>
@@ -61,14 +81,20 @@ export default function RecipeHeader(){
                     ? <p className={styles.recipeHeaderType}>{receta.categoria_info?.nombre}</p>
                     : isSuperUser && isStaff && <p className={styles.recipeHeaderTypeNoData}>Sin categoria</p> }
                     <div className={styles.recipeHeaderRating}>
-                        <div className={styles.recipeHeaderStars}>
-                            <ReactSVG src={`/src/assets/Iconos/star.svg`}/>
-                            <ReactSVG src={`/src/assets/Iconos/star.svg`}/>
-                            <ReactSVG src={`/src/assets/Iconos/star.svg`}/>
-                            <ReactSVG src={`/src/assets/Iconos/star.svg`}/>
-                            <ReactSVG src={`/src/assets/Iconos/star.svg`}/>
-                        </div>
-                        <p className={styles.recipeRatingText}>Promedio: 4.5 (10)</p>
+                        {receta?.rating_promedio > 0 
+                        ? <><div className={styles.recipeHeaderStars}>
+                            {[...Array(5)].map((_, index) => (
+                                <div key={index}>
+                                    <ReactSVG
+                                    src={`/src/assets/Iconos/${getStarIcon(index, receta?.rating_promedio)}.svg`}
+                                    className="star-icon"
+                                    />
+                                </div>
+                            ))}
+                            </div>
+                            <p className={styles.recipeRatingText}>Promedio: {receta?.rating_promedio.toFixed(2)} ({commentCount})</p></>
+                        : <p className={styles.recipeRatingText}>Esta receta no tiene reseñas</p>
+                        }
                     </div>
                     <Link to={`/user/${receta?.creador_info?.id}`} className={styles.recipeHeaderCreator}>
                         <img src={receta.creador_info?.profile_picture}/>
@@ -88,8 +114,8 @@ export default function RecipeHeader(){
                 <RecipeContents recipe={receta}/>
                 <RecipeNutritionalFacts/>
                 <div className={styles.recipeHeaderShowTwo}>
-                    <RecipeRating/>
-                    <RecipeComments/>
+                    <RecipeRating recipe_id={receta?.id} setUpdateRecipe={setUpdateRecipe}/>
+                    <RecipeComments recipeId={receta?.id}/>
                 </div>
             </div>
             <div className={styles.recipeImageTagsContainer}>

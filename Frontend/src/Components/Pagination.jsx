@@ -3,9 +3,8 @@ import styles from './Pagination.module.css';
 import arrowBack from '../assets/Iconos/arrow-back.svg';
 import arrowForward from '../assets/Iconos/arrow-forward.svg';
 
-export default function Pagination({ next = null, previous = null, count, currentPage, text, action }){
+export default function Pagination({ next = null, previous = null, count, currentPage, text, resultsPerPage = 12, action }){
 
-    const resultsPerPage = 10; // Change if needed
     const start = (currentPage - 1) * resultsPerPage + 1;
     const end = Math.min(start + resultsPerPage - 1, count);
 

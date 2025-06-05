@@ -191,6 +191,7 @@ export default function EtiquetaCategoria(){
                     <Pagination
                         action={getEtiquetasCategorias}
                         next={nextPage} 
+                        resultsPerPage={10}
                         previous={previousPage} 
                         count={count} 
                         currentPage={currentPage} 

@@ -152,7 +152,8 @@ export default function UserRecipes(){
                 </div>
                 <div className='mobileSpace'>
                     <Pagination
-                        action={getRecipes}               
+                        action={getRecipes}
+                        resultsPerPage={10}              
                         next={nextPage} 
                         previous={previousPage} 
                         count={count} 

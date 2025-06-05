@@ -82,7 +82,6 @@ export default function SearchRecipes(){
             : next 
             ? next.split('app')[1] 
             : `/recetas/`;
-            console.log(url);
 
             if(!noFilters && previous == null && next == null){
                 const params = new URLSearchParams();
@@ -192,7 +191,8 @@ export default function SearchRecipes(){
                     {recipes.map(recipe => <Recipe cristal={true} recipe={recipe}/>)}
                 </div>
                 <div className='mobileSpace'>
-                    <Pagination               
+                    <Pagination
+                        resultsPerPage={10}
                         action={getRecipes}
                         next={nextPage} 
                         previous={previousPage} 

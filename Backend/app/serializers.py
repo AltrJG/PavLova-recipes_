@@ -350,11 +350,12 @@ class RecetaSerializer(serializers.ModelSerializer):
 class ComentarioSerializer(serializers.ModelSerializer):
     usuario_nombre = serializers.CharField(source='usuario.name', read_only=True)
     usuario_id = serializers.IntegerField(source='usuario.id', read_only=True)
+    profile_picture = serializers.ImageField(source='usuario.profile_picture', read_only=True)
     
     class Meta:
         model = Comentario
         fields = [
             'id', 'usuario_id', 'usuario_nombre', 'puntuacion',
-            'contenido', 'fecha_creacion', 'receta'
+            'contenido', 'fecha_creacion', 'receta', 'profile_picture'
         ]
-        read_only_fields = ['id', 'fecha_creacion', 'usuario_id', 'usuario_nombre', 'receta']
+        read_only_fields = ['id', 'fecha_creacion', 'usuario_id', 'usuario_nombre', 'receta', 'profile_picture']

@@ -64,6 +64,24 @@
     box-shadow: 0 0 8px rgba(255, 166, 0, 0.5);
 }
 
+.logInButton button{
+    cursor: pointer;
+    font-family: 'Oswald', sans-serif;
+    border: none;
+    background-color: rgba(255, 166, 1, 0.438);
+    padding: .3rem 1rem;
+    font-size: 1.6rem;
+    border-radius: 2rem;
+    color: black;
+    text-decoration: none;
+    transition: .3s;
+}
+
+.logInButton:hover button{
+    color: white;
+    background-color: orange;
+}
+
 @media(max-width: 68.75em){
     .recipeHeaderRatingFormContainer{
         width: 100% !important;

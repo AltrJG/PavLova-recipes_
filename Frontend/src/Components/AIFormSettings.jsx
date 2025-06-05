@@ -98,7 +98,7 @@ export default function AIFormSettings(){
                     });
                     setImagen([]);
                     setVisibilityData({visibilidad: 'Personal'});
-                    Swal.fire({
+                    ({
                         icon: "success",
                         title: "Ingrediente Creado",
                         text: response.data.message,
