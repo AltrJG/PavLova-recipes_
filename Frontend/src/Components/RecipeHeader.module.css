@@ -235,6 +235,9 @@
         grid-template-columns: 1fr 1fr;
         grid-gap: 2rem;
     }
+    .recipeHeaderNoComments{
+        grid-template-columns: 1fr !important;
+    }
     .recipeHeaderImage{
         height: 65rem;
     }

@@ -113,8 +113,8 @@ export default function RecipeHeader(){
                 </div>
                 <RecipeContents recipe={receta}/>
                 <RecipeNutritionalFacts/>
-                <div className={styles.recipeHeaderShowTwo}>
-                    <RecipeRating recipe_id={receta?.id} setUpdateRecipe={setUpdateRecipe}/>
+                <div className={`${styles.recipeHeaderShowTwo} ${user?.id == receta?.creador_info?.id ? styles.recipeHeaderNoComments : ''}`}>
+                    {user?.id != receta?.creador_info?.id && <RecipeRating recipe_id={receta?.id} setUpdateRecipe={setUpdateRecipe}/>}
                     <RecipeComments recipeId={receta?.id}/>
                 </div>
             </div>
