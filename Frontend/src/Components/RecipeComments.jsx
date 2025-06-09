@@ -5,8 +5,10 @@ import Pagination from './Pagination';
 import { useEffect, useState } from 'react';
 import backendAPI from '../api/axiosConfig';
 import { FadeLoader } from 'react-spinners';
+import icon from '../assets/Iconos/trash.svg'
+import Swal from 'sweetalert2';
 
-export default function RecipeComments({recipeId}){
+export default function RecipeComments({recipeId, isSuperUser, isStaff, user, recipeCreator}){
     
     const [comentarios, setComentarios] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -39,6 +41,51 @@ export default function RecipeComments({recipeId}){
         } finally{
             setLoading(false);
         }
+    };
+
+    
+    const deleteComment = async (nombre, id) => {
+        try{
+            await backendAPI.delete(`/comentarios/${id}/`);
+            Swal.fire({
+                icon: "success",
+                title: "Comentario eliminado",
+                text: `Se elimino el comentario con exito de ${nombre}`,
+                showConfirmButton: true,
+                customClass: {
+                    title: "swal_title",
+                    icon: "swal_icon",
+                    htmlContainer: "swal_text",
+                    confirmButton: "swal_confirm"
+                }
+            });
+            setLoading(true);
+            await getComments();
+        } catch(error){
+            console.log(error);
+        }
+    }
+
+    const askDeleteComment = (nombre, id) => {
+        Swal.fire({
+            title: `Eliminar comentario?`,
+            icon: "question",
+            text: `Estas seguro de eliminar el comentario de '${nombre}'`,
+            customClass: {
+                title: "swal_title",
+                icon: "swal_icon",
+                htmlContainer: "swal_text",
+                confirmButton: "swal_confirm"
+            },
+            showCancelButton: true,
+            cancelButtonText: "Cancelar",
+            confirmButtonText: "Eliminar",
+            allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+            if (result.isConfirmed) {
+                deleteComment(nombre, id);
+            }
+        });
     }
 
     useEffect(() => {
@@ -68,7 +115,10 @@ export default function RecipeComments({recipeId}){
                             <img src={comentario.profile_picture} />
                         </div>
                         <div className={styles.recipeCommentData}>
-                            <h5 className={styles.recipeCommentName}>{comentario.usuario_nombre}</h5>
+                            <div className={styles.recipeNameDelete}>
+                                <h5 className={styles.recipeCommentName}>{comentario.usuario_nombre}</h5>
+                                { (user?.id == recipeCreator || isSuperUser || isStaff) && <ReactSVG onClick={() => askDeleteComment(comentario.usuario_nombre, comentario.id)} src={icon}/>}
+                            </div>
                             <p className={styles.recipeCommentDate}>
                                 {new Date(comentario?.fecha_creacion).toLocaleDateString('es-MX', {
                                     year: 'numeric',

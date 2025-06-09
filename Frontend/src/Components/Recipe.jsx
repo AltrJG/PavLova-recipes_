@@ -12,7 +12,7 @@ export default function Recipe({ isModificationAllowed = false, recipe, deleteAc
         <div className={`${styles.recipeContainer}  ${cristal ? styles.cristal : ""}`}>
             <Link to={`/receta/${recipe?.id}`} style={isModificationAllowed ? { pointerEvents: "none" } : {}} className={styles.recipeImageContent}>
                 <img className={styles.recipeImage} src={recipe?.foto_receta}/>
-                <div className={styles.recipeRating}><ReactSVG src={`/src/assets/Iconos/star.svg`}/>{recipe?.rating_promedio != 0 ? recipe?.rating_promedio : "Sin Reseñas"}</div>
+                <div className={styles.recipeRating}><ReactSVG src={`/src/assets/Iconos/star.svg`}/>{recipe?.rating_promedio != 0 ? recipe?.rating_promedio?.toFixed(2) : "Sin Reseñas"}</div>
             </Link>
             <Link to={`/receta/${recipe?.id}`} className={`${styles.recipeData}`}>
                 <h4 className={styles.recipeName}>{recipe?.nombre}</h4>

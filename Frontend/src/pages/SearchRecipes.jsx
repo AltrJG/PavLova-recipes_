@@ -65,7 +65,7 @@ export default function SearchRecipes(){
                 setRecipes(response.data.results);
             } catch(error){
                 if(error.response?.status == 401){
-                    await refreshAccessToken(getRecipes);
+                    await refreshAccessToken(obtenerInformacion);
                 }
             } finally{
                 setLoading(false);
@@ -161,6 +161,7 @@ export default function SearchRecipes(){
         advanceFilters.rating != 0 && (isFilterActive = true);
         advanceFilters.show_recipes_score != 'Todas' && (isFilterActive = true);
         advanceFilters.selected_etiquetas.length != 0 && (isFilterActive = true);
+        setCurrentPage(1);
         if(isFilterActive){
             setRemoveFilters(true);
         } else{

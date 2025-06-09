@@ -115,7 +115,7 @@ export default function RecipeHeader(){
                 <RecipeNutritionalFacts/>
                 <div className={`${styles.recipeHeaderShowTwo} ${user?.id == receta?.creador_info?.id ? styles.recipeHeaderNoComments : ''}`}>
                     {user?.id != receta?.creador_info?.id && <RecipeRating recipe_id={receta?.id} setUpdateRecipe={setUpdateRecipe}/>}
-                    <RecipeComments recipeId={receta?.id}/>
+                    <RecipeComments recipeCreator={receta?.creador_info?.id} isSuperUser={isSuperUser} isStaff={isStaff} user={user} recipeId={receta?.id}/>
                 </div>
             </div>
             <div className={styles.recipeImageTagsContainer}>
@@ -124,7 +124,7 @@ export default function RecipeHeader(){
                     {receta.etiquetas_info.map(etiqueta => <p key={etiqueta.id} className={styles.recipeTag}>{etiqueta.nombre}</p>)}
                 </div>
                 <div className='mobileSpaceProcess'>
-                <RecipePreparation procedimiento={JSON.parse(receta.procedimiento)}/>
+                    <RecipePreparation procedimiento={JSON.parse(receta.procedimiento)}/>
                 </div>
             </div>
         </div>
