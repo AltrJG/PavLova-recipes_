@@ -6,20 +6,21 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from django.shortcuts import get_object_or_404
-from .models import User, EmailVerificationCode, Ingrediente, Categoria, Etiqueta, Receta, Comentario
+from .models import User, EmailVerificationCode, Ingrediente, Categoria, Etiqueta, Receta, Comentario, RecetaFavorito
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate, update_session_auth_hash
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer, ComentarioSerializer
+from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer, ComentarioSerializer, RecetaFavoritoSerializer
 from .permissions import IsModeratorOrAdmin, IsSuperUserOrReadOnly, IsStaffOrSuperUserOrReadOnly, IsOwnerOrStaffOrSuperUser
-from .filters import UserFilter, IngredienteFilter, EtiquetaFilter, CategoriaFilter, RecetaFilter
+from .filters import UserFilter, IngredienteFilter, EtiquetaFilter, CategoriaFilter, RecetaFilter, MisRecetasFilter, MisFavoritosFilter
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from .pagination import IngredientePagination, UserPagination, CommentPagination
 from rest_framework.decorators import action
+from django_filters.rest_framework import DjangoFilterBackend
 
 #Miscellaneous>>>>>>>>>>>>>>>>>>>
 
@@ -501,6 +502,26 @@ class RecetaViewSet(viewsets.ModelViewSet):
         receta.foto_receta = imagen
         receta.save(update_fields=['foto_receta'])
         return Response({'mensaje': 'Imagen subida con éxito'}, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['get'], url_path='mis-recetas', permission_classes=[IsAuthenticated])
+    def mis_recetas(self, request):
+        queryset = Receta.objects.filter(creador=request.user)
+
+        filter_backend = DjangoFilterBackend()
+        filterset = MisRecetasFilter(request.GET, queryset=queryset, request=request)
+
+        if filterset.is_valid():
+            queryset = filterset.qs
+        else:
+            return Response({"error": "Parámetros de filtro inválidos", "detalles": filterset.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 class ComentarioViewSet(viewsets.ModelViewSet):
     queryset = Comentario.objects.all()
@@ -512,6 +533,8 @@ class ComentarioViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated()]
         elif self.action in ['update', 'partial_update', 'destroy']:
             return [IsOwnerOrStaffOrSuperUser()]
+        elif self.action == 'comentario_usuario':
+            return [IsAuthenticated()]
         return []
 
     def get_queryset(self):
@@ -551,3 +574,67 @@ class ComentarioViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("No puedes borrar este comentario.")
 
         instance.delete()
+
+    @action(detail=False, methods=['get'], url_path='mi-comentario', permission_classes=[IsAuthenticated])
+    def comentario_usuario(self, request):
+        receta_id = request.query_params.get('receta')
+        if not receta_id:
+            return Response({"error": "Debes especificar el parámetro 'receta'."}, status=400)
+
+        try:
+            comentario = Comentario.objects.get(receta_id=receta_id, usuario=request.user)
+        except Comentario.DoesNotExist:
+            return Response({"detail": "El usuario no ha comentado en esta receta."}, status=404)
+
+        serializer = self.get_serializer(comentario)
+        return Response(serializer.data)
+    
+class RecetaFavoritoViewSet(viewsets.ModelViewSet):
+    queryset = RecetaFavorito.objects.all()
+    serializer_class = RecetaFavoritoSerializer
+    filterset_class = MisFavoritosFilter
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [IsModeratorOrAdmin()]
+        elif self.action in ['create', 'destroy', 'mis_favoritos']:
+            return [IsAuthenticated()]
+        return []
+
+    def get_queryset(self):
+        if self.action in ['list', 'retrieve']:
+            return RecetaFavorito.objects.all()
+        return RecetaFavorito.objects.filter(usuario=self.request.user)
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        receta_id = self.request.data.get('receta')
+
+        if not receta_id:
+            raise PermissionDenied("Debes especificar la receta que quieres agregar a favoritos.")
+
+        receta = Receta.objects.get(pk=receta_id)
+
+        if RecetaFavorito.objects.filter(usuario=user, receta=receta).exists():
+            raise PermissionDenied("Esta receta ya está en tus favoritos.")
+
+        serializer.save(usuario=user, receta=receta)
+
+    def perform_destroy(self, instance):
+        user = self.request.user
+        if instance.usuario != user and not (user.is_staff or user.is_superuser):
+            raise PermissionDenied("No puedes eliminar este favorito.")
+        instance.delete()
+
+    @action(detail=False, methods=['get'], url_path='mis-favoritos', permission_classes=[IsAuthenticated])
+    def mis_favoritos(self, request):
+        queryset = RecetaFavorito.objects.filter(usuario=request.user)
+        queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True, context={'request': request})
+            return self.get_paginated_response(serializer.data)
+        
+        serializer = self.get_serializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,6 +1,6 @@
 import django_filters
 from django.db.models import Avg
-from .models import User, Ingrediente, Etiqueta, Categoria, Receta
+from .models import User, Ingrediente, Etiqueta, Categoria, Receta, RecetaFavorito
 
 # Se filtra de la siguiente forma en la URL: /users/?role=<rol> | /users/?name=<nombre> | /users/?email=<correo> o cualquier combinación de estos.
 # Se combina de la siguiente forma en la URL: /users/?role=<rol>&name=<nombre>&email=<correo>
@@ -91,4 +91,30 @@ class RecetaFilter(django_filters.FilterSet):
 
     def filter_rating(self, queryset, name, value):
         queryset = queryset.annotate(rating_anotado=Avg('comentarios__puntuacion'))
+        return queryset.filter(rating_anotado__gte=value)
+    
+class MisRecetasFilter(django_filters.FilterSet):
+    nombre = django_filters.CharFilter(field_name='nombre', lookup_expr='icontains')
+    nombre_usuario = django_filters.CharFilter(field_name='creador__name', lookup_expr='icontains')
+    rating = django_filters.NumberFilter(method='filter_rating')
+
+    class Meta:
+        model = Receta
+        fields = ['nombre', 'nombre_usuario', 'rating']
+
+    def filter_rating(self, queryset, name, value):
+        queryset = queryset.annotate(rating_anotado=Avg('comentarios__puntuacion'))
+        return queryset.filter(rating_anotado__gte=value)
+    
+class MisFavoritosFilter(django_filters.FilterSet):
+    nombre = django_filters.CharFilter(field_name='receta__nombre', lookup_expr='icontains')
+    nombre_usuario = django_filters.CharFilter(field_name='receta__creador__name', lookup_expr='icontains')
+    rating = django_filters.NumberFilter(method='filter_rating')
+
+    class Meta:
+        model = RecetaFavorito
+        fields = ['nombre', 'nombre_usuario', 'rating']
+
+    def filter_rating(self, queryset, name, value):
+        queryset = queryset.annotate(rating_anotado=Avg('receta__comentarios__puntuacion'))
         return queryset.filter(rating_anotado__gte=value)

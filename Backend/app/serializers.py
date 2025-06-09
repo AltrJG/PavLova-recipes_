@@ -1,4 +1,4 @@
-from .models import User, PasswordResetToken, Ingrediente, Categoria, Etiqueta, Receta, RecetaIngrediente, Comentario
+from .models import User, PasswordResetToken, Ingrediente, Categoria, Etiqueta, Receta, RecetaIngrediente, Comentario, RecetaFavorito
 from rest_framework import serializers
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -359,3 +359,28 @@ class ComentarioSerializer(serializers.ModelSerializer):
             'contenido', 'fecha_creacion', 'receta', 'profile_picture'
         ]
         read_only_fields = ['id', 'fecha_creacion', 'usuario_id', 'usuario_nombre', 'receta', 'profile_picture']
+
+class RecetaFavoritoSerializer(serializers.ModelSerializer):
+    usuario_id = serializers.IntegerField(source='usuario.id', read_only=True)
+    receta_nombre = serializers.CharField(source='receta.nombre', read_only=True)
+    receta_imagen_url = serializers.SerializerMethodField()
+    receta_categoria = serializers.CharField(source='receta.categoria.nombre', read_only=True)
+    receta_tiempo_preparacion = serializers.IntegerField(source='receta.tiempo_preparacion', read_only=True)
+    receta_tiempo_coccion = serializers.IntegerField(source='receta.tiempo_coccion', read_only=True)
+    receta_rating_promedio = serializers.FloatField(source='receta.rating_promedio', read_only=True)
+    creador_nombre = serializers.CharField(source='receta.creador.name', read_only=True)
+    
+    class Meta:
+        model = RecetaFavorito
+        fields = [
+            'id', 'usuario_id', 'receta', 'receta_nombre', 'receta_imagen_url',
+            'receta_categoria', 'receta_tiempo_preparacion', 'receta_tiempo_coccion',
+            'receta_rating_promedio', 'creador_nombre'
+        ]
+        read_only_fields = ['id', 'usuario_id', 'creador_nombre']
+
+    def get_receta_imagen_url(self, obj):
+        request = self.context.get('request')
+        if obj.receta.foto_receta and hasattr(obj.receta.foto_receta, 'url'):
+            return request.build_absolute_uri(obj.receta.foto_receta.url)
+        return None
