@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.documentation import include_docs_urls
 from rest_framework import routers
 from app import views
-from .views import RegisterView, LoginView, LogoutView, UserInfoView, CustomTokenRefreshView, UpdateUserProfileView, UpdateUserPasswordView, UpdateUserEmailView, ProfilePictureUpdateView, UserViewSet, UserUpdateViewSet, GetUsuarioById, PasswordResetRequestView, PasswordResetView, VerifyEmailView, IngredienteViewSet, CategoriaViewSet, EtiquetaViewSet, RecetaViewSet, ComentarioViewSet
+from .views import RegisterView, LoginView, LogoutView, UserInfoView, CustomTokenRefreshView, UpdateUserProfileView, UpdateUserPasswordView, UpdateUserEmailView, ProfilePictureUpdateView, UserViewSet, UserUpdateViewSet, GetUsuarioById, PasswordResetRequestView, PasswordResetView, VerifyEmailView, IngredienteViewSet, CategoriaViewSet, EtiquetaViewSet, RecetaViewSet, ComentarioViewSet, RecetaFavoritoViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user') # /users/
@@ -10,8 +10,9 @@ router.register(r'users/update', UserUpdateViewSet, basename='user_update') # /u
 router.register(r'ingredientes', IngredienteViewSet, basename='ingrediente') # /ingredientes/
 router.register(r'categorias', CategoriaViewSet, basename='categoria') # /categorias/
 router.register(r'etiquetas', EtiquetaViewSet, basename='etiqueta') # /etiquetas/
-router.register(r'recetas', RecetaViewSet, basename='receta') # /recetas/
+router.register(r'recetas', RecetaViewSet, basename='receta') # /recetas/ 
 router.register(r'comentarios', ComentarioViewSet, basename='comentario') # /comentarios/ /comentarios/<id>/ /comentarios/?receta=<id>/
+router.register(r'favoritos', RecetaFavoritoViewSet, basename='favoritos') # /favoritos/ /favoritos/<id>/ /favoritos/mis-favoritos/
 
 urlpatterns = [
     path('', include(router.urls)),
