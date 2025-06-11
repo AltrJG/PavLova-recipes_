@@ -8,7 +8,7 @@ import { ReactSVG } from "react-svg";
 import book from '../assets/Iconos/book.svg';
 import heart from '../assets/Iconos/heart.svg';
 
-export default function UserDetails({ usuario = null }){
+export default function UserDetails({ usuario = null, totalCreados = 0, totalFavoritos = 0 }){
 
     const { user } = useAuth();
     const userData = (usuario != null ? usuario : user);
@@ -26,12 +26,12 @@ export default function UserDetails({ usuario = null }){
                 <div className={styles.userStats}>
                     <div className={styles.userSingleStat}>
                         <ReactSVG src={book}/>
-                        <h5 className={styles.userAmountStat}>50</h5>
+                        <h5 className={styles.userAmountStat}>{totalCreados}</h5>
                         <p className={styles.userStatDescription}>Recetas creadas</p>
                     </div>
                     <div className={`${styles.userSingleStat} ${styles.userSecondStat}`}>
                         <ReactSVG src={heart}/>
-                        <h5 className={styles.userAmountStat}>50</h5>
+                        <h5 className={styles.userAmountStat}>{totalFavoritos}</h5>
                         <p className={styles.userStatDescription}>Recetas Favoritas</p>
                     </div>
                 </div>

@@ -22,6 +22,9 @@ export default function SearchContent(){
         if(searchOption == 'Usuarios'){
             setSearchTextQuery("");
             navigate(`users?nombre=${searchTextQuery}`);
+        } else{
+            setSearchTextQuery("");
+            navigate(`/?nombre=${searchTextQuery}`);
         }
     }
 

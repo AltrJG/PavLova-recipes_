@@ -18,7 +18,7 @@ from .filters import UserFilter, IngredienteFilter, EtiquetaFilter, CategoriaFil
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from .pagination import IngredientePagination, UserPagination, CommentPagination
+from .pagination import IngredientePagination, UserPagination, CommentPagination, RecipePagination
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -468,6 +468,7 @@ class RecetaViewSet(viewsets.ModelViewSet):
     queryset = Receta.objects.all()
     serializer_class = RecetaSerializer
     filterset_class = RecetaFilter
+    pagination_class = RecipePagination
 
     def get_permissions(self):
         if self.action == 'create':
@@ -509,6 +510,31 @@ class RecetaViewSet(viewsets.ModelViewSet):
 
         filter_backend = DjangoFilterBackend()
         filterset = MisRecetasFilter(request.GET, queryset=queryset, request=request)
+
+        if filterset.is_valid():
+            queryset = filterset.qs
+        else:
+            return Response({"error": "Parámetros de filtro inválidos", "detalles": filterset.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'], url_path='por-usuario/(?P<user_id>[^/.]+)')
+    def recetas_por_usuario(self, request, user_id=None):
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        queryset = Receta.objects.filter(creador=user)
+
+        filter_backend = DjangoFilterBackend()
+        filterset = RecetaFilter(request.GET, queryset=queryset, request=request)
 
         if filterset.is_valid():
             queryset = filterset.qs
@@ -593,11 +619,13 @@ class RecetaFavoritoViewSet(viewsets.ModelViewSet):
     queryset = RecetaFavorito.objects.all()
     serializer_class = RecetaFavoritoSerializer
     filterset_class = MisFavoritosFilter
+    pagination_class = RecipePagination
+
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
             return [IsModeratorOrAdmin()]
-        elif self.action in ['create', 'destroy', 'mis_favoritos']:
+        elif self.action in ['create', 'destroy', 'mis_favoritos', 'favorito_usuario']:
             return [IsAuthenticated()]
         return []
 
@@ -630,6 +658,37 @@ class RecetaFavoritoViewSet(viewsets.ModelViewSet):
     def mis_favoritos(self, request):
         queryset = RecetaFavorito.objects.filter(usuario=request.user)
         queryset = self.filter_queryset(queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True, context={'request': request})
+            return self.get_paginated_response(serializer.data)
+        
+        serializer = self.get_serializer(queryset, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['get'], url_path='favorito-usuario', permission_classes=[IsAuthenticated])
+    def favorito_usuario(self, request):
+        receta_id = request.query_params.get('receta')
+        if not receta_id:
+            return Response({"error": "Debes especificar el parámetro 'receta'."}, status=400)
+
+        try:
+            favorito = RecetaFavorito.objects.get(receta_id=receta_id, usuario_id=request.user)
+        except RecetaFavorito.DoesNotExist:
+            return Response({"detail": "El usuario no ha marcado favorito en esta receta."}, status=404)
+
+        serializer = self.get_serializer(favorito)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'], url_path='por-usuario/(?P<user_id>[^/.]+)')
+    def recetas_por_usuario(self, request, user_id=None):
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        queryset = RecetaFavorito.objects.filter(usuario=user)
 
         page = self.paginate_queryset(queryset)
         if page is not None:

@@ -16,11 +16,13 @@ import FondoPavlova from '../Components/FondoPavlova';
 import { useUpdateData } from '../context/UpdateDataProvider';
 import { FadeLoader } from 'react-spinners';
 import { useAuth } from '../context/AuthProvider';
+import Swal from 'sweetalert2';
+import { useSearchParams } from 'react-router-dom';
 
 export default function SearchRecipes(){
 
     const { openRecipesAdvanceFilters } = useRightSidebar();
-
+    const [ searchParams ] = useSearchParams();
     const [ activeCategoria, setActiveCategoria ] = useState('');
     const [ etiquetasOptions, setEtiquetasOptions ] = useState([]);
     const [ categoriasOptions, setCategoriasOptions ] = useState([]);
@@ -32,7 +34,9 @@ export default function SearchRecipes(){
     const [ count, setCount ] = useState(0);
     const [ currentPage, setCurrentPage ] = useState(1);
     const { recipeFilters: advanceFilters, resetRecipeFilters } = useUpdateData();
-    const { refreshAccessToken } = useAuth();
+    const { refreshAccessToken, isSuperUser, isStaff } = useAuth();
+
+    const name = searchParams.get("nombre");
 
     const [ recipeFilters, setRecipeFilters ] = useState({
         nombre: name != null ? name : "",
@@ -139,6 +143,53 @@ export default function SearchRecipes(){
         await getRecipes(null, null, true);
     }
 
+    // Eliminar receta
+    const deleteRecetaAsk = (receta) => {
+        Swal.fire({
+            title: "Eliminar Receta",
+            icon: "question",
+            text: `Estas seguro de eliminar la receta '${receta?.nombre || receta?.receta_nombre}'`,
+            customClass: {
+                title: "swal_title",
+                icon: "swal_icon",
+                htmlContainer: "swal_text",
+                confirmButton: "swal_confirm"
+            },
+            showCancelButton: true,
+            cancelButtonText: "Cancelar",
+            confirmButtonText: "Eliminar",
+            allowOutsideClick: () => !Swal.isLoading()
+          }).then((result) => {
+            if (result.isConfirmed) {
+                deleteReceta(receta);
+            }
+        });
+    }
+
+    const deleteReceta = async (receta) => {
+        try{
+            await backendAPI.delete(`recetas/${receta?.receta || receta?.id}/`);
+            Swal.fire({
+                icon: "success",
+                title: "Eliminado!",
+                text: `La receta '${receta?.nombre || receta?.receta_nombre}' fue eliminada con exito`,
+                showConfirmButton: true,
+                customClass: {
+                    title: "swal_title",
+                    icon: "swal_icon",
+                    htmlContainer: "swal_text",
+                    confirmButton: "swal_confirm"
+                }
+            });
+            await getRecipes();
+        } catch(error){
+            console.log(error);
+            if(error.response?.status == 401){
+                await refreshAccessToken(deleteReceta, receta);
+            }
+        }
+    }
+
     useEffect(() => {
         const triggerUpdateRecipes = async () => {
             await getRecipes();
@@ -189,7 +240,7 @@ export default function SearchRecipes(){
                 : recipes.length == 0 
                 ? <p className={styles.usersNotFound}>No se encontraron recetas con los filtros colocados, prueba modificando los filtros</p>
                 : <><div className="recipesContent">
-                    {recipes.map(recipe => <Recipe cristal={true} recipe={recipe}/>)}
+                    {recipes.map(recipe => <Recipe deleteAction={deleteRecetaAsk} isSuperUser={isSuperUser} isStaff={isStaff} isModificationAllowed={isSuperUser || isStaff} cristal={true} recipe={recipe}/>)}
                 </div>
                 <div className='mobileSpace'>
                     <Pagination

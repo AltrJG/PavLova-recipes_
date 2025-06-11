@@ -7,6 +7,7 @@ import styles from './RootLayout.module.css';
 import RightSidebar from "../Components/RightSidebar";
 import { useAuth } from "../context/AuthProvider";
 import NavigationOptions from "../Components/NavigationOptions";
+import FondoPavlova from "../Components/FondoPavlova";
 
 
 export default function RootLayout(){

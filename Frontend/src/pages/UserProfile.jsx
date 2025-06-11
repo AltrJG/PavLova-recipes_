@@ -18,33 +18,49 @@ export default function UserProfile(){
     const [ user, setUser ] = useState({});
     const [ loading, setLoading ] = useState(true);
     const [ errorPage, setErrorPage ] = useState(false);
+    const [ totalCreados, setTotalCreados ] = useState(0);
+    const [ totalFavoritos, setTotalFavoritos ] = useState(0);
+
+    const getUserProfile = async () => {
+        try{
+            const userData = await backendAPI(`/user/${user_id}/`);
+            setUser({
+                nombre: userData.data.name, 
+                email: userData.data.email, 
+                pais: userData.data.country, 
+                sobreMi: userData.data.about, 
+                fotoPerfil: userData.data.profile_picture,
+                redFacebook: userData.data.social_facebook,
+                redYoutube: userData.data.social_youtube,
+                redTwitter: userData.data.social_twitter
+            });
+            console.log(userData);
+        } catch(error){
+            if(error.response?.status == 401){
+                await refreshAccessToken(getUserProfile);
+            } else{
+                setErrorPage(true);
+            }
+        } finally{
+            setLoading(false);
+        }
+    }
+
+    const getUserRecipesTotals = async () => {
+        try{
+            const favoriteData = await backendAPI(`/favoritos/por-usuario/${user_id}/?page_size=1`);
+            const recipeData = await backendAPI(`/recetas/por-usuario/${user_id}/?page_size=1`);
+            console.log(favoriteData);
+            setTotalFavoritos(favoriteData.data.count);
+            setTotalCreados(recipeData.data.count);
+        } catch(error){
+
+        }
+    }
 
     useEffect(() => {
-        const getUserProfile = async () => {
-            try{
-                const userData = await backendAPI(`/user/${user_id}/`);
-                setUser({
-                    nombre: userData.data.name, 
-                    email: userData.data.email, 
-                    pais: userData.data.country, 
-                    sobreMi: userData.data.about, 
-                    fotoPerfil: userData.data.profile_picture,
-                    redFacebook: userData.data.social_facebook,
-                    redYoutube: userData.data.social_youtube,
-                    redTwitter: userData.data.social_twitter
-                });
-                console.log(userData);
-            } catch(error){
-                if(error.response?.status == 401){
-                    await refreshAccessToken(getUserProfile);
-                } else{
-                    setErrorPage(true);
-                }
-            } finally{
-                setLoading(false);
-            }
-        }
         getUserProfile();
+        getUserRecipesTotals();
     }, []);
 
     const volver = () => {
@@ -61,8 +77,8 @@ export default function UserProfile(){
                 <MainButton action={volver} disabled={false} type={'button'} icon={"arrow-back"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Volver"}/>
             </Help>
             <div className={styles.profileCurrentUser}>
-                <UserDetails usuario={user}/>
-                <RecipesProfile/>
+                <UserDetails totalCreados={totalCreados} totalFavoritos={totalFavoritos} usuario={user}/>
+                <RecipesProfile user_id={user_id}/>
             </div></>
             }
             <div className='mobileSpace'></div>
