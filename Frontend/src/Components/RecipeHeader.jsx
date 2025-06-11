@@ -20,11 +20,14 @@ import NotFound404 from "../pages/NotFound404";
 export default function RecipeHeader(){
 
     let { recipe_id } = useParams();
-    const { refreshAccessToken, isSuperUser, isStaff, user } = useAuth();
+    const { refreshAccessToken, isSuperUser, isStaff, user, isAuthenticated } = useAuth();
     const [ receta, setReceta ] = useState({});
     const [ updateRecipe, setUpdateRecipe ] = useState(false);
+    const [ loadingFavorite, setLoadingFavorite ] = useState(false);
     const [ loading, setLoading ] = useState(true);
     const [ commentCount, setCommentCount ] = useState(0);
+    const [ favorito, setFavorito ] = useState(-1);
+    const [ userComentario, setUserComentario ] = useState({});
     const navigate = useNavigate();
 
     const navigateLogIn = () => {
@@ -48,15 +51,71 @@ export default function RecipeHeader(){
         }
     };
 
+    const esFavorito = async () => {
+        try{
+            const response = await backendAPI.get(`favoritos/favorito-usuario/?receta=${recipe_id}`);
+            setFavorito(response.data.id);
+        } catch(error){
+            console.log(error);
+            if(error.response?.status == 404){ // No hay comentario
+                setFavorito(-1);
+            } else if(error.response?.status == 401){
+                await refreshAccessToken(esFavorito);
+            }
+        }
+    };
+
+    const fueComentado = async () => {
+        try{
+            const response = await backendAPI.get(`comentarios/mi-comentario/?receta=${recipe_id}`);
+            setUserComentario(response.data);
+        } catch(error){
+            console.log(error);
+            if(error.response?.status == 404){
+                setUserComentario({});
+            } else if(error.response?.status == 401){
+                await refreshAccessToken(fueComentado);
+            }
+        }
+    }
+
+    const toggleFavorito = async () => {
+        if(isAuthenticated){
+            setLoadingFavorite(true);
+            try{
+                if(favorito != -1){
+                    await backendAPI.delete(`favoritos/${favorito}/`);
+                    setFavorito(-1);
+                } else{
+                    const response = await backendAPI.post(`favoritos/`, {receta: recipe_id});
+                    setFavorito(response.data.id);
+                }
+            } catch(error){
+                if(error.response?.status == 401){
+                    await refreshAccessToken(toggleFavorito);
+                }
+            } finally{
+                setLoadingFavorite(false);
+            }
+        }
+    }
+
     useEffect(() => {
+        const obtainData = async () => {
+            await esFavorito();
+            await fueComentado();
+            await getReceta();
+        };
         setLoading(true);
-        getReceta();
+        obtainData();
     }, []);
 
     useEffect(() => {
         if(updateRecipe){
             setLoading(true);
+            fueComentado();
             getReceta();
+            setUpdateRecipe(false);
         }
     }, [updateRecipe]);
 
@@ -106,7 +165,7 @@ export default function RecipeHeader(){
                     </div>
                     <p className={styles.recipeHeaderQuote}>{receta.frase}</p>
                     <div className={styles.recipeHeaderActions}>
-                        <CircleButton iconName={"heart-outline"} iconSize="3.5rem"/>
+                        {receta?.creador_info?.id != user?.id && isAuthenticated && <CircleButton text={favorito != -1 ? 'Eliminar de favoritos?' : 'Agregar a favoritos'} action={toggleFavorito} args={[]} iconName={favorito != -1 ? 'heart' : "heart-outline"} iconSize="3.5rem"/>}
                         <CircleButton action={(Object.keys(user).length != 0) ? generarRecetaPDF : navigateLogIn} args={[receta]} text="Descargar PDF" iconName={"document-attach"} iconSize="3.5rem"/>
                         { (isSuperUser || isStaff || receta?.creador_info?.id === user?.id) && <CircleButton action={navigate} args={[`/crear-receta?recetaEditar=${receta.id}`]} text="Editar Receta" iconName={"create"} iconSize="3.5rem"/> }
                     </div>
@@ -114,7 +173,7 @@ export default function RecipeHeader(){
                 <RecipeContents recipe={receta}/>
                 <RecipeNutritionalFacts/>
                 <div className={`${styles.recipeHeaderShowTwo} ${user?.id == receta?.creador_info?.id ? styles.recipeHeaderNoComments : ''}`}>
-                    {user?.id != receta?.creador_info?.id && <RecipeRating recipe_id={receta?.id} setUpdateRecipe={setUpdateRecipe}/>}
+                    {user?.id != receta?.creador_info?.id && <RecipeRating userComentario={userComentario} recipe_id={receta?.id} setUpdateRecipe={setUpdateRecipe}/>}
                     <RecipeComments recipeCreator={receta?.creador_info?.id} isSuperUser={isSuperUser} isStaff={isStaff} user={user} recipeId={receta?.id}/>
                 </div>
             </div>

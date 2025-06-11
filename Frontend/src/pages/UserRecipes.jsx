@@ -23,7 +23,7 @@ export default function UserRecipes(){
     const { refreshAccessToken, isSuperUser, isStaff, user } = useAuth();
     const [ recipes, setRecipes ] = useState([]);
 
-    const [ searchOption, setSearchOption ] = useState('mis_recetas');
+    const [ searchOption, setSearchOption ] = useState('mis-recetas');
 
     const navigate = useNavigate();
 
@@ -41,7 +41,7 @@ export default function UserRecipes(){
 
     const searchOptions = [
         { type: 'favoritos', icon: 'heart', label: 'Favoritos' },
-        { type: 'mis_recetas', icon: 'restaurant', label: 'Mis Recetas' }
+        { type: 'mis-recetas', icon: 'restaurant', label: 'Mis Recetas' }
     ];
 
     const getRecipes = async (previous = null, next = null) => {
@@ -51,7 +51,7 @@ export default function UserRecipes(){
             ? previous.split('app')[1] 
             : next 
             ? next.split('app')[1] 
-            : `/recetas/`;
+            : `${searchOption == 'mis-recetas' ? '/recetas' : ''}/${searchOption}${searchOption == 'favoritos' ? "/mis-favoritos/" : ''}`;
 
             const params = new URLSearchParams();
 
@@ -64,6 +64,7 @@ export default function UserRecipes(){
                 url += `?${params.toString()}`;
             }
             const response = await backendAPI(url);
+            console.log(response);
             previous != null && setCurrentPage(currentPage-1);
             next != null && setCurrentPage(currentPage+1);
             setCount(response.data.count);
@@ -84,7 +85,7 @@ export default function UserRecipes(){
         Swal.fire({
             title: "Eliminar Receta",
             icon: "question",
-            text: `Estas seguro de eliminar la receta '${receta.nombre}'`,
+            text: `Estas seguro de eliminar la receta '${receta?.nombre || receta?.receta_nombre}'`,
             customClass: {
                 title: "swal_title",
                 icon: "swal_icon",
@@ -104,11 +105,11 @@ export default function UserRecipes(){
 
     const deleteReceta = async (receta) => {
         try{
-            await backendAPI.delete(`recetas/${receta.id}/`);
+            await backendAPI.delete(`recetas/${receta?.receta || receta?.id}/`);
             Swal.fire({
                 icon: "success",
                 title: "Eliminado!",
-                text: `La receta '${receta.nombre}' fue eliminada con exito`,
+                text: `La receta '${receta?.nombre || receta?.receta_nombre}' fue eliminada con exito`,
                 showConfirmButton: true,
                 customClass: {
                     title: "swal_title",
@@ -128,7 +129,7 @@ export default function UserRecipes(){
 
     useEffect(() => {
         getRecipes();
-    }, []);
+    }, [searchOption]);
     
     return(
         <>
@@ -148,7 +149,7 @@ export default function UserRecipes(){
                 : recipes.length == 0 
                 ? <p className={styles.usersNotFound}>No se encontraron recetas con los filtros colocados, prueba modificando los filtros</p> 
                 : <><div className="recipesContent">
-                    { recipes.map(recipe => <Recipe isSuperUser={isSuperUser} isStaff={isStaff} user={user} cristal={true} key={recipe.id} recipe={recipe} isModificationAllowed={true} deleteAction={deleteRecetaAsk}/>) }
+                    { recipes.map(recipe => <Recipe isSuperUser={isSuperUser} isStaff={isStaff} user={user} cristal={true} key={recipe.id} recipe={recipe} isModificationAllowed={isSuperUser || isStaff || searchOption == 'mis-recetas'} deleteAction={deleteRecetaAsk}/>) }
                 </div>
                 <div className='mobileSpace'>
                     <Pagination

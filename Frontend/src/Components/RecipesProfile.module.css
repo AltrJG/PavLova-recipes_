@@ -4,6 +4,7 @@
     display: flex;
     border-radius: 2rem;
     padding: .5rem 0;
+    backdrop-filter: blur(4px);
     -webkit-box-shadow: 0px 0px 13px -7px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 0px 13px -7px rgba(0,0,0,0.75);
     box-shadow: 0px 0px 13px -7px rgba(0,0,0,0.75);
@@ -17,7 +18,7 @@
     border: none;
     margin: 0rem 1rem;
     padding: .3rem 1rem;
-    background-color: white;
+    background-color: transparent;
     border-radius: 2rem;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 700;
@@ -34,6 +35,20 @@
     background: -moz-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
     background: -webkit-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
     background: linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+}
+
+.usersNotFound{
+    font-size: 3rem;
+    color: #23130d;
+    text-align: center;
+    margin-top: 3rem;
+    font-family: "Oswald", sans-serif;
+}
+
+@media(max-width: 56.25em){
+    .usersNotFound{
+        font-size: 2rem;
+    }
 }
 
 @media(max-width: 37.5em){

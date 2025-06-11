@@ -336,7 +336,9 @@ class Receta(models.Model):
     @property
     def rating_promedio(self):
         promedio = self.comentarios.aggregate(promedio=models.Avg('puntuacion'))['promedio'] # Calcula el promedio de puntuación de los comentarios relacionados con la receta
-        return promedio or 0.0
+        if promedio is None:
+            return 0.0
+        return round(promedio, 1)
 
     def __str__(self):
         return self.nombre

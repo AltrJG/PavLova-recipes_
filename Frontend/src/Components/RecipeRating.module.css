@@ -82,6 +82,12 @@
     background-color: orange;
 }
 
+.commentOptions{
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0 0 0;
+}
+
 @media(max-width: 68.75em){
     .recipeHeaderRatingFormContainer{
         width: 100% !important;
