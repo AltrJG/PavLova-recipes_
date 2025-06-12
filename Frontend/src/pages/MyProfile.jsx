@@ -8,10 +8,12 @@ import { useRightSidebar } from '../context/RightSidebarProvider';
 import styles from './MyProfile.module.css';
 import backendAPI from '../api/axiosConfig';
 import { FadeLoader } from 'react-spinners';
+import { useBackground } from '../context/BackgroundProvider';
 
 export default function MyProfile(){
     const { openModifyProfile } = useRightSidebar();
     const { user, refreshAccessToken } = useAuth();
+    const { addPavlorficAero } = useBackground();
     const [ totalCreados, setTotalCreados ] = useState(0);
     const [ totalFavoritos, setTotalFavoritos ] = useState(0);
     const [ loading, setLoading ] = useState(true);
@@ -32,6 +34,7 @@ export default function MyProfile(){
     }
 
     useEffect(() => {
+        addPavlorficAero();
         setLoading(true);
         getUserRecipesTotals();
     }, []);

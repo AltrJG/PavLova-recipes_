@@ -3,10 +3,17 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
 import { FadeLoader } from 'react-spinners';
+import { useBackground } from '../context/BackgroundProvider';
+import { useEffect } from 'react';
 
 const useAuthTexts = () => {
     const location = useLocation();
     const { pathname } = location;
+    const { disableBackground } = useBackground();
+
+    useEffect(() => {
+        disableBackground();
+    }, [])
 
     let title, paragraph;
 

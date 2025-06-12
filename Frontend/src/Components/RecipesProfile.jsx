@@ -56,7 +56,6 @@ export default function RecipesProfile({user_id}){
 
     return(
         <>
-        <FondoPavlova/>
         <div className={styles.profileRecipesContainer}>
             <div className={styles.profileSearch}>
                 <button onClick={() => handleFilter("my_recipes")} className={`${styles.profileSearchOption} ${selectedFilter == "my_recipes" ? styles.activeOption : ""}`}>Mis Recetas</button>

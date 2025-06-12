@@ -1,18 +1,19 @@
 import React, { useState } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
-import LinkSidebar from "../Components/LinkSidebar";
 import libreriaLogo from "../assets/logo.png"
 import Header from "../Components/Header";
 import styles from './RootLayout.module.css';
 import RightSidebar from "../Components/RightSidebar";
-import { useAuth } from "../context/AuthProvider";
 import NavigationOptions from "../Components/NavigationOptions";
 import FondoPavlova from "../Components/FondoPavlova";
-
+import { useBackground } from "../context/BackgroundProvider";
+import RotatingBall from "../Components/RotatingBall";
+import BurbujaCanvas from "../Components/BurbujaCanvas";
 
 export default function RootLayout(){
 
     const location = useLocation();
+    const { pavlorficAero, ollaHirviendo } = useBackground();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const toggleMenu = () => {
@@ -38,6 +39,8 @@ export default function RootLayout(){
                 <div className={styles.content_container}>
                     <Header toggleMenu={toggleMenu} isMenuOpen={isMenuOpen}/>
                     <div className={styles.dynamic_content}>
+                        { pavlorficAero && <FondoPavlova/> }
+                        { ollaHirviendo && <><BurbujaCanvas/><RotatingBall/></> }
                         <Outlet/>
                     </div>
                 </div>

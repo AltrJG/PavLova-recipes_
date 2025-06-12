@@ -19,10 +19,12 @@ import RotatingBall from '../Components/RotatingBall';
 import CircleButton from '../Components/CircleButton';
 import flameIcon from '../assets/Iconos/flame.svg';
 import timeIcon from '../assets/Iconos/timer.svg';
+import { useBackground } from '../context/BackgroundProvider';
 
 export default function PlanAlimenticio(){
 
     const { openNutritionalObjectivesForm, openAiForm } = useRightSidebar();
+    const { addOllaHirviendo } = useBackground();
     const { updatedObjectives, resetNewObjectives } = useUpdateData();
     const [ activePicker, setActivePicker ] = useState(false);
     const [ personas, setPersonas ] = useState(1);
@@ -110,6 +112,10 @@ export default function PlanAlimenticio(){
     }
 
     useEffect(() => {
+        addOllaHirviendo();
+    }, [])
+
+    useEffect(() => {
         if(Object.keys(updatedObjectives).length != 0){
             setNutritionalObjectives({
                 calorias: updatedObjectives.calorias,               
@@ -127,8 +133,6 @@ export default function PlanAlimenticio(){
 
     return(
         <section className={styles.planAlimenticioContainer}>
-            <BurbujaCanvas/>
-            <RotatingBall/>
             <RecipePlanPicker activePicker={activePicker} setActivePicker={setActivePicker}/>
             <Help title={'Plan alimenticio'} description={'Crea tu plan alimenticio'}>
                 <MainButton action={handleOpenAiForm} disabled={false} type="button" icon="hardware-chip" iconSize="3" fontSize="2.5" color="primary" borderRadius="1.5" text={"Plan AI"}/>

@@ -18,10 +18,12 @@ import { FadeLoader } from 'react-spinners';
 import { useAuth } from '../context/AuthProvider';
 import Swal from 'sweetalert2';
 import { useSearchParams } from 'react-router-dom';
+import { useBackground } from '../context/BackgroundProvider';
 
 export default function SearchRecipes(){
 
     const { openRecipesAdvanceFilters } = useRightSidebar();
+    const { addPavlorficAero } = useBackground();
     const [ searchParams ] = useSearchParams();
     const [ activeCategoria, setActiveCategoria ] = useState('');
     const [ etiquetasOptions, setEtiquetasOptions ] = useState([]);
@@ -58,6 +60,7 @@ export default function SearchRecipes(){
     ];
 
     useEffect(() => {
+        addPavlorficAero();
         setLoading(true);
         const obtenerInformacion = async () => {
             try{
@@ -222,7 +225,6 @@ export default function SearchRecipes(){
     
     return(
         <>
-            <FondoPavlova/>
             <Help title={"Buscar recetas."} description={"Encuentra tu siguiente receta favorita."}>
                 <div className={styles.filterOptionsContainer}>
                     <div className={styles.filterOptions}>
@@ -240,7 +242,7 @@ export default function SearchRecipes(){
                 : recipes.length == 0 
                 ? <p className={styles.usersNotFound}>No se encontraron recetas con los filtros colocados, prueba modificando los filtros</p>
                 : <><div className="recipesContent">
-                    {recipes.map(recipe => <Recipe deleteAction={deleteRecetaAsk} isSuperUser={isSuperUser} isStaff={isStaff} isModificationAllowed={isSuperUser || isStaff} cristal={true} recipe={recipe}/>)}
+                    {recipes.map(recipe => <Recipe key={recipe.id} deleteAction={deleteRecetaAsk} isSuperUser={isSuperUser} isStaff={isStaff} isModificationAllowed={isSuperUser || isStaff} cristal={true} recipe={recipe}/>)}
                 </div>
                 <div className='mobileSpace'>
                     <Pagination

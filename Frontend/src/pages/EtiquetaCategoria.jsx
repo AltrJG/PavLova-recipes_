@@ -13,10 +13,12 @@ import Categoria from "../Components/Categoria";
 import Etiqueta from "../Components/Etiqueta";
 import Swal from "sweetalert2";
 import FondoPavlova from "../Components/FondoPavlova";
+import { useBackground } from "../context/BackgroundProvider";
 
 
 export default function EtiquetaCategoria(){
     const { openCategoriaEtiquetaForm } = useRightSidebar();
+    const { addPavlorficAero } = useBackground();
     const { refreshAccessToken, user, isStaff, isSuperUser } = useAuth();
     const { updatedEtiqueta, createdEtiqueta, createdCategoria, updatedCategoria, resetCategoriaEtiquetaState } = useUpdateData();
 
@@ -137,6 +139,10 @@ export default function EtiquetaCategoria(){
     }
 
     useEffect(() => {
+        addPavlorficAero();
+    }, [])
+
+    useEffect(() => {
         setCurrentPage(1);
         getEtiquetasCategorias();
     }, [etiquetaCategoriaFilters.tipo]);
@@ -170,7 +176,6 @@ export default function EtiquetaCategoria(){
 
     return(
         <>
-            <FondoPavlova/>
             <Help title={"Categorias y Etiquetas"} description={"Gestiona las clasificaciones para todos los usuarios"}>
                 <MainButton action={registerCategoriaEtiqueta} disabled={false} type={'button'} icon={"bookmarks"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Crear Clasificacion"}/>
             </Help>

@@ -12,9 +12,11 @@ import { useAuth } from '../context/AuthProvider';
 import Swal from "sweetalert2";
 import { FadeLoader } from 'react-spinners';
 import FondoPavlova from '../Components/FondoPavlova';
+import { useBackground } from '../context/BackgroundProvider';
 
 export default function UserRecipes(){
 
+    const { addPavlorficAero } = useBackground();
     const [ loading, setLoading ] = useState(true);
     const [ nextPage, setNextPage ] = useState(null);
     const [ previousPage, setPreviousPage ] = useState(null);
@@ -128,12 +130,15 @@ export default function UserRecipes(){
     }
 
     useEffect(() => {
+        addPavlorficAero();
+    }, []);
+
+    useEffect(() => {
         getRecipes();
     }, [searchOption]);
     
     return(
         <>
-            <FondoPavlova/>
             <Help title={"Mis Recetas."} description={"Gestiona tus recetas y favoritos."}>
                 <div className={styles.filterOptionsContainer}>
                     <div className={styles.filterOptions}>

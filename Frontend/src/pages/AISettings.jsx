@@ -1,13 +1,16 @@
+import { useEffect } from "react";
 import FondoPavlova from "../Components/FondoPavlova";
 import Help from "../Components/Help";
 import MainButton from "../Components/MainButton";
 import PreconfiguracionIA from "../Components/PreconfiguracionIA";
 import { useRightSidebar } from "../context/RightSidebarProvider";
 import styles from './AISettings.module.css';
+import { useBackground } from "../context/BackgroundProvider";
 
 export default function AISettings(){
 
     const { openAiFormSettings } = useRightSidebar();
+    const { addPavlorficAero } = useBackground();
 
     const dummySettings = [
         {
@@ -76,11 +79,14 @@ export default function AISettings(){
             grasas_insaturadas: 140,
             grasas_trans: 10
         }    
-    ]
+    ];
+
+    useEffect(() => {
+        addPavlorficAero();
+    }, []);
 
     return(
         <>
-            <FondoPavlova/>
             <Help title={"Inteligencia Artificial"} description={"Gestiona las preconfiguraciones"}>
                 <MainButton action={openAiFormSettings} disabled={false} type={'button'} icon={"hardware-chip"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Gestionar IA"}/>
             </Help>

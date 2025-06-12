@@ -10,11 +10,13 @@ import { useUpdateData } from '../context/UpdateDataProvider';
 import { FadeLoader } from 'react-spinners';
 import { useSearchParams } from 'react-router-dom';
 import FondoPavlova from '../Components/FondoPavlova';
+import { useBackground } from '../context/BackgroundProvider';
 
 export default function ManageUsers(){
 
     const [ searchParams ] = useSearchParams();
     const { isSuperUser, refreshAccessToken } = useAuth();
+    const { addPavlorficAero } = useBackground();
     const [ users, setUsers ] = useState([]);
     const [ loading, setLoading ] = useState(true);
     const [ nextPage, setNextPage ] = useState(null);
@@ -75,6 +77,7 @@ export default function ManageUsers(){
     }
 
     useEffect(() => {
+        addPavlorficAero();
         getUsers(null, null, name);
     }, []);
 
@@ -95,7 +98,6 @@ export default function ManageUsers(){
 
     return(
         <>
-            <FondoPavlova/>
             <Help title={"Buscar Personas"} description={"Busca perfiles de otras personas"}/>
             <div className={styles.usersContainer}>
                 <FilterForm setCurrentPage={setCurrentPage} action={getUsers} filterOptions={filterOptions} data={userFilters} setData={setUserFilters}/>

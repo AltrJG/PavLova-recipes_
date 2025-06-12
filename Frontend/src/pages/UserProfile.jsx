@@ -10,11 +10,13 @@ import NotFound404 from '../pages/NotFound404'
 import backendAPI from '../api/axiosConfig';
 import { FadeLoader } from 'react-spinners';
 import { useAuth } from '../context/AuthProvider';
+import { useBackground } from '../context/BackgroundProvider';
 
 export default function UserProfile(){
     const navigate = useNavigate();
     let { user_id } = useParams();
     const { refreshAccessToken } = useAuth();
+    const { addPavlorficAero } = useBackground();
     const [ user, setUser ] = useState({});
     const [ loading, setLoading ] = useState(true);
     const [ errorPage, setErrorPage ] = useState(false);
@@ -59,6 +61,7 @@ export default function UserProfile(){
     }
 
     useEffect(() => {
+        addPavlorficAero();
         getUserProfile();
         getUserRecipesTotals();
     }, []);

@@ -18,6 +18,7 @@ import Swal from 'sweetalert2';
 import RightSidebarErrors from '../Components/RightSidebarErrors';
 import RotatingBall from '../Components/RotatingBall';
 import { useUpdateData } from '../context/UpdateDataProvider';
+import { useBackground } from '../context/BackgroundProvider';
 
 export default function CrearReceta() {
 
@@ -25,6 +26,7 @@ export default function CrearReceta() {
   const [ searchParams ] = useSearchParams();
   const { refreshAccessToken, user, isStaff, isSuperUser } = useAuth();
   const { createdIngredient, resetIngredientState } = useUpdateData();
+  const { addOllaHirviendo } = useBackground();
   const [ loading, setLoading ] = useState(true);
   const [ isUpdateActive, setIsUpdateActive ] = useState(false);
   const [ loadingRequest, setLoadingRequest ] = useState(false);
@@ -73,6 +75,7 @@ export default function CrearReceta() {
   }
 
   useEffect(() => {
+    addOllaHirviendo();
     setLoading(true);
     const obtenerRecetaActualizar = async () => {
       try{
@@ -263,8 +266,6 @@ const subirImagenReceta = async (recetaId) => {
 
   return (
     <div className={styles.container}>
-      <BurbujaCanvas />
-      <RotatingBall />
       {loading 
       ? <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
       : <><Help title={"Crear o Editar receta"} description={"Crea o modifica la receta seleccionada"}>
