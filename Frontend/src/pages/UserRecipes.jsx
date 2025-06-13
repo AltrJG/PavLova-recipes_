@@ -13,10 +13,12 @@ import Swal from "sweetalert2";
 import { FadeLoader } from 'react-spinners';
 import FondoPavlova from '../Components/FondoPavlova';
 import { useBackground } from '../context/BackgroundProvider';
+import { useRightSidebar } from '../context/RightSidebarProvider';
 
 export default function UserRecipes(){
 
     const { addPavlorficAero } = useBackground();
+    const { openChangeVisibilty } = useRightSidebar();
     const [ loading, setLoading ] = useState(true);
     const [ nextPage, setNextPage ] = useState(null);
     const [ previousPage, setPreviousPage ] = useState(null);
@@ -129,6 +131,10 @@ export default function UserRecipes(){
         }
     }
 
+    const handleOpenVisibilityForm = (id, nombre, visibilidad) => {
+        openChangeVisibilty(id, nombre, visibilidad);
+    }
+
     useEffect(() => {
         addPavlorficAero();
     }, []);
@@ -154,7 +160,7 @@ export default function UserRecipes(){
                 : recipes.length == 0 
                 ? <p className={styles.usersNotFound}>No se encontraron recetas con los filtros colocados, prueba modificando los filtros</p> 
                 : <><div className="recipesContent">
-                    { recipes.map(recipe => <Recipe isSuperUser={isSuperUser} isStaff={isStaff} user={user} cristal={true} key={recipe.id} recipe={recipe} isModificationAllowed={isSuperUser || isStaff || searchOption == 'mis-recetas'} deleteAction={deleteRecetaAsk}/>) }
+                    { recipes.map(recipe => <Recipe handleVisibility={handleOpenVisibilityForm} isSuperUser={isSuperUser} isStaff={isStaff} user={user} cristal={true} key={recipe.id} recipe={recipe} isModificationAllowed={isSuperUser || isStaff || searchOption == 'mis-recetas'} deleteAction={deleteRecetaAsk}/>) }
                 </div>
                 <div className='mobileSpace'>
                     <Pagination

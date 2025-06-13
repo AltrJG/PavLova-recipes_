@@ -312,7 +312,6 @@ export function checkNutritionalObjectives(objectivesData){
 
 export const validateCommentData = (commentData) => {
     let errors = {};
-    console.log(commentData);
     const sanitizedContenido = DOMPurify.sanitize(commentData.contenido.trim());
     if (sanitizedContenido !== commentData.contenido) {
         errors.contenido = "El contenido del comentario contiene código no permitido.";
@@ -325,3 +324,12 @@ export const validateCommentData = (commentData) => {
     }
     return errors;
 };
+
+export const validateChangeVisibility = (visibilityData) => {
+    let errors = {};
+    const validRoles = ["Publica", "Privada"];
+    if (!validRoles.includes(visibilityData.visibilidad)) {
+        errors.rol = "Esta opcion no es valida.";
+    }
+    return errors;
+}

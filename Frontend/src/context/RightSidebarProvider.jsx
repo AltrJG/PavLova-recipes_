@@ -18,7 +18,9 @@ const initialState = {
     etiquetaModify: false,
     categoriaEtiquetaModify: null,
     nutritionalObjectivesForm: false,
-    nutritionalObjectives: {}
+    nutritionalObjectives: {},
+    changeVisibilityForm: false,
+    changeVisibilityData: {}
 }
 
 function reducer(state, action){
@@ -28,13 +30,13 @@ function reducer(state, action){
         case 'rightSidebar/close':
             return { ...state, isOpen: false }
         case 'rightSidebar/openModifyProfile':
-            return { ...state, modifyProfile: true, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {}, recipeAdvanceFiltersForm: false, recipeAdvanceFilters: {}, aiForm: false, aiFormSettings: false }
+            return { ...state, modifyProfile: true, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {}, recipeAdvanceFiltersForm: false, recipeAdvanceFilters: {}, aiForm: false, aiFormSettings: false, changeVisibilityForm: false, changeVisibilityData: {} }
         case 'rightSidebar/openUpdatePermissions':
-            return { ...state, modifyProfile: false, updatePermissions: true, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {}, recipeAdvanceFiltersForm: false, recipeAdvanceFilters: {}, aiForm: false, aiFormSettings: false }
+            return { ...state, modifyProfile: false, updatePermissions: true, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {}, recipeAdvanceFiltersForm: false, recipeAdvanceFilters: {}, aiForm: false, aiFormSettings: false, changeVisibilityForm: false, changeVisibilityData: {} }
         case 'rightSidebar/openIngredientForm':
-            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: true, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {}, recipeAdvanceFiltersForm: false, recipeAdvanceFilters: {}, aiForm: false, aiFormSettings: false }
+            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: true, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {}, recipeAdvanceFiltersForm: false, recipeAdvanceFilters: {}, aiForm: false, aiFormSettings: false, changeVisibilityForm: false, changeVisibilityData: {} }
         case 'rightSidebar/openCategoriaEtiquetaForm':
-            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: true, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {}, recipeAdvanceFiltersForm: false, recipeAdvanceFilters: {}, aiForm: false, aiFormSettings: false }
+            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: true, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {}, recipeAdvanceFiltersForm: false, recipeAdvanceFilters: {}, aiForm: false, aiFormSettings: false, changeVisibilityForm: false, changeVisibilityData: {} }
         case 'rightSidebar/setUserModify':
             return { ...state, userModify: action.payload }
         case 'rightSidebar/setCategoriaModify':
@@ -44,19 +46,20 @@ function reducer(state, action){
         case 'rightSidebar/setIngredientModify':
             return { ...state, ingredientModify: action.payload }
         case 'rightSidebar/openNutritionalObjectivesForm':
-            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: true, nutritionalObjectives: action.payload, recipeAdvanceFiltersForm: false, recipeAdvanceFilters: {}, aiForm: false, aiFormSettings: false }
+            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: true, nutritionalObjectives: action.payload, recipeAdvanceFiltersForm: false, recipeAdvanceFilters: {}, aiForm: false, aiFormSettings: false, changeVisibilityForm: false, changeVisibilityData: {} }
         case 'rightSidebar/openRecipesAdvanceFilters':
-            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {}, recipeAdvanceFiltersForm: true, recipeAdvanceFilters: action.payload, aiForm: false, aiFormSettings: false }
+            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {}, recipeAdvanceFiltersForm: true, recipeAdvanceFilters: action.payload, aiForm: false, aiFormSettings: false, changeVisibilityForm: false, changeVisibilityData: {} }
         case 'rightSidebar/openAiForm':
-            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {}, recipeAdvanceFiltersForm: false, recipeAdvanceFilters: {}, aiForm: true, aiFormSettings: false }
+            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {}, recipeAdvanceFiltersForm: false, recipeAdvanceFilters: {}, aiForm: true, aiFormSettings: false, changeVisibilityForm: false, changeVisibilityData: {} }
         case 'rightSidebar/openAiFormSettings':
-            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {}, recipeAdvanceFiltersForm: false, recipeAdvanceFilters: {}, aiForm: false, aiFormSettings: true }
+            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {}, recipeAdvanceFiltersForm: false, recipeAdvanceFilters: {}, aiForm: false, aiFormSettings: true, changeVisibilityForm: false, changeVisibilityData: {} }
+        case 'rightSidebar/openChangeVisibilty':
+            return { ...state, modifyProfile: false, updatePermissions: false, ingredientForm: false, ingredientModify: null, categoriaEtiquetaForm: false, etiquetaModify: false, categoriaModify: false, categoriaEtiquetaModify: null, nutritionalObjectivesForm: false, nutritionalObjectives: {}, recipeAdvanceFiltersForm: false, recipeAdvanceFilters: {}, aiForm: false, aiFormSettings: false, changeVisibilityForm: true, changeVisibilityData: action.payload }
         }
-
 }
 
 const RightSidebarProvider = ({ children }) => {
-    const [{ isOpen, updatePermissions, modifyProfile, userModify, ingredientForm, ingredientModify, categoriaEtiquetaForm, categoriaEtiquetaModify, categoriaModify, etiquetaModify, nutritionalObjectivesForm, recipeAdvanceFiltersForm, recipeAdvanceFilters, aiForm, aiFormSettings }, dispatch] = useReducer(reducer, initialState);
+    const [{ isOpen, updatePermissions, modifyProfile, userModify, ingredientForm, ingredientModify, categoriaEtiquetaForm, categoriaEtiquetaModify, categoriaModify, etiquetaModify, nutritionalObjectivesForm, recipeAdvanceFiltersForm, recipeAdvanceFilters, aiForm, aiFormSettings, changeVisibilityForm, changeVisibilityData }, dispatch] = useReducer(reducer, initialState);
 
     function openRightSidebar(){
         dispatch({type: 'rightSidebar/open'});
@@ -109,6 +112,11 @@ const RightSidebarProvider = ({ children }) => {
         dispatch({type: 'rightSidebar/openAiFormSettings'})
     }
 
+    function openChangeVisibilty(id, nombre, visibilidad){
+        openRightSidebar();
+        dispatch({type: 'rightSidebar/openChangeVisibilty', payload: {id, nombre, visibilidad}});
+    }
+
     return (
         <RightSidebarContext.Provider value={{
             isOpen,
@@ -126,6 +134,8 @@ const RightSidebarProvider = ({ children }) => {
             recipeAdvanceFilters,
             aiForm,
             aiFormSettings,
+            changeVisibilityForm,
+            changeVisibilityData,
             openModifyProfile,
             openUpdatePermissions,
             closeRightSidebar,
@@ -134,7 +144,8 @@ const RightSidebarProvider = ({ children }) => {
             openNutritionalObjectivesForm,
             openRecipesAdvanceFilters,
             openAiForm,
-            openAiFormSettings
+            openAiFormSettings,
+            openChangeVisibilty
         }}>
             {children}
         </RightSidebarContext.Provider>

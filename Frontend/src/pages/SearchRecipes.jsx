@@ -22,7 +22,7 @@ import { useBackground } from '../context/BackgroundProvider';
 
 export default function SearchRecipes(){
 
-    const { openRecipesAdvanceFilters } = useRightSidebar();
+    const { openRecipesAdvanceFilters, openChangeVisibilty } = useRightSidebar();
     const { addPavlorficAero } = useBackground();
     const [ searchParams ] = useSearchParams();
     const [ activeCategoria, setActiveCategoria ] = useState('');
@@ -193,6 +193,10 @@ export default function SearchRecipes(){
         }
     }
 
+    const handleOpenVisibilityForm = (id, nombre, visibilidad) => {
+        openChangeVisibilty(id, nombre, visibilidad);
+    }
+
     useEffect(() => {
         const triggerUpdateRecipes = async () => {
             await getRecipes();
@@ -242,7 +246,7 @@ export default function SearchRecipes(){
                 : recipes.length == 0 
                 ? <p className={styles.usersNotFound}>No se encontraron recetas con los filtros colocados, prueba modificando los filtros</p>
                 : <><div className="recipesContent">
-                    {recipes.map(recipe => <Recipe key={recipe.id} deleteAction={deleteRecetaAsk} isSuperUser={isSuperUser} isStaff={isStaff} isModificationAllowed={isSuperUser || isStaff} cristal={true} recipe={recipe}/>)}
+                    {recipes.map(recipe => <Recipe handleVisibility={handleOpenVisibilityForm} key={recipe.id} deleteAction={deleteRecetaAsk} isSuperUser={isSuperUser} isStaff={isStaff} isModificationAllowed={isSuperUser || isStaff} cristal={true} recipe={recipe}/>)}
                 </div>
                 <div className='mobileSpace'>
                     <Pagination

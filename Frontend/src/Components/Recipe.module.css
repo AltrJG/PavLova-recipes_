@@ -92,6 +92,28 @@
     }
 }
 
+.visibilityIndicator{
+    display: flex;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Italic, Geneva, Verdana, sans-serif;
+    font-weight: 700;
+    position: absolute;
+    font-size: 1.8rem;
+    padding: .1rem .6rem;
+    top: 15rem;
+    right: 0;
+    border-top-left-radius: 1rem;
+    color: white;
+    background-color: rgb(255, 123, 0);
+    height: min-content;
+
+    & svg{
+        margin-top: .2rem;
+        width: 2.2rem;
+        height: 2.2rem;
+    }
+}
+
 .recipeAuthor{
     padding-left: 1rem;
     font-size: 1.1rem;

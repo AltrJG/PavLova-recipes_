@@ -98,10 +98,6 @@ export default function AIForm(){
         { type: "slider", step: "1", name: "sodio", label: "Sodio (%)", defaultValue: 15, max: 100, min: 0, showInput: false},
     ];
 
-    const IngredientVisibilityOptions = [
-        { type: "select", name: "visibilidad", defaultOption: "Personal", label: "Visibilidad:", options: ["Personal", "Global"]},
-    ];
-
     const options = [
         { type: 'preconfiguracion', icon: 'hardware-chip', label: 'Preconfigurado' },
         { type: 'avanzado', icon: 'person', label: 'Personalizado' },

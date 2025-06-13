@@ -3,6 +3,7 @@ import AIForm from './AIForm';
 import AIFormSettings from './AIFormSettings';
 import ChangeProfileForm from './ChangeProfileForm';
 import ChangeUserPermissions from './ChangeUserPermissions';
+import ChangeVisibilityForm from './ChangeVisibilityForm';
 import EtiquetaCategoriaForm from './EtiquetaCategoriaForm';
 import IngredientsForm from './IngredientsForm';
 import ObjectivesForm from './ObjectivesForm';
@@ -11,7 +12,7 @@ import styles from './RightSidebar.module.css';
 
 export default function RightSidebar(){
 
-    const { isOpen, closeRightSidebar, modifyProfile, updatePermissions, ingredientForm, categoriaEtiquetaForm, nutritionalObjectivesForm, recipeAdvanceFiltersForm, aiForm, aiFormSettings } = useRightSidebar();
+    const { isOpen, closeRightSidebar, modifyProfile, updatePermissions, ingredientForm, categoriaEtiquetaForm, nutritionalObjectivesForm, recipeAdvanceFiltersForm, aiForm, aiFormSettings, changeVisibilityForm } = useRightSidebar();
 
     return(
         <>
@@ -24,6 +25,7 @@ export default function RightSidebar(){
                 {recipeAdvanceFiltersForm && <RecipeAdvanceFilters/>}
                 {aiForm && <AIForm/>}
                 {aiFormSettings && <AIFormSettings/>}
+                {changeVisibilityForm && <ChangeVisibilityForm/>}
             </div>
             <div onClick={closeRightSidebar} className={`${styles.rightSidebarFilter} ${isOpen ? styles.rightSidebarFilterOpen : ""}`}></div>
             <div className={`${styles.rightSidebarClose} ${isOpen ? styles.rightSidebarCloseActive : ""}`} onClick={closeRightSidebar}>X</div>

@@ -661,12 +661,23 @@ class ComentarioViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     
 class RecetaFavoritoViewSet(viewsets.ModelViewSet):
-    queryset = RecetaFavorito.objects.all()
     serializer_class = RecetaFavoritoSerializer
     filterset_class = MisFavoritosFilter
     pagination_class = RecipePagination
 
+    def get_queryset(self):
+        user = self.request.user
 
+        if not user.is_authenticated:
+            return RecetaFavorito.objects.filter(visibilidad=True)
+
+        if user.is_staff or user.is_superuser:
+            return RecetaFavorito.objects.all()
+
+        return RecetaFavorito.objects.filter(
+            Q(visibilidad=True) | Q(creador=user)
+        )
+    
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
             return [IsModeratorOrAdmin()]
@@ -701,7 +712,7 @@ class RecetaFavoritoViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path='mis-favoritos', permission_classes=[IsAuthenticated])
     def mis_favoritos(self, request):
-        queryset = RecetaFavorito.objects.filter(usuario=request.user)
+        queryset = RecetaFavorito.objects.filter(usuario=request.user, receta__visibilidad=True)
         queryset = self.filter_queryset(queryset)
 
         page = self.paginate_queryset(queryset)
@@ -733,7 +744,7 @@ class RecetaFavoritoViewSet(viewsets.ModelViewSet):
         except User.DoesNotExist:
             return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
-        queryset = RecetaFavorito.objects.filter(usuario=user)
+        queryset = RecetaFavorito.objects.filter(usuario=user, receta__visibilidad=True)
 
         page = self.paginate_queryset(queryset)
         if page is not None:

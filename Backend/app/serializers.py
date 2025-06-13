@@ -314,7 +314,7 @@ class RecetaSerializer(serializers.ModelSerializer):
 
     def get_visibilidad_estado(self, obj):
         if obj.visibilidad:
-            return "Pública"
+            return "Publica"
         return "Privada"
 
     def validate_ingredientes(self, value):
@@ -375,12 +375,14 @@ class RecetaFavoritoSerializer(serializers.ModelSerializer):
     receta_tiempo_coccion = serializers.IntegerField(source='receta.tiempo_coccion', read_only=True)
     receta_rating_promedio = serializers.FloatField(source='receta.rating_promedio', read_only=True)
     creador_nombre = serializers.CharField(source='receta.creador.name', read_only=True)
-    
+    visibilidad_estado = serializers.SerializerMethodField(read_only=True)
+    visibilidad = serializers.BooleanField(source='receta.visibilidad', read_only=True)
+
     class Meta:
         model = RecetaFavorito
         fields = [
             'id', 'usuario_id', 'receta', 'receta_nombre', 'receta_imagen_url',
-            'receta_categoria', 'receta_tiempo_preparacion', 'receta_tiempo_coccion',
+            'receta_categoria', 'receta_tiempo_preparacion', 'visibilidad_estado', 'visibilidad', 'receta_tiempo_coccion',
             'receta_rating_promedio', 'creador_nombre'
         ]
         read_only_fields = ['id', 'usuario_id', 'creador_nombre']
@@ -390,3 +392,8 @@ class RecetaFavoritoSerializer(serializers.ModelSerializer):
         if obj.receta.foto_receta and hasattr(obj.receta.foto_receta, 'url'):
             return request.build_absolute_uri(obj.receta.foto_receta.url)
         return None
+    
+    def get_visibilidad_estado(self, obj):
+        if obj.receta.visibilidad:
+            return "Publica"
+        return "Privada"
