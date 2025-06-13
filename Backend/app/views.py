@@ -21,6 +21,7 @@ from django.core.exceptions import PermissionDenied
 from .pagination import IngredientePagination, UserPagination, CommentPagination, RecipePagination
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Q
 
 #Miscellaneous>>>>>>>>>>>>>>>>>>>
 
@@ -465,10 +466,22 @@ class EtiquetaViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 class RecetaViewSet(viewsets.ModelViewSet):
-    queryset = Receta.objects.all()
     serializer_class = RecetaSerializer
     filterset_class = RecetaFilter
     pagination_class = RecipePagination
+    
+    def get_queryset(self):
+        user = self.request.user
+
+        if not user.is_authenticated:
+            return Receta.objects.filter(visibilidad=True)
+
+        if user.is_staff or user.is_superuser:
+            return Receta.objects.all()
+
+        return Receta.objects.filter(
+            Q(visibilidad=True) | Q(creador=user)
+        )
 
     def get_permissions(self):
         if self.action == 'create':
@@ -531,7 +544,16 @@ class RecetaViewSet(viewsets.ModelViewSet):
         except User.DoesNotExist:
             return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
-        queryset = Receta.objects.filter(creador=user)
+        current_user = request.user
+
+        if current_user.is_staff or current_user.is_superuser:
+            queryset = Receta.objects.filter(creador=user)
+
+        elif current_user.is_authenticated and current_user == user:
+            queryset = Receta.objects.filter(creador=user)
+
+        else:
+            queryset = Receta.objects.filter(creador=user, visibilidad=True)
 
         filter_backend = DjangoFilterBackend()
         filterset = RecetaFilter(request.GET, queryset=queryset, request=request)
@@ -548,6 +570,29 @@ class RecetaViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+    
+    @action(detail=True, methods=['patch'], url_path='cambiar-visibilidad', permission_classes=[IsAuthenticated, IsOwnerOrStaffOrSuperUser])
+    def cambiar_visibilidad(self, request, pk=None):
+        receta = self.get_object()
+
+        nueva_visibilidad = request.data.get('visibilidad')
+
+        if nueva_visibilidad is None:
+            return Response({'error': 'Debes proporcionar el campo "visibilidad".'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not isinstance(nueva_visibilidad, bool) and not str(nueva_visibilidad).lower() in ['true', 'false']:
+            return Response({'error': '"visibilidad" debe ser un valor booleano (true o false).'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if isinstance(nueva_visibilidad, str):
+            nueva_visibilidad = nueva_visibilidad.lower() == 'true'
+
+        receta.visibilidad = nueva_visibilidad
+        receta.save(update_fields=['visibilidad'])
+
+        return Response({
+            'mensaje': f'La receta ahora es {"pública" if receta.visibilidad else "privada"}.',
+            'visibilidad': receta.visibilidad
+        }, status=status.HTTP_200_OK)
 
 class ComentarioViewSet(viewsets.ModelViewSet):
     queryset = Comentario.objects.all()

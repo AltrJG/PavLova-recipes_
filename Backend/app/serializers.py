@@ -302,14 +302,20 @@ class RecetaSerializer(serializers.ModelSerializer):
     creador = serializers.HiddenField(default=serializers.CurrentUserDefault())
     creador_info = UsuarioSerializer(source='creador', read_only=True)
     rating_promedio = serializers.FloatField(read_only=True, default=0.0)
+    visibilidad_estado = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Receta
         fields = [
             'id', 'nombre', 'porciones', 'frase', 'foto_receta', 'procedimiento',
-            'tiempo_preparacion', 'tiempo_coccion', 'categoria', 'categoria_info',
-            'etiquetas', 'etiquetas_info', 'ingredientes', 'creador', 'creador_info', 'rating_promedio'
+            'tiempo_preparacion', 'tiempo_coccion', 'visibilidad', 'visibilidad_estado', 'categoria', 'categoria_info',
+            'etiquetas', 'etiquetas_info', 'ingredientes', 'creador', 'creador_info', 'rating_promedio',
         ]
+
+    def get_visibilidad_estado(self, obj):
+        if obj.visibilidad:
+            return "Pública"
+        return "Privada"
 
     def validate_ingredientes(self, value):
         if not value:
