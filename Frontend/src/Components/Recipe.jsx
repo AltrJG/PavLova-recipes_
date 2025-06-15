@@ -6,7 +6,7 @@ import visibilityOnIcon from '../assets/Iconos/eye.svg';
 import visibilityOffIcon from '../assets/Iconos/eye-off-outline.svg';
 import { Link, useNavigate } from "react-router-dom";
 
-export default function Recipe({ handleVisibility = null, isModificationAllowed = false, recipe, deleteAction, cristal = false, user, isSuperUser, isStaff }){
+export default function Recipe({ canUserViewVisibility = false, handleVisibility = null, isModificationAllowed = false, recipe, deleteAction, cristal = false, user, isSuperUser, isStaff }){
 
     const navigate = useNavigate();
 
@@ -15,7 +15,7 @@ export default function Recipe({ handleVisibility = null, isModificationAllowed 
             <Link to={`/receta/${recipe?.receta || recipe?.id}`} style={isModificationAllowed ? { pointerEvents: "none" } : {}} className={styles.recipeImageContent}>
                 <img className={styles.recipeImage} src={recipe?.foto_receta || recipe?.receta_imagen_url}/>
                 <div className={styles.recipeRating}><ReactSVG src={`/src/assets/Iconos/star.svg`}/>{(recipe?.rating_promedio != 0 && recipe?.receta_rating_promedio != 0) ? (recipe?.rating_promedio?.toFixed(2) || recipe?.receta_rating_promedio?.toFixed(2)) : "Sin Reseñas"}</div>
-                { (isSuperUser || isStaff) && <div className={styles.visibilityIndicator}><ReactSVG src={recipe?.visibilidad_estado == 'Publica' ? visibilityOnIcon : visibilityOffIcon}/></div>}
+                { (isSuperUser || isStaff || canUserViewVisibility) && <div className={styles.visibilityIndicator}><ReactSVG src={recipe?.visibilidad_estado == 'Publica' ? visibilityOnIcon : visibilityOffIcon}/></div>}
             </Link>
             <Link to={`/receta/${recipe?.receta || recipe?.id}`} className={`${styles.recipeData}`}>
                 <h4 className={styles.recipeName}>{recipe?.nombre || recipe?.receta_nombre}</h4>

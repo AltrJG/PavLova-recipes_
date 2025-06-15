@@ -160,7 +160,7 @@ export default function UserRecipes(){
                 : recipes.length == 0 
                 ? <p className={styles.usersNotFound}>No se encontraron recetas con los filtros colocados, prueba modificando los filtros</p> 
                 : <><div className="recipesContent">
-                    { recipes.map(recipe => <Recipe handleVisibility={handleOpenVisibilityForm} isSuperUser={isSuperUser} isStaff={isStaff} user={user} cristal={true} key={recipe.id} recipe={recipe} isModificationAllowed={isSuperUser || isStaff || searchOption == 'mis-recetas'} deleteAction={deleteRecetaAsk}/>) }
+                    { recipes.map(recipe => <Recipe canUserViewVisibility={searchOption == 'mis-recetas'} handleVisibility={handleOpenVisibilityForm} isSuperUser={isSuperUser} isStaff={isStaff} user={user} cristal={true} key={recipe.id} recipe={recipe} isModificationAllowed={isSuperUser || isStaff || searchOption == 'mis-recetas'} deleteAction={deleteRecetaAsk}/>) }
                 </div>
                 <div className='mobileSpace'>
                     <Pagination
