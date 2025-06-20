@@ -103,7 +103,7 @@
 }
 
 .recipeNutritionTable{
-    padding: 1rem;
+    padding: 2rem;
     background: rgb(241,180,52);
     background: -moz-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
     background: -webkit-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
@@ -130,6 +130,7 @@
 .planTimesContainer{
     margin-top: 2rem;
     background-color: rgba(255, 255, 255, 0.297);
+    border: .1rem solid white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 2rem;
     padding: 1rem;
@@ -158,6 +159,7 @@
 .recipeNutrientsPerCalories{
     height: 33rem;
     margin-top: 2rem;
+    border: .1rem solid white;
     background-color: rgba(255, 255, 255, 0.331);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     backdrop-filter: blur( 3px );
@@ -184,6 +186,7 @@
     height: 25rem;
     width: 100%;
     background-color: rgba(255, 255, 255, 0.293);
+    border: .1rem solid white;
     backdrop-filter: blur( 3px );
     -webkit-backdrop-filter: blur( 3px );
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.118);
@@ -230,9 +233,9 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 2rem;
+        margin-right: 2rem;
     }
     .recipeNutrientsPerCalories{
-        grid-column: 1 / 3;
         margin-top: 0;
     }
     .recipeContentsUsefulData,
@@ -243,6 +246,10 @@
     }
     .planTimesContainer{
         margin-top: 0;
+    }
+
+    .objectiveCharts{
+        padding-right: 2rem;
     }
 }
 

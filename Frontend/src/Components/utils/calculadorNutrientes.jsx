@@ -41,7 +41,6 @@ export const calcularNutrienteAporteCalorias = (informacionNutrimental) =>{
         grasas_insaturadas: ((kcalGrasasInsaturadas / caloriasTotales) * 100).toFixed(2),
         grasas_trans: ((kcalGrasasTrans / caloriasTotales) * 100).toFixed(2)
     };
-    console.log(porcentajesNutrimentales)
     return porcentajesNutrimentales;
 }
 
@@ -71,3 +70,44 @@ export const calcularPorcentajesVDR = (informacionNutrimental) => {
     console.log(porcentajesVDR);
     return porcentajesVDR;
   };
+
+export const combineIngredients = (recetas, porciones) => {
+  let resultado = {};
+  let conversionResultado = [];
+  let objetoConvertido;
+  let ingredienteExiste;
+  let porcionUtilizar;
+  recetas.forEach(receta => {
+    // Retorna la porcion a utilizar
+    porcionUtilizar = porciones[receta['id']];
+    receta.ingredientes.forEach(ingrediente => {
+      if(!resultado[ingrediente['unidad']]){
+        // Crear la separacion de la unidad como arreglo vacio y que este el ingrediente forme parte de el
+        resultado[ingrediente['unidad']] = [];
+        resultado[ingrediente['unidad']].push({...ingrediente, cantidad: ((ingrediente.cantidad/receta.porciones)*porcionUtilizar)});
+      } else{
+        // En caso de que exista la metrica, verificar si comparte su id con un ingrediente ya presente
+        ingredienteExiste = resultado[ingrediente['unidad']].findIndex(resultadoIngrediente => resultadoIngrediente.ingrediente.id == ingrediente.ingrediente.id);
+        if(ingredienteExiste != -1){
+          // Sumar las proporciones
+          resultado[ingrediente['unidad']][ingredienteExiste].cantidad += ((ingrediente.cantidad/receta.porciones)*porcionUtilizar);
+        } else{
+          // En caso contrario, agregarlo en el array
+          resultado[ingrediente['unidad']].push({...ingrediente, cantidad: ((ingrediente.cantidad/receta.porciones)*porcionUtilizar)});
+        }
+      }
+    });
+  });
+  //Convertir el resultado en un formato para el frontend
+  Object.keys(resultado).forEach(key => {
+    //Acceder a los ingredientes de cada metrica
+    resultado[key].forEach(ingredient => {
+      objetoConvertido = {
+        text: `${(ingredient.cantidad.toFixed(2))} ${ingredient.unidad == 'numerica' ? (ingredient.ingrediente.consistencia == 'solido' ? "g" : "ml") : ingredient.unidad == 'cucharadita' ? "cdta." : (ingredient.unidad == "cucharada" ? "cda." : (ingredient.unidad == "taza" ? "taza" : ""))} de ${ingredient.ingrediente.nombre}`,
+        image: ingredient.ingrediente.foto_ingrediente.includes('ingrediente_placeholder') ? null : ingredient.ingrediente.foto_ingrediente
+      };
+      conversionResultado.push(objetoConvertido);
+    });
+  })
+  return conversionResultado;
+}

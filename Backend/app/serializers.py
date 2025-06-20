@@ -377,12 +377,14 @@ class RecetaFavoritoSerializer(serializers.ModelSerializer):
     creador_nombre = serializers.CharField(source='receta.creador.name', read_only=True)
     visibilidad_estado = serializers.SerializerMethodField(read_only=True)
     visibilidad = serializers.BooleanField(source='receta.visibilidad', read_only=True)
+    ingredientes = RecetaIngredienteSerializer(source="receta.receta_ingredientes", many=True, required=False)
+    porciones = serializers.IntegerField(source='receta.porciones', read_only=True)
 
     class Meta:
         model = RecetaFavorito
         fields = [
             'id', 'usuario_id', 'receta', 'receta_nombre', 'receta_imagen_url',
-            'receta_categoria', 'receta_tiempo_preparacion', 'visibilidad_estado', 'visibilidad', 'receta_tiempo_coccion',
+            'receta_categoria', 'receta_tiempo_preparacion', 'porciones', 'ingredientes', 'visibilidad_estado', 'visibilidad', 'receta_tiempo_coccion',
             'receta_rating_promedio', 'creador_nombre'
         ]
         read_only_fields = ['id', 'usuario_id', 'creador_nombre']

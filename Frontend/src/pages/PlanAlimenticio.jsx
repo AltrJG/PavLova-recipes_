@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import BurbujaCanvas from '../Components/BurbujaCanvas';
 import Help from '../Components/Help';
 import ShowImage from '../components/ShowImage';
@@ -15,13 +15,15 @@ import MainButton from "../Components/MainButton";
 import { useRightSidebar } from '../context/RightSidebarProvider';
 import { useUpdateData } from '../context/UpdateDataProvider';
 import RecipePlanPicker from '../Components/RecipePlanPicker';
-import RotatingBall from '../Components/RotatingBall';
 import CircleButton from '../Components/CircleButton';
 import flameIcon from '../assets/Iconos/flame.svg';
 import timeIcon from '../assets/Iconos/timer.svg';
 import { useBackground } from '../context/BackgroundProvider';
+import { calcularNutrienteAporteCalorias, calcularNutrientes, combineIngredients } from '../Components/utils/calculadorNutrientes';
 
 export default function PlanAlimenticio(){
+
+    const timerRef = useRef(null);
 
     const { openNutritionalObjectivesForm, openAiForm } = useRightSidebar();
     const { addOllaHirviendo } = useBackground();
@@ -29,6 +31,9 @@ export default function PlanAlimenticio(){
     const [ activePicker, setActivePicker ] = useState(false);
     const [ personas, setPersonas ] = useState(1);
     const [ activeDay, setActiveDay ] = useState(1);
+    const [ ingredientesView, setIngredientesView ] = useState([]);
+    const [ activeRecipes, setActiveRecipes ] = useState([]);
+    const [ recipeProportions, setRecipeProportions ] = useState({});
     const [ nutritionalObjectives, setNutritionalObjectives ] = useState({
         calorias: 2000,               // kcal
         proteina: 50,                 // g
@@ -36,7 +41,7 @@ export default function PlanAlimenticio(){
         grasas_saturadas: 20,        // g
         grasas_insaturadas: 44,      // g
         grasas_trans: 2,             // g
-        sodio: 2300                  // mg
+        sodio: 2300,                 // mg
     });
     const [ currentNutritionalValues, setCurrentNutritionalValues ] = useState({
         calorias: 800,               // kcal
@@ -45,20 +50,20 @@ export default function PlanAlimenticio(){
         grasas_saturadas: 5,        // g
         grasas_insaturadas: 12,      // g
         grasas_trans: 1,             // g
-        sodio: 1000                  // mg
+        sodio: 1000,                  // mg
+        tiempo_coccion: 0,
+        tiempo_preparacion: 0
     });
 
-    const changeTemp = () => {
-        setCurrentNutritionalValues(nutritionalObjectives);
-    }
+    const aportePorcentajes = calcularNutrienteAporteCalorias(currentNutritionalValues);
 
     const nutrientesPorCalorias = [
-        { name: 'Grasas Saturadas', value: 23.44 },
-        { name: 'Grasas Insaturadas', value: 12.46 },
-        { name: 'Grasas Trans', value: 1.02 },
-        { name: 'Proteina', value: 4.04 },
-        { name: 'Carbohidratos', value: 58.76 },
-      ];
+        { name: 'Grasas Saturadas', value: ((!isNaN(aportePorcentajes.grasas_saturadas)) ? Number(aportePorcentajes.grasas_saturadas) : 0) },
+        { name: 'Grasas Insaturadas', value: ((!isNaN(aportePorcentajes.grasas_insaturadas)) ? Number(aportePorcentajes.grasas_insaturadas) : 0) },
+        { name: 'Grasas Trans', value: ((!isNaN(aportePorcentajes.grasas_trans)) ? Number(aportePorcentajes.grasas_trans) : 0) },
+        { name: 'Proteina', value: ((!isNaN(aportePorcentajes.proteina)) ? Number(aportePorcentajes.proteina) : 0) },
+        { name: 'Carbohidratos', value: ((!isNaN(aportePorcentajes.carbohidratos)) ? Number(aportePorcentajes.carbohidratos) : 0) },
+    ];
 
     const days = [
         { value: 1, day: 'dayOne' },
@@ -70,50 +75,52 @@ export default function PlanAlimenticio(){
         { value: 7, day: 'daySeven' }
     ];
 
-    const ingredientesView = [
-        {
-          text: "1 taza de Harina de Trigo",
-          image: null
-        },
-        {
-          text: "2 cucharadas de Azúcar Morena",
-          image: tempImg
-        },
-        {
-          text: "3 huevos grandes",
-          image: tempImg
-        },
-        {
-          text: "100 ml de Leche Entera",
-          image: null
-        },
-        {
-          text: "Una pizca de sal fina",
-          image: null
-        },
-        {
-          text: "1 cucharadita de extracto de vainilla natural",
-          image: tempImg
-        }
-      ];
-
     const nutritionalData = {
-        Calorias: `50 Kcal`,
-        Carbohidratos: `50g`,
-        Proteinas: `50g`,
-        'Grasas Saturadas': `50g`,
-        'Grasas Insaturadas': `50g`,
-        'Grasas Trans': `50g`,
-        Sodio: `50mg`
+        Calorias: `${currentNutritionalValues.calorias.toFixed(2)} Kcal`,
+        Carbohidratos: `${currentNutritionalValues.carbohidratos.toFixed(2)}g`,
+        Proteinas: `${currentNutritionalValues.proteina.toFixed(2)}g`,
+        'Grasas Saturadas': `${currentNutritionalValues.grasas_saturadas.toFixed(2)}g`,
+        'Grasas Insaturadas': `${currentNutritionalValues.grasas_insaturadas.toFixed(2)}g`,
+        'Grasas Trans': `${currentNutritionalValues.grasas_trans.toFixed(2)}g`,
+        Sodio: `${currentNutritionalValues.sodio.toFixed(2)}mg`
     };
 
     const handleOpenAiForm = () => {
         openAiForm()
+    };
+
+    const saveProportionChange = () => {
+        console.log('SAVING...');
+    }
+
+    const handlePortionChange = (value, id, calculate = false) => {
+        // Clear any existing timer
+        clearTimeout(timerRef.current);
+        // Almacenar la nueva informacion
+        !calculate && setRecipeProportions({...recipeProportions, [id]: Number(value)});
+        calculate && value > 0 && recipeProportions[id] < 10 && setRecipeProportions({...recipeProportions, [id]: ( recipeProportions[id] += value)});
+        calculate && value < 0 && recipeProportions[id] > .2 && setRecipeProportions({...recipeProportions, [id]: ( recipeProportions[id] += value)});
+        // Set a new timer
+        timerRef.current = setTimeout(() => {
+            saveProportionChange();
+        }, 2000);
+    };
+
+    const removeFromPlan = (recipe_id) => {
+        let currentRecipes = activeRecipes.filter(item => item.id !== recipe_id);
+        setActiveRecipes(currentRecipes);
+        let proportions = currentRecipes.reduce((acc, selectedRecipe) => {
+            if (selectedRecipe['id'] !== undefined && selectedRecipe['porciones'] !== undefined) {
+                acc[selectedRecipe['id']] = recipeProportions[selectedRecipe['id']] ?? 1;
+            }
+            return acc;
+        }, {});
+        setRecipeProportions(proportions);
     }
 
     useEffect(() => {
         addOllaHirviendo();
-    }, [])
+    }, []);
 
     useEffect(() => {
         if(Object.keys(updatedObjectives).length != 0){
@@ -131,9 +138,39 @@ export default function PlanAlimenticio(){
         }
     }, [updatedObjectives]);
 
+    useEffect(() => {
+        let nutrientesReceta;
+        let nutrientesResultadosSeparados = [];
+        let resultado = {
+            calorias: 0,
+            proteina: 0,
+            carbohidratos: 0,
+            grasas_saturadas: 0,
+            grasas_insaturadas: 0,
+            grasas_trans: 0,
+            sodio: 0,
+            tiempo_coccion: 0,
+            tiempo_preparacion: 0
+        };
+        activeRecipes.forEach(activeRecipe => {
+            nutrientesReceta = calcularNutrientes(activeRecipe.ingredientes, activeRecipe.porciones, recipeProportions[activeRecipe['id']]);
+            nutrientesReceta.tiempo_coccion = activeRecipe.tiempo_coccion;
+            nutrientesReceta.tiempo_preparacion = activeRecipe.tiempo_preparacion;
+            nutrientesResultadosSeparados.push(nutrientesReceta);
+        });
+        resultado = Object.keys(resultado).reduce((acc, key) => {
+            acc[key] = nutrientesResultadosSeparados.reduce((sum, resultadoIndv) => {
+                return sum + (resultadoIndv[key] ?? 0);
+            }, resultado[key] ?? 0);
+            return acc;
+        }, {});
+        setCurrentNutritionalValues(resultado);
+        setIngredientesView(combineIngredients(activeRecipes, recipeProportions));
+    }, [activeRecipes, recipeProportions]);
+
     return(
         <section className={styles.planAlimenticioContainer}>
-            <RecipePlanPicker activePicker={activePicker} setActivePicker={setActivePicker}/>
+            <RecipePlanPicker currentProportions={recipeProportions} setProportions={setRecipeProportions} activeRecipes={activeRecipes} setActiveRecipes={setActiveRecipes} activePicker={activePicker} setActivePicker={setActivePicker}/>
             <Help title={'Plan alimenticio'} description={'Crea tu plan alimenticio'}>
                 <MainButton action={handleOpenAiForm} disabled={false} type="button" icon="hardware-chip" iconSize="3" fontSize="2.5" color="primary" borderRadius="1.5" text={"Plan AI"}/>
             </Help>
@@ -148,38 +185,36 @@ export default function PlanAlimenticio(){
                     </div>
                     <div className={styles.selectedRecipes}>
                         <div className="recipesContent">
-                            <Recipe cristal={true}/>
-                            <Recipe cristal={true}/>
-                            <Recipe cristal={true}/>
+                            { activeRecipes.length != 0 && activeRecipes.map(recipe => <Recipe removeFromPlan={removeFromPlan} proportion={recipeProportions[recipe.id]} handlePortionChange={handlePortionChange} portionPicker={true} key={recipe.id} isModificationAllowed={false} cristal={true} recipe={recipe}/>) }
                             <button onClick={() => setActivePicker(true)} className={styles.addRecipes}><span className={styles.recipeAddIcon}><ReactSVG src={PlusIcon}/></span>Agregar Recetas...</button>
                         </div>
                     </div>
                     <div className={styles.objectiveCharts}>
-                        {Object.keys(nutritionalObjectives).map(key => <div key={key} className={styles.objectiveChartSingle}><h4>{key.toUpperCase().replace('_', ' ')}</h4><RadialChartComponent data={[{name: `Objetivo: ${nutritionalObjectives[key]*personas}`, uv: nutritionalObjectives[key]*personas, fill: '#FF9900'},{name: `Meta: ${currentNutritionalValues[key]}`, uv: currentNutritionalValues[key], fill: '#FF5E00'}]}/></div>)}
+                        {Object.keys(nutritionalObjectives).map(key => <div key={key} className={styles.objectiveChartSingle}><h4>{key.toUpperCase().replace('_', ' ')}</h4><RadialChartComponent data={[{name: `Objetivo: ${nutritionalObjectives[key]*personas}`, uv: (nutritionalObjectives[key]*personas), fill: '#FF9900'},{name: `Meta: ${currentNutritionalValues[key].toFixed(2)}`, uv: (currentNutritionalValues[key]).toFixed(2), fill: '#FF5E00'}]}/></div>)}
                         <button onClick={() => openNutritionalObjectivesForm(nutritionalObjectives)} className={styles.addRecipes}><span className={styles.recipeAddIcon}><ReactSVG src={CalendarIcon}/></span>Cambiar Objetivos...</button>
                     </div>
                 </div>
-                <div onClick={() => changeTemp()} className={styles.planImportantData}>
+                <div className={styles.planImportantData}>
                     <div className={styles.recipeNutritionTable}>
                         <h5 className={styles.headerInfoNutricional}>Informacion Nutricional</h5>
                         <NutritionalTable nutritionalData={nutritionalData}/>
+                    </div>
+                    <div className={styles.planTimesContainer}>
+                        <h5 className={styles.planTimesDescription}>Tiempos:</h5>
+                        <div className={styles.planTimes}>
+                            <div className={styles.timePreparation}><ReactSVG src={timeIcon}/> {`${currentNutritionalValues.tiempo_preparacion} Minutos`}</div>
+                            <div className={styles.timePreparation}><ReactSVG src={flameIcon}/> {`${currentNutritionalValues.tiempo_coccion} Minutos`}</div>
+                        </div>
+                    </div>
+                    <div className={styles.recipeNutrientsPerCalories}>
+                        <h4 className={styles.recipeNutrientsPerCaloriesHeader}>Nutrientes Por Calorias:</h4>
+                        <PieChartComponent data={nutrientesPorCalorias}/>
                     </div>
                     <div className={styles.recipeContentsUsefulData}>
                         <h4 className={styles.recipeContentsText}>Ingredientes:</h4>
                         <div className={styles.ingredientsContainer}>
                             { ingredientesView.map(ingredient => <ShowImage key={ingredient.text} text={ingredient.text} position={ingredient.text.length > 20 ? 'Top' : 'Right'} width={'17'} height={'12'} hasImage={ingredient.image != null} image={ingredient.image}/>)}
                         </div>
-                    </div>
-                    <div className={styles.planTimesContainer}>
-                        <h5 className={styles.planTimesDescription}>Tiempos:</h5>
-                        <div className={styles.planTimes}>
-                            <div className={styles.timePreparation}><ReactSVG src={timeIcon}/> {`10 Minutos`}</div>
-                            <div className={styles.timePreparation}><ReactSVG src={flameIcon}/> {`10 Minutos`}</div>
-                        </div>
-                    </div>
-                    <div className={styles.recipeNutrientsPerCalories}>
-                        <h4 className={styles.recipeNutrientsPerCaloriesHeader}>Nutrientes Por Calorias:</h4>
-                        <PieChartComponent data={nutrientesPorCalorias}/>
                     </div>
                 </div>
             </div>

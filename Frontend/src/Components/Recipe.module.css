@@ -17,11 +17,14 @@
     border: .1rem solid white;
 }
 
-.recipeContainer button{
+.recipeContainer button,
+.recipeContainer input{
+    transition: .3s;
     opacity: 0;
 }
 
-.recipeContainer:hover button{
+.recipeContainer:hover button,
+.recipeContainer:hover input{
     opacity: 1;
 }
 
@@ -157,8 +160,101 @@
     }
 }
 
+.selectedRecipe{
+    background: orange !important;
+    color: white;
+}
+
+.selectedRecipe .recipeDifficulty,
+.selectedRecipe .recipeTime,
+.selectedRecipe .recipeAuthor,
+.selectedRecipe .recipeName{
+    color: white;
+}
+
+.selectedRecipe{
+    & svg{
+        color: white;
+    }
+}
+
+/* Slider for proportion picker*/
+.sliderProportionsForm{
+    position: absolute;
+    height: 100%;
+    width: 3rem;
+    top: 0;
+    right: .3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 1rem;
+}
+
+.sliderProportionsButton{
+    background-color: orange;
+    font-size: 2.5rem;
+    font-family: 'Oswald', sans-serif;
+    width: 60%;
+    border: none;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem !important;
+    cursor: pointer;
+}
+
+.sliderProportionsRef{
+    position: absolute;
+    top: 1rem;
+    font-size: 1.2rem;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 900;
+    background-color: #23130d;
+    color: white;
+    padding: .4rem;
+    border-radius: .5rem;
+}
+
+.sliderProportionsButton:hover{
+    background-color: #23130d;
+    color: white;
+}
+
+.sliderProportionsButton:nth-child(1){
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+}
+
+.sliderProportionsButton:nth-child(4){
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
+.sliderProportionsSlider{
+    writing-mode: vertical-lr;
+    direction: rtl;
+    appearance: slider-vertical;
+    margin: 0 !important;
+    width: 3rem;
+    vertical-align: middle;
+    height: 70% !important;
+    border-radius: 0 !important;
+}
+
+.sliderProportionsSlider::-webkit-slider-thumb{
+    margin-top: 0;
+}
+
+.sliderProportionsSlider::-webkit-slider-runnable-track{
+    margin: .5rem 0 .5rem 0;
+}
+
 @media(max-width: 81.25em){
-    .recipeContainer button{
+    .recipeContainer button,
+    .recipeContainer input{
         opacity: 1;
     }
 }
@@ -175,5 +271,23 @@
             width: 1.5rem;
             height: 1.5rem;
         }
+    }
+
+    .sliderProportionsSlider{
+        height: 78% !important;
+    }
+
+    .sliderProportionsRef{
+        right: 3.5rem;
+        top: .5rem;
+    }
+
+    .sliderProportionsForm{
+        width: 3.5rem;
+    }
+
+    .separationPicker .recipeName,
+    .separationPicker .recipeAuthor{
+        padding-right: 4rem !important;
     }
 }
