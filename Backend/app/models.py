@@ -411,3 +411,36 @@ class RecetaFavorito(models.Model):
 
     def __str__(self):
         return f"{self.receta.nombre} - {self.usuario.email}"
+    
+#---------------------------PLAN ALIMENTICIO-------------------------------#
+
+class PlanAlimenticio(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='planes_alimenticios')
+    fecha_inicio = models.DateField(blank=True, null=True)
+    fecha_finalizacion = models.DateField(blank=True, null=True)
+    objetivo_calorias = models.IntegerField(default=2000)
+    objetivo_proteinas = models.IntegerField(default=50)
+    objetivo_carbohidratos = models.IntegerField(default=275)
+    objetivo_grasas_saturadas = models.IntegerField(default=20)
+    objetivo_grasas_insaturadas = models.IntegerField(default=44)
+    objetivo_grasas_trans = models.IntegerField(default=2)
+    objetivo_sodio = models.IntegerField(default=2300)
+    personas = models.IntegerField(default=1)
+
+    def __str__(self):
+        return f"Plan Alimenticio de {self.usuario.name} - Desde {self.fecha_inicio} hasta {self.fecha_finalizacion}"
+
+class PlanAlimenticioDia(models.Model):
+    plan_alimenticio = models.ForeignKey(PlanAlimenticio, on_delete=models.CASCADE, related_name='dias')
+    fecha_objetivo = models.DateField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Día del Plan Alimenticio de {self.plan_alimenticio.usuario.name} - {self.fecha}"
+
+class PlanAlimenticioDiaReceta(models.Model):
+    plan_alimenticio_dia = models.ForeignKey(PlanAlimenticioDia, on_delete=models.CASCADE, related_name='recetas')
+    receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name='plan_alimenticio_recetas')
+    porcion = models.FloatField(default=1.0)
+
+    def __str__(self):
+        return f"{self.porcion} porciones de {self.receta.nombre} - {self.plan_alimenticio_dia.fecha_objetivo}"
