@@ -10,6 +10,15 @@
 
 .planImportantData{
     margin-right: 1rem;
+    opacity: 1;
+    transition: .5s;
+    visibility: visible;
+}
+
+.hiddenImportantData.planImportantData,
+.hiddenChart{
+    opacity: 0 !important;
+    visibility: hidden !important;
 }
 
 .daysContainer{
@@ -183,6 +192,8 @@
 }
 
 .objectiveChartSingle{
+    opacity: 1;
+    visibility: visible;
     height: 25rem;
     width: 100%;
     background-color: rgba(255, 255, 255, 0.293);
@@ -191,6 +202,7 @@
     -webkit-backdrop-filter: blur( 3px );
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.118);
     border-radius: 2rem;
+    transition: .5s;
 }
 
 .timePreparation{
@@ -218,6 +230,17 @@
     gap: 1rem;
 }
 
+.addRecipesTip{
+    grid-column: 1 / -1;
+    font-size: 3rem;
+    color: #23130d;
+    text-align: left;
+    font-family: "Oswald", sans-serif;
+}
+
+.hiddenTip{
+    display: none;
+}
 
 @media(max-width: 75em){
     .planAlimenticioSeparation{
@@ -285,5 +308,9 @@
 @media(max-width: 34.375em){
     .planImportantData{
         margin-right: 0;
+    }
+
+    .addRecipesTip{
+        font-size: 2rem;
     }
 }

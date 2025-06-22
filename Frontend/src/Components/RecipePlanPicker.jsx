@@ -98,6 +98,8 @@ export default function RecipePlanPicker({currentProportions, activeRecipes, set
             fixedRecipe = {
                 id: recipe.receta,
                 nombre: recipe.receta_nombre,
+                frase: recipe.frase,
+                procedimiento: recipe.procedimiento,
                 porciones: recipe.porciones,
                 foto_receta: recipe.receta_imagen_url,
                 tiempo_preparacion: recipe.receta_tiempo_preparacion,

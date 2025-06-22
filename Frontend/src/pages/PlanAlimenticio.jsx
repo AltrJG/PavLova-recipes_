@@ -19,6 +19,7 @@ import CircleButton from '../Components/CircleButton';
 import flameIcon from '../assets/Iconos/flame.svg';
 import timeIcon from '../assets/Iconos/timer.svg';
 import { useBackground } from '../context/BackgroundProvider';
+import { generarPlanDiaPDF } from '../Components/utils/PDFDataGenerator';
 import { calcularNutrienteAporteCalorias, calcularNutrientes, combineIngredients } from '../Components/utils/calculadorNutrientes';
 
 export default function PlanAlimenticio(){
@@ -168,6 +169,10 @@ export default function PlanAlimenticio(){
         setIngredientesView(combineIngredients(activeRecipes, recipeProportions));
     }, [activeRecipes, recipeProportions]);
 
+    const generarPlanDia = async () =>{
+        await generarPlanDiaPDF(activeRecipes, recipeProportions, nutritionalObjectives, nutrientesPorCalorias, currentNutritionalValues, '01-01-2001', ingredientesView, personas);
+    }
+
     return(
         <section className={styles.planAlimenticioContainer}>
             <RecipePlanPicker currentProportions={recipeProportions} setProportions={setRecipeProportions} activeRecipes={activeRecipes} setActiveRecipes={setActiveRecipes} activePicker={activePicker} setActivePicker={setActivePicker}/>
@@ -180,7 +185,7 @@ export default function PlanAlimenticio(){
                         <div className={styles.daysContainer}>
                             { days.map(day => <div onClick={() => setActiveDay(day.value)} key={day.value} className={`${styles.dias} ${activeDay == day.value ? styles.activeDay : ""}`}><div key={day.value} className={styles.diaNumero}>{day.value}</div><p className={styles.diaTexto}>Dia</p></div>) }                        
                         </div>
-                        <CircleButton text="Descargar PDF de este dia" iconName={"document-attach"} iconSize="3rem"/>
+                        { activeRecipes.length > 0 && <CircleButton action={generarPlanDia} args={[]} text="Descargar PDF de este dia" iconName={"document-attach"} iconSize="3rem"/>}
                         <CircleButton text="Descargar PDF del Plan" iconName={"folder-with-document"} iconSize="3rem"/>
                     </div>
                     <div className={styles.selectedRecipes}>
@@ -190,11 +195,12 @@ export default function PlanAlimenticio(){
                         </div>
                     </div>
                     <div className={styles.objectiveCharts}>
-                        {Object.keys(nutritionalObjectives).map(key => <div key={key} className={styles.objectiveChartSingle}><h4>{key.toUpperCase().replace('_', ' ')}</h4><RadialChartComponent data={[{name: `Objetivo: ${nutritionalObjectives[key]*personas}`, uv: (nutritionalObjectives[key]*personas), fill: '#FF9900'},{name: `Meta: ${currentNutritionalValues[key].toFixed(2)}`, uv: (currentNutritionalValues[key]).toFixed(2), fill: '#FF5E00'}]}/></div>)}
-                        <button onClick={() => openNutritionalObjectivesForm(nutritionalObjectives)} className={styles.addRecipes}><span className={styles.recipeAddIcon}><ReactSVG src={CalendarIcon}/></span>Cambiar Objetivos...</button>
+                        <p className={`${activeRecipes.length > 0 ? styles.hiddenTip : ""} ${styles.addRecipesTip}`}>Comienza agregando una receta, ya sea propia o favorita</p>
+                        {Object.keys(nutritionalObjectives).map(key => <div key={key} className={`${activeRecipes.length > 0 ? "" : styles.hiddenChart} ${styles.objectiveChartSingle}`}><h4>{key.toUpperCase().replace('_', ' ')}</h4><RadialChartComponent data={[{name: `Objetivo: ${nutritionalObjectives[key]*personas}`, uv: (nutritionalObjectives[key]*personas), fill: '#FF9900'},{name: `Meta: ${currentNutritionalValues[key].toFixed(2)}`, uv: (currentNutritionalValues[key]).toFixed(2), fill: '#FF5E00'}]}/></div>)}
+                        <button onClick={() => openNutritionalObjectivesForm(nutritionalObjectives)} className={`${activeRecipes.length > 0 ? "" : styles.hiddenChart} ${styles.addRecipes}`}><span className={styles.recipeAddIcon}><ReactSVG src={CalendarIcon}/></span>Cambiar Objetivos...</button>
                     </div>
                 </div>
-                <div className={styles.planImportantData}>
+                <div className={`${activeRecipes.length > 0 ? "" : styles.hiddenImportantData} ${styles.planImportantData}`}>
                     <div className={styles.recipeNutritionTable}>
                         <h5 className={styles.headerInfoNutricional}>Informacion Nutricional</h5>
                         <NutritionalTable nutritionalData={nutritionalData}/>

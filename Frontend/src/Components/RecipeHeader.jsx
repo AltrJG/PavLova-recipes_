@@ -16,11 +16,13 @@ import { FadeLoader } from "react-spinners";
 import { useAuth } from "../context/AuthProvider";
 import { generarRecetaPDF } from "./utils/PDFDataGenerator";
 import NotFound404 from "../pages/NotFound404";
+import { useNutritionalDataRecipeProvider } from "../context/NutritionalDataRecipeProvider";
 
 export default function RecipeHeader(){
 
     let { recipe_id } = useParams();
     const { refreshAccessToken, isSuperUser, isStaff, user, isAuthenticated } = useAuth();
+    const { porciones } = useNutritionalDataRecipeProvider();
     const [ receta, setReceta ] = useState({});
     const [ updateRecipe, setUpdateRecipe ] = useState(false);
     const [ loadingFavorite, setLoadingFavorite ] = useState(false);
@@ -166,7 +168,7 @@ export default function RecipeHeader(){
                     <p className={styles.recipeHeaderQuote}>{receta.frase}</p>
                     <div className={styles.recipeHeaderActions}>
                         {receta?.creador_info?.id != user?.id && isAuthenticated && <CircleButton text={favorito != -1 ? 'Eliminar de favoritos?' : 'Agregar a favoritos'} action={toggleFavorito} args={[]} iconName={favorito != -1 ? 'heart' : "heart-outline"} iconSize="3.5rem"/>}
-                        <CircleButton action={(Object.keys(user).length != 0) ? generarRecetaPDF : navigateLogIn} args={[receta]} text="Descargar PDF" iconName={"document-attach"} iconSize="3.5rem"/>
+                        <CircleButton action={(Object.keys(user).length != 0) ? generarRecetaPDF : navigateLogIn} args={[receta, porciones]} text="Descargar PDF" iconName={"document-attach"} iconSize="3.5rem"/>
                         { (isSuperUser || isStaff || receta?.creador_info?.id === user?.id) && <CircleButton action={navigate} args={[`/crear-receta?recetaEditar=${receta.id}`]} text="Editar Receta" iconName={"create"} iconSize="3.5rem"/> }
                     </div>
                 </div>
