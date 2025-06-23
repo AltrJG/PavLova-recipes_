@@ -1,4 +1,4 @@
-from .models import User, PasswordResetToken, Ingrediente, Categoria, Etiqueta, Receta, RecetaIngrediente, Comentario, RecetaFavorito
+from .models import User, PasswordResetToken, Ingrediente, Categoria, Etiqueta, Receta, RecetaIngrediente, Comentario, RecetaFavorito, PlanAlimenticio
 from rest_framework import serializers
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -401,3 +401,15 @@ class RecetaFavoritoSerializer(serializers.ModelSerializer):
         if obj.receta.visibilidad:
             return "Publica"
         return "Privada"
+    
+#---------------------------PLAN ALIMENTICIO-------------------------------#
+
+class PlanAlimenticioSerializer(serializers.ModelSerializer):
+    usuario_id = serializers.IntegerField(source='usuario.id', read_only=True)
+
+    class Meta:
+        model = PlanAlimenticio
+        fields = ['id', 'usuario_id', 'fecha_inicio', 'fecha_finalizacion', 'objetivo_calorias',
+            'objetivo_proteinas', 'objetivo_carbohidratos', 'objetivo_grasas_saturadas',
+            'objetivo_grasas_insaturadas', 'objetivo_grasas_trans', 'objetivo_sodio',
+            'personas',]

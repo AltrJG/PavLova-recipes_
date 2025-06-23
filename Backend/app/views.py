@@ -6,13 +6,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from django.shortcuts import get_object_or_404
-from .models import User, EmailVerificationCode, Ingrediente, Categoria, Etiqueta, Receta, Comentario, RecetaFavorito
+from .models import User, EmailVerificationCode, Ingrediente, Categoria, Etiqueta, Receta, Comentario, RecetaFavorito, PlanAlimenticio, PlanAlimenticioDia
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate, update_session_auth_hash
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer, ComentarioSerializer, RecetaFavoritoSerializer
+from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer, ComentarioSerializer, RecetaFavoritoSerializer, PlanAlimenticioSerializer
 from .permissions import IsModeratorOrAdmin, IsSuperUserOrReadOnly, IsStaffOrSuperUserOrReadOnly, IsOwnerOrStaffOrSuperUser
 from .filters import UserFilter, IngredienteFilter, EtiquetaFilter, CategoriaFilter, RecetaFilter, MisRecetasFilter, MisFavoritosFilter
 from django.core.mail import send_mail
@@ -22,6 +22,7 @@ from .pagination import IngredientePagination, UserPagination, CommentPagination
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
+from datetime import timedelta
 
 #Miscellaneous>>>>>>>>>>>>>>>>>>>
 
@@ -753,3 +754,37 @@ class RecetaFavoritoViewSet(viewsets.ModelViewSet):
         
         serializer = self.get_serializer(queryset, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class PlanAlimenticioViewSet(viewsets.ModelViewSet):
+    serializer_class = PlanAlimenticioSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return PlanAlimenticio.objects.filter(usuario=self.request.user)
+    
+    def create(self, request, *args, **kwargs):
+        user = request.user
+
+        if not user.is_authenticated:
+            raise PermissionDenied("Debes iniciar sesión para crear un plan alimenticio.")
+        
+        if PlanAlimenticio.objects.filter(usuario=user).exists():
+            raise PermissionDenied("Ya tienes un plan alimenticio creado.")
+        
+        serializer = self.get_serializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+
+        fecha_inicio = serializer.validated_data.get('fecha_inicio')
+        fecha_fin = serializer.validated_data.get('fecha_finalizacion')
+
+        if fecha_fin <= fecha_inicio:
+            return Response({'error': 'La fecha de finalización debe ser posterior a la fecha de inicio.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        plan = serializer.save(usuario=user)
+
+        dia_actual = fecha_inicio
+        while dia_actual <= fecha_fin:
+            PlanAlimenticioDia.objects.create(plan_alimenticio=plan, fecha_objetivo=dia_actual)
+            dia_actual += timedelta(days=1)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
