@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import BurbujaCanvas from '../Components/BurbujaCanvas';
 import Help from '../Components/Help';
 import ShowImage from '../components/ShowImage';
@@ -21,14 +21,29 @@ import timeIcon from '../assets/Iconos/timer.svg';
 import { useBackground } from '../context/BackgroundProvider';
 import { generarPlanDiaPDF } from '../Components/utils/PDFDataGenerator';
 import { calcularNutrienteAporteCalorias, calcularNutrientes, combineIngredients } from '../Components/utils/calculadorNutrientes';
+import DateRangeSlider from '../Components/DateRangeSlider';
+import backendAPI from '../api/axiosConfig';
+import Swal from 'sweetalert2';
+import { useAuth } from '../context/AuthProvider';
 
 export default function PlanAlimenticio(){
 
     const timerRef = useRef(null);
 
+    const start = useMemo(() => new Date(), []);
+    const end = useMemo(() => {
+        const d = new Date();
+        d.setDate(d.getDate() + 6);
+        return d;
+    }, []);
+
     const { openNutritionalObjectivesForm, openAiForm } = useRightSidebar();
     const { addOllaHirviendo } = useBackground();
     const { updatedObjectives, resetNewObjectives } = useUpdateData();
+    const { refreshAccessToken } = useAuth();
+    const [ creacionLoading, setCreacionLoading ] = useState(false);
+    const [ datePickerForm, setDatePickerForm ] = useState(true);
+    const [ selectedDates, setSelectedDates ] = useState([]);
     const [ activePicker, setActivePicker ] = useState(false);
     const [ personas, setPersonas ] = useState(1);
     const [ activeDay, setActiveDay ] = useState(1);
@@ -173,9 +188,64 @@ export default function PlanAlimenticio(){
         await generarPlanDiaPDF(activeRecipes, recipeProportions, nutritionalObjectives, nutrientesPorCalorias, currentNutritionalValues, '01-01-2001', ingredientesView, personas);
     }
 
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    const handleDates = ([start, end]) => {
+        setSelectedDates([formatDate(start), formatDate(end)]);
+    };
+
+    const handleCreatePlan = async () => {
+        setCreacionLoading(true);
+        try{
+            const response = await backendAPI.post('/plan_alimenticio/', {
+                fecha_inicio: selectedDates[0],
+                fecha_finalizacion: selectedDates[1]
+            });
+            Swal.fire({
+                icon: "success",
+                title: "Plan Alimenticio creado",
+                text: 'Se ha creado el plan alimenticio con exito',
+                showConfirmButton: true,
+                customClass: {
+                    title: "swal_title",
+                    icon: "swal_icon",
+                    htmlContainer: "swal_text",
+                    confirmButton: "swal_confirm"
+                }
+            });
+            console.log(response);
+        } catch(error){
+            if(error.response?.status == 401){
+                await refreshAccessToken(handleCreatePlan);
+            }
+            console.log(error);
+        } finally{
+            setCreacionLoading(false);
+        }
+    }
+
     return(
         <section className={styles.planAlimenticioContainer}>
-            <RecipePlanPicker currentProportions={recipeProportions} setProportions={setRecipeProportions} activeRecipes={activeRecipes} setActiveRecipes={setActiveRecipes} activePicker={activePicker} setActivePicker={setActivePicker}/>
+            {datePickerForm 
+            ? <div className={styles.datePicker}>
+                <div className={styles.datePickerContainer}>
+                    <h2>Selecciona los dias del plan</h2>
+                    <DateRangeSlider
+                        startDate={start}
+                        endDate={end}
+                        onChange={handleDates}
+                    />
+                    <div className={styles.buttonDatePicker}>
+                        <MainButton action={handleCreatePlan} disabled={creacionLoading} type="button" icon="calendar" iconSize="3" fontSize="2.5" color="primary" borderRadius="1.5" text={creacionLoading ? "Creando..." : "Crear Plan Alimenticio"}/>
+                    </div>
+                </div>
+            </div>
+            : <><RecipePlanPicker currentProportions={recipeProportions} setProportions={setRecipeProportions} activeRecipes={activeRecipes} setActiveRecipes={setActiveRecipes} activePicker={activePicker} setActivePicker={setActivePicker}/>
             <Help title={'Plan alimenticio'} description={'Crea tu plan alimenticio'}>
                 <MainButton action={handleOpenAiForm} disabled={false} type="button" icon="hardware-chip" iconSize="3" fontSize="2.5" color="primary" borderRadius="1.5" text={"Plan AI"}/>
             </Help>
@@ -223,7 +293,7 @@ export default function PlanAlimenticio(){
                         </div>
                     </div>
                 </div>
-            </div>
+            </div></>}
             <div className="mobileSpace"></div>
         </section>
     )

@@ -242,6 +242,51 @@
     display: none;
 }
 
+.datePicker{
+    margin-top: 10rem;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.datePickerContainer{
+    width: max-content;
+    padding: 1rem 4rem;
+    background-color: rgba(255, 255, 255, 0.505);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 2rem;
+    backdrop-filter: blur( 3px );
+    -webkit-backdrop-filter: blur( 3px );
+}
+
+.datePicker h2{
+    font-family: 'Oswald', sans-serif;
+    margin-bottom: 3rem;
+    text-align: center;
+    font-size: 2.2rem;
+}
+
+.datePicker p,
+.datePicker strong{
+    text-align: center;
+    font-family: 'Lato', sans-serif;
+    font-size: 1.6rem;
+}
+
+.datePicker section{
+    width: 40rem;
+}
+
+.buttonDatePicker{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
 @media(max-width: 75em){
     .planAlimenticioSeparation{
         grid-template-columns: 1fr;
@@ -302,6 +347,17 @@
     }
     .pdfDaysContainer{
         justify-content: center;
+    }
+}
+
+@media(max-width: 37.5em){
+    .datePickerContainer,
+    .datePicker section{
+        width: 100% !important;
+    }
+
+    .datePickerContainer button{
+        font-size: 1.8rem !important;
     }
 }
 

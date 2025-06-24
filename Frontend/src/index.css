@@ -408,3 +408,39 @@ font-size: 15px !important;
   opacity: 0;
   transition: opacity 300ms;
 }
+
+/* Estilos para el slider personalizado */
+.noUi-connect {
+  background: orange !important; /* Green */
+}
+
+.noUi-handle {
+  border: 2px solid #23130d !important;
+  background: #23130d !important;
+  height: 3rem !important;
+  width: 3rem !important;
+  border-radius: 50% !important;
+  top: -6px !important; /* center vertically */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
+  cursor: pointer !important;
+}
+
+.noUi-handle:hover{
+  border: 2px solid orangered !important;
+}
+
+.noUi-handle:before,
+.noUi-handle:after {
+  display: none !important;
+}
+
+.noUi-tooltip {
+  background: #333 !important;
+  color: white !important;
+  border-radius: 2rem !important;
+  padding: .4rem .8rem !important;
+  font-size: 1.2rem !important;
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  text-transform: capitalize;
+}
