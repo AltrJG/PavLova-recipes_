@@ -788,3 +788,15 @@ class PlanAlimenticioViewSet(viewsets.ModelViewSet):
             dia_actual += timedelta(days=1)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def destroy(self, request, *args, **kwargs):
+        try:
+            plan = self.get_object()
+        except Exception:
+            return Response({"error": "Plan alimenticio no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+        if plan.usuario != request.user:
+            return Response({"error": "No tienes permiso para eliminar este plan alimenticio."}, status=status.HTTP_403_FORBIDDEN)
+
+        plan.delete()
+        return Response({"mensaje": "Plan alimenticio eliminado correctamente."}, status=status.HTTP_204_NO_CONTENT)
