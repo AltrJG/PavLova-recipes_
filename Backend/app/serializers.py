@@ -1,4 +1,4 @@
-from .models import User, PasswordResetToken, Ingrediente, Categoria, Etiqueta, Receta, RecetaIngrediente, Comentario, RecetaFavorito, PlanAlimenticio
+from .models import User, PasswordResetToken, Ingrediente, Categoria, Etiqueta, Receta, RecetaIngrediente, Comentario, RecetaFavorito, PlanAlimenticio, PlanAlimenticioDia, PlanAlimenticioDiaReceta
 from rest_framework import serializers
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -403,6 +403,45 @@ class RecetaFavoritoSerializer(serializers.ModelSerializer):
         return "Privada"
     
 #---------------------------PLAN ALIMENTICIO-------------------------------#
+
+class RecetaResumenSerializer(serializers.ModelSerializer):
+    categoria = serializers.CharField(source='categoria.nombre', read_only=True)
+    creador_nombre = serializers.CharField(source='creador.name', read_only=True)
+    foto_receta = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Receta
+        fields = [
+            'id',
+            'nombre',
+            'foto_receta',
+            'tiempo_preparacion',
+            'tiempo_coccion',
+            'categoria',
+            'creador_nombre',
+            'rating_promedio',
+            'visibilidad',
+        ]
+    
+    def get_foto_receta(self, obj):
+        request = self.context.get('request')
+        if obj.foto_receta and hasattr(obj.foto_receta, 'url'):
+            return request.build_absolute_uri(obj.foto_receta.url)
+        return None
+
+class PlanAlimenticioDiaRecetaSerializer(serializers.ModelSerializer):
+    receta = RecetaResumenSerializer(read_only=True)
+
+    class Meta:
+        model = PlanAlimenticioDiaReceta
+        fields = ['receta', 'porcion']
+
+class PlanAlimenticioDiaSerializer(serializers.ModelSerializer):
+    recetas = PlanAlimenticioDiaRecetaSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = PlanAlimenticioDia
+        fields = ['id', 'fecha_objetivo', 'recetas']
 
 class PlanAlimenticioSerializer(serializers.ModelSerializer):
     usuario_id = serializers.IntegerField(source='usuario.id', read_only=True)

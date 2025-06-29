@@ -429,6 +429,13 @@ class PlanAlimenticio(models.Model):
 
     def __str__(self):
         return f"Plan Alimenticio de {self.usuario.name} - Desde {self.fecha_inicio} hasta {self.fecha_finalizacion}"
+    
+    #Constraint para asegurar que un usuario solo tenga un plan alimenticio activo
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['usuario'], name='unique_plan_alimenticio_usuario',)
+        ]
 
 class PlanAlimenticioDia(models.Model):
     plan_alimenticio = models.ForeignKey(PlanAlimenticio, on_delete=models.CASCADE, related_name='dias')

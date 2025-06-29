@@ -12,7 +12,7 @@ from django.contrib.auth import authenticate, update_session_auth_hash
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer, ComentarioSerializer, RecetaFavoritoSerializer, PlanAlimenticioSerializer
+from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer, ComentarioSerializer, RecetaFavoritoSerializer, PlanAlimenticioSerializer, PlanAlimenticioDiaSerializer
 from .permissions import IsModeratorOrAdmin, IsSuperUserOrReadOnly, IsStaffOrSuperUserOrReadOnly, IsOwnerOrStaffOrSuperUser
 from .filters import UserFilter, IngredienteFilter, EtiquetaFilter, CategoriaFilter, RecetaFilter, MisRecetasFilter, MisFavoritosFilter
 from django.core.mail import send_mail
@@ -22,7 +22,7 @@ from .pagination import IngredientePagination, UserPagination, CommentPagination
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
-from datetime import timedelta
+from datetime import timedelta, date
 
 #Miscellaneous>>>>>>>>>>>>>>>>>>>
 
@@ -800,3 +800,88 @@ class PlanAlimenticioViewSet(viewsets.ModelViewSet):
 
         plan.delete()
         return Response({"mensaje": "Plan alimenticio eliminado correctamente."}, status=status.HTTP_204_NO_CONTENT)
+    
+    @action(detail=False, methods=['get'], url_path='plan-actual')
+    def obtener_plan_actual(self, request):
+   
+        user = request.user
+        hoy = date.today()
+
+        try:
+            plan = PlanAlimenticio.objects.get(usuario=user)
+        except PlanAlimenticio.DoesNotExist:
+            return Response({"error": "No tienes un plan alimenticio activo."}, status=status.HTTP_404_NOT_FOUND)
+
+        if plan.fecha_finalizacion and hoy > plan.fecha_finalizacion:
+            plan.delete()
+            return Response({"error": "Tu plan alimenticio ha caducado y fue eliminado."}, status=status.HTTP_410_GONE)
+        
+        for dia in plan.dias.all():
+            recetas_dia = dia.recetas.select_related('receta', 'receta__creador')
+
+            for receta_dia in recetas_dia:
+                receta = receta_dia.receta
+                if not receta.visibilidad and receta.creador != user:
+                    receta_dia.delete()
+
+        dias_plan = plan.dias.all().order_by('fecha_objetivo')
+        ids_fechas = [{"id": dia.id, "fecha": dia.fecha_objetivo} for dia in dias_plan]
+
+        if not dias_plan.exists():
+            return Response({"error": "Tu plan alimenticio no tiene dias asignados."}, status=status.HTTP_404_NOT_FOUND)
+
+        primer_dia = dias_plan.first()
+        dia_serializer = PlanAlimenticioDiaSerializer(primer_dia, context={'request': request})
+
+        return Response({
+            "plan": {
+                "id": plan.id,
+                "fecha_inicio": plan.fecha_inicio,
+                "fecha_finalizacion": plan.fecha_finalizacion,
+                "ids_fechas": ids_fechas,
+            },
+            "primer_dia": dia_serializer.data,
+        }, status=status.HTTP_200_OK)
+    
+    @action(detail=True, methods=['put', 'patch'], url_path='actualizar-objetivos')
+    def actualizar_objetivos(self, request, pk=None):
+        
+        user = request.user
+
+        try:
+            plan = PlanAlimenticio.objects.get(pk=pk)
+        except PlanAlimenticio.DoesNotExist:
+            return Response({'error': 'El plan alimenticio no existe.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        if plan.usuario != user:
+            return Response({'error': 'No tienes permiso para modificar este plan alimenticio.'}, status=status.HTTP_403_FORBIDDEN)
+        
+        serializer = self.get_serializer(plan, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({'mensaje': 'Plan alimenticio actualizado correctamente.'}, status=status.HTTP_200_OK)
+    
+class PlanAlimenticioDiaViewSet(viewsets.ModelViewSet):
+    serializer_class = PlanAlimenticioDiaSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return PlanAlimenticioDia.objects.filter(plan_alimenticio__usuario=self.request.user)
+    
+    def retrieve(self, request, pk=None):
+        
+        user = request.user
+        dia = get_object_or_404(PlanAlimenticioDia, pk=pk)
+
+        if dia.plan_alimenticio.usuario != user:
+            return Response({"error": "No tienes permiso para acceder a este dia del plan alimenticio."}, status=status.HTTP_403_FORBIDDEN)
+        
+        recetas_dia = dia.recetas.select_related('receta', 'receta__creador')
+        for receta_dia in recetas_dia:
+            receta = receta_dia.receta
+            if not receta.visibilidad and receta.creador != user:
+                receta_dia.delete()
+
+        serializer = PlanAlimenticioDiaSerializer(dia, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
