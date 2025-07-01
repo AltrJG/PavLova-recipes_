@@ -814,8 +814,10 @@ class PlanAlimenticioViewSet(viewsets.ModelViewSet):
 
         if plan.fecha_finalizacion and hoy > plan.fecha_finalizacion:
             plan.delete()
-            return Response({"error": "Tu plan alimenticio ha caducado y fue eliminado."}, status=status.HTTP_410_GONE)
-        
+            response = Response({"error": "Tu plan alimenticio ha caducado y fue eliminado."}, status=status.HTTP_410_GONE)
+            response["Cache-Control"] = "no-store"        
+            return response
+
         for dia in plan.dias.all():
             recetas_dia = dia.recetas.select_related('receta', 'receta__creador')
 
@@ -832,6 +834,7 @@ class PlanAlimenticioViewSet(viewsets.ModelViewSet):
 
         primer_dia = dias_plan.first()
         dia_serializer = PlanAlimenticioDiaSerializer(primer_dia, context={'request': request})
+        print(plan.objetivo_sodio)
 
         return Response({
             "plan": {
@@ -839,6 +842,15 @@ class PlanAlimenticioViewSet(viewsets.ModelViewSet):
                 "fecha_inicio": plan.fecha_inicio,
                 "fecha_finalizacion": plan.fecha_finalizacion,
                 "ids_fechas": ids_fechas,
+                "objetivos_nutricionales": {
+                    "calorias": plan.objetivo_calorias,
+                    "proteina": plan.objetivo_proteinas,
+                    "carbohidratos": plan.objetivo_carbohidratos,
+                    "grasas_saturadas": plan.objetivo_grasas_saturadas,
+                    "grasas_insaturadas": plan.objetivo_grasas_insaturadas,
+                    "grasas_trans": plan.objetivo_grasas_trans,
+                    "sodio": plan.objetivo_sodio
+                }
             },
             "primer_dia": dia_serializer.data,
         }, status=status.HTTP_200_OK)

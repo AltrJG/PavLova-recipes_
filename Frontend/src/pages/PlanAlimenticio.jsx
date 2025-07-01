@@ -25,6 +25,7 @@ import DateRangeSlider from '../Components/DateRangeSlider';
 import backendAPI from '../api/axiosConfig';
 import Swal from 'sweetalert2';
 import { useAuth } from '../context/AuthProvider';
+import { FadeLoader } from 'react-spinners';
 
 export default function PlanAlimenticio(){
 
@@ -41,11 +42,15 @@ export default function PlanAlimenticio(){
     const { addOllaHirviendo } = useBackground();
     const { updatedObjectives, resetNewObjectives } = useUpdateData();
     const { refreshAccessToken } = useAuth();
+    const [ loadingPlan, setLoadingPlan ] = useState(true);
+    const [ loadingDay, setLoadingDay ] = useState(false);
+    const [ planID, setPlanID ] = useState(-1); 
     const [ creacionLoading, setCreacionLoading ] = useState(false);
     const [ datePickerForm, setDatePickerForm ] = useState(true);
     const [ selectedDates, setSelectedDates ] = useState([]);
     const [ activePicker, setActivePicker ] = useState(false);
     const [ personas, setPersonas ] = useState(1);
+    const [ days, setDays ] = useState([]);
     const [ activeDay, setActiveDay ] = useState(1);
     const [ ingredientesView, setIngredientesView ] = useState([]);
     const [ activeRecipes, setActiveRecipes ] = useState([]);
@@ -79,16 +84,6 @@ export default function PlanAlimenticio(){
         { name: 'Grasas Trans', value: ((!isNaN(aportePorcentajes.grasas_trans)) ? Number(aportePorcentajes.grasas_trans) : 0) },
         { name: 'Proteina', value: ((!isNaN(aportePorcentajes.proteina)) ? Number(aportePorcentajes.proteina) : 0) },
         { name: 'Carbohidratos', value: ((!isNaN(aportePorcentajes.carbohidratos)) ? Number(aportePorcentajes.carbohidratos) : 0) },
-    ];
-
-    const days = [
-        { value: 1, day: 'dayOne' },
-        { value: 2, day: 'dayTwo' },
-        { value: 3, day: 'dayThree' },
-        { value: 4, day: 'dayFour' },
-        { value: 5, day: 'dayFive' },
-        { value: 6, day: 'daySix' },
-        { value: 7, day: 'daySeven' }
     ];
 
     const nutritionalData = {
@@ -134,8 +129,61 @@ export default function PlanAlimenticio(){
         setRecipeProportions(proportions);
     }
 
+    const verifyPlan = async () => {
+        setLoadingPlan(true);
+        try{
+            const response = await backendAPI.get('/plan_alimenticio/plan-actual/');
+            setDatePickerForm(false);
+            setDays(response.data.plan.ids_fechas.map(dia => { return {value: dia.id, dia: dia.fecha}}));
+            setActiveDay(response.data.primer_dia.id);
+            setPlanID(response.data.plan.id);
+            setActiveRecipes(response.data.primer_dia.recetas);
+            setNutritionalObjectives(response.data.plan.objetivos_nutricionales);
+        } catch(error){
+            if(error.response?.status == 401){
+                await refreshAccessToken(verifyPlan);
+            }
+            if(error.response?.status == 410){
+                Swal.fire({
+                    icon: "info",
+                    title: "Plan Eliminado",
+                    text: 'Tu Plan alimenticio fue eliminado, ya que este estaba caducado',
+                    showConfirmButton: true,
+                    customClass: {
+                        title: "swal_title",
+                        icon: "swal_icon",
+                        htmlContainer: "swal_text",
+                        confirmButton: "swal_confirm"
+                    }
+                });
+            }
+        } finally{
+            setLoadingPlan(false);
+        }
+    }
+
+    const checkDay = async (day_id) => {
+        setActiveDay(day_id);
+        setLoadingDay(true);
+        try{
+            const response = await backendAPI.get(`/plan_alimenticio_dia/${day_id}/`);
+            setDatePickerForm(false);
+            setActiveDay(response.data.id);
+            setActiveRecipes(response.data.recetas);
+            console.log(response.data);
+        } catch(error){
+            if(error.response?.status == 401){
+                await refreshAccessToken(checkDay);
+            }
+            console.log(error);
+        } finally{
+            setLoadingDay(false);
+        }
+    }
+
     useEffect(() => {
         addOllaHirviendo();
+        verifyPlan();
     }, []);
 
     useEffect(() => {
@@ -219,6 +267,7 @@ export default function PlanAlimenticio(){
                 }
             });
             console.log(response);
+            await verifyPlan();
         } catch(error){
             if(error.response?.status == 401){
                 await refreshAccessToken(handleCreatePlan);
@@ -228,6 +277,8 @@ export default function PlanAlimenticio(){
             setCreacionLoading(false);
         }
     }
+
+    if(loadingPlan) return <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
 
     return(
         <section className={styles.planAlimenticioContainer}>
@@ -253,12 +304,13 @@ export default function PlanAlimenticio(){
                 <div className={styles.planMainContent}>
                     <div className={styles.pdfDaysContainer}>
                         <div className={styles.daysContainer}>
-                            { days.map(day => <div onClick={() => setActiveDay(day.value)} key={day.value} className={`${styles.dias} ${activeDay == day.value ? styles.activeDay : ""}`}><div key={day.value} className={styles.diaNumero}>{day.value}</div><p className={styles.diaTexto}>Dia</p></div>) }                        
+                            { days.map(day => <div onClick={async () => await checkDay(day.value)} key={day.value} className={`${styles.dias} ${activeDay == day.value ? styles.activeDay : ""}`}><div key={day.value} className={styles.diaNumero}>{String(new Date(day.dia + 'T00:00:00').getDate()).padStart(2, '0')}</div><p className={styles.diaTexto}>{new Date(day.dia + 'T00:00:00').toLocaleDateString('es-MX', { weekday: 'short' })}.</p></div>) }                        
                         </div>
-                        { activeRecipes.length > 0 && <CircleButton action={generarPlanDia} args={[]} text="Descargar PDF de este dia" iconName={"document-attach"} iconSize="3rem"/>}
-                        <CircleButton text="Descargar PDF del Plan" iconName={"folder-with-document"} iconSize="3rem"/>
+                        { activeRecipes.length > 0 && !loadingDay && <CircleButton action={generarPlanDia} args={[]} text="Descargar PDF de este dia" iconName={"document-attach"} iconSize="3rem"/>}
+                        { !loadingDay && <CircleButton text="Descargar PDF del Plan" iconName={"folder-with-document"} iconSize="3rem"/>}
                     </div>
-                    <div className={styles.selectedRecipes}>
+                    {!loadingDay 
+                    ? <><div className={styles.selectedRecipes}>
                         <div className="recipesContent">
                             { activeRecipes.length != 0 && activeRecipes.map(recipe => <Recipe removeFromPlan={removeFromPlan} proportion={recipeProportions[recipe.id]} handlePortionChange={handlePortionChange} portionPicker={true} key={recipe.id} isModificationAllowed={false} cristal={true} recipe={recipe}/>) }
                             <button onClick={() => setActivePicker(true)} className={styles.addRecipes}><span className={styles.recipeAddIcon}><ReactSVG src={PlusIcon}/></span>Agregar Recetas...</button>
@@ -266,11 +318,12 @@ export default function PlanAlimenticio(){
                     </div>
                     <div className={styles.objectiveCharts}>
                         <p className={`${activeRecipes.length > 0 ? styles.hiddenTip : ""} ${styles.addRecipesTip}`}>Comienza agregando una receta, ya sea propia o favorita</p>
-                        {Object.keys(nutritionalObjectives).map(key => <div key={key} className={`${activeRecipes.length > 0 ? "" : styles.hiddenChart} ${styles.objectiveChartSingle}`}><h4>{key.toUpperCase().replace('_', ' ')}</h4><RadialChartComponent data={[{name: `Objetivo: ${nutritionalObjectives[key]*personas}`, uv: (nutritionalObjectives[key]*personas), fill: '#FF9900'},{name: `Meta: ${currentNutritionalValues[key].toFixed(2)}`, uv: (currentNutritionalValues[key]).toFixed(2), fill: '#FF5E00'}]}/></div>)}
-                        <button onClick={() => openNutritionalObjectivesForm(nutritionalObjectives)} className={`${activeRecipes.length > 0 ? "" : styles.hiddenChart} ${styles.addRecipes}`}><span className={styles.recipeAddIcon}><ReactSVG src={CalendarIcon}/></span>Cambiar Objetivos...</button>
-                    </div>
+                        {Object.keys(nutritionalObjectives).map(key => <div key={key} className={`${activeRecipes.length > 0 ? "" : styles.hiddenChart} ${styles.objectiveChartSingle}`}><h4>{key.toUpperCase().replace('_', ' ')}</h4><RadialChartComponent data={[{name: `Objetivo: ${nutritionalObjectives[key]*personas}`, uv: (nutritionalObjectives[key]*personas), fill: '#FF9900'},{name: `Meta: ${currentNutritionalValues[key]?.toFixed(2)}`, uv: (currentNutritionalValues[key])?.toFixed(2), fill: '#FF5E00'}]}/></div>)}
+                        <button onClick={() => openNutritionalObjectivesForm(nutritionalObjectives, planID)} className={`${activeRecipes.length > 0 ? "" : styles.hiddenChart} ${styles.addRecipes}`}><span className={styles.recipeAddIcon}><ReactSVG src={CalendarIcon}/></span>Cambiar Objetivos...</button>
+                    </div></> 
+                    : <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>}
                 </div>
-                <div className={`${activeRecipes.length > 0 ? "" : styles.hiddenImportantData} ${styles.planImportantData}`}>
+                <div className={`${activeRecipes.length > 0 ? "" : styles.hiddenImportantData} ${styles.planImportantData} ${loadingDay && styles.loadingDay}`}>
                     <div className={styles.recipeNutritionTable}>
                         <h5 className={styles.headerInfoNutricional}>Informacion Nutricional</h5>
                         <NutritionalTable nutritionalData={nutritionalData}/>

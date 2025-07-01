@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./ObjectivesForm.module.css";
 import RightSidebarForms from "./RightSidebarForms";
 import MainButton from "./MainButton";
@@ -10,6 +10,7 @@ import backendAPI from "../api/axiosConfig";
 import RightSidebarErrors from "./RightSidebarErrors";
 import Swal from "sweetalert2";
 import { useUpdateData } from "../context/UpdateDataProvider";
+import { useRightSidebar } from "../context/RightSidebarProvider";
 
 export default function ObjectivesForm(){
 
@@ -18,6 +19,7 @@ export default function ObjectivesForm(){
     const [ personas, setPersonas ] = useState(1);
     const { user, changeUserData, refreshAccessToken, getUserData } = useAuth();
     const { setNewObjectives } = useUpdateData();
+    const { nutritionalObjectives: nutritionalObjectivesData } = useRightSidebar();
 
     const mainFormOptions = [
         { type: "number", name: "calorias", label: "Calorias (kcal):"},
@@ -39,27 +41,52 @@ export default function ObjectivesForm(){
         sodio: 2300                  // mg
     });
 
-    const handleChangeInformation = e => {
+    useEffect(() => {
+        setNutritionalObjectives(nutritionalObjectivesData.objectives);
+    }, [nutritionalObjectivesData]);
+
+    const handleChangeInformation = async e => {
         e.preventDefault();
+        setLoading(true);
         let newObjectives = nutritionalObjectives;
         newObjectives.personas = personas;
         let errors = checkNutritionalObjectives(newObjectives);
         setErrorsHandler(errors);
         if(Object.keys(errors).length == 0){
-            setNewObjectives(nutritionalObjectives);
-            Swal.fire({
-                icon: "success",
-                title: "Objetivos actualizados",
-                text: 'Se han actualizado los objetivos con exito',
-                showConfirmButton: true,
-                customClass: {
-                    title: "swal_title",
-                    icon: "swal_icon",
-                    htmlContainer: "swal_text",
-                    confirmButton: "swal_confirm"
+            try{
+                setNewObjectives(nutritionalObjectives);
+                const response = await backendAPI.patch(`/plan_alimenticio/${nutritionalObjectivesData.plan_id}/actualizar-objetivos/`, {
+                    objetivo_calorias: nutritionalObjectives.calorias,
+                    objetivo_proteinas: nutritionalObjectives.proteina,
+                    objetivo_carbohidratos: nutritionalObjectives.carbohidratos,
+                    objetivo_grasas_saturadas: nutritionalObjectives.grasas_saturadas,
+                    objetivo_grasas_insaturadas: nutritionalObjectives.grasas_insaturadas,
+                    objetivo_grasas_trans: nutritionalObjectives.grasas_trans,
+                    objetivo_sodio: nutritionalObjectives.sodio,
+                    personas
+                })
+                console.log(response);
+                Swal.fire({
+                    icon: "success",
+                    title: "Objetivos actualizados",
+                    text: 'Se han actualizado los objetivos con exito',
+                    showConfirmButton: true,
+                    customClass: {
+                        title: "swal_title",
+                        icon: "swal_icon",
+                        htmlContainer: "swal_text",
+                        confirmButton: "swal_confirm"
+                    }
+                });
+            } catch(error){
+                if(error.response?.status == 401){
+                    await refreshAccessToken(handleChangeInformation, e);
                 }
-            });
+            } finally{
+                setLoading(false);
+            }
         }
+        setLoading(false);
     };
 
     return(
