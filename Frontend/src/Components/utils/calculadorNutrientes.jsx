@@ -52,7 +52,8 @@ export const calcularPorcentajesVDR = (informacionNutrimental) => {
       carbohidratos: 275,          // g
       grasas_saturadas: 20,        // g
       grasas_insaturadas: 44,      // g (ejemplo para grasas saludables)
-      grasas_trans: 2              // g (máximo tolerado)
+      grasas_trans: 2,              // g (máximo tolerado)
+      sodio: 2300                  // mg
     };
   
     const calcularPorcentaje = (valor, referencia) =>
@@ -64,10 +65,10 @@ export const calcularPorcentajesVDR = (informacionNutrimental) => {
       grasas_saturadas: calcularPorcentaje(informacionNutrimental.grasas_saturadas, VDR.grasas_saturadas),
       grasas_insaturadas: calcularPorcentaje(informacionNutrimental.grasas_insaturadas, VDR.grasas_insaturadas),
       grasas_trans: calcularPorcentaje(informacionNutrimental.grasas_trans, VDR.grasas_trans),
-      calorias: calcularPorcentaje(informacionNutrimental.calorias, VDR.calorias)
+      calorias: calcularPorcentaje(informacionNutrimental.calorias, VDR.calorias),
+      sodio: calcularPorcentaje(informacionNutrimental.sodio, VDR.sodio)
     };
   
-    console.log(porcentajesVDR);
     return porcentajesVDR;
   };
 
@@ -110,4 +111,76 @@ export const combineIngredients = (recetas, porciones) => {
     });
   })
   return conversionResultado;
+}
+
+export const calculateNutritionalValuesObjectives = (resultado, objetivos, personas) => {
+  let alertas = {};
+  let division;
+  Object.keys(objetivos).forEach(objetivo => {
+    division = (resultado[objetivo]/(objetivos[objetivo]*personas))*100;
+    if(objetivo == "calorias"){
+      if(division >= 90 && division <= 110){
+        alertas[objetivo] = {estado: "Aceptable", mensaje: "Las calorias se ajustan aproximadamente a tu objetivo, bien hecho!"};
+      } else if(division < 90){
+        alertas[objetivo] = {estado: 'Alerta', mensaje: "Una ingesta calórica baja puede causar fatiga, pérdida muscular y déficit de nutrientes esenciales."}
+      } else if(division > 110){
+        alertas[objetivo] = {estado: 'Alerta', mensaje: "Consumir más calorías de las que tu cuerpo necesita puede favorecer el aumento de peso y el riesgo de enfermedades metabólicas."}
+      }
+    }
+    if(objetivo == "proteina"){
+      if(division >= 90 && division <= 110){
+        alertas[objetivo] = {estado: "Aceptable", mensaje: "Las proteinas se ajustan aproximadamente a tu objetivo, bien hecho!"};
+      } else if(division < 90){
+        alertas[objetivo] = {estado: 'Alerta', mensaje: "Una ingesta insuficiente de proteínas puede provocar pérdida de masa muscular, debilidad y un sistema inmune debilitado."}
+      } else if(division > 110){
+        alertas[objetivo] = {estado: 'Alerta', mensaje: "Un exceso de proteínas puede sobrecargar los riñones y aumentar la deshidratación."}
+      }
+    }
+    if(objetivo == 'carbohidratos'){
+      if(division >= 90 && division <= 110){
+        alertas[objetivo] = {estado: "Aceptable", mensaje: "Los carbohidratos se ajustan aproximadamente a tu objetivo, bien hecho!"};
+      } else if(division < 90){
+        alertas[objetivo] = {estado: 'Alerta', mensaje: "Muy pocos carbohidratos pueden producir fatiga, dificultad para concentrarse y mal funcionamiento del sistema nervioso."}
+      } else if(division > 110){
+        alertas[objetivo] = {estado: 'Alerta', mensaje: "El consumo elevado de carbohidratos, especialmente azúcares simples, puede causar picos de glucosa y contribuir al sobrepeso."}
+      }
+    }
+    if(objetivo == 'grasas_saturadas'){
+      if(division >= 90 && division <= 105){
+        alertas[objetivo] = {estado: "Aceptable", mensaje: "Las grasas saturadas se ajustan aproximadamente a tu objetivo, considera mantener este valor lo mas bajo posible"};
+      } else if(division < 90){
+        alertas[objetivo] = {estado: 'Aceptable', mensaje: "Reducir las grasas saturadas suele ser positivo para la salud cardiovascular."}
+      } else if(division > 110){
+        alertas[objetivo] = {estado: 'Peligro', mensaje: "El exceso de grasas saturadas puede aumentar el colesterol LDL (‘malo’) y el riesgo de enfermedades cardiovasculares."}
+      }
+    }
+    if(objetivo == 'grasas_insaturadas'){
+      if(division >= 90 && division <= 110){
+        alertas[objetivo] = {estado: "Aceptable", mensaje: "Las grasas insaturadas se ajustan aproximadamente a tu objetivo, bien hecho!"};
+      } else if(division < 90){
+        alertas[objetivo] = {estado: 'Alerta', mensaje: "La falta de grasas insaturadas puede comprometer la salud del corazón y reducir la absorción de vitaminas liposolubles (A, D, E, K)."}
+      } else if(division > 110){
+        alertas[objetivo] = {estado: 'Alerta', mensaje: "Aunque son saludables, un exceso de grasas insaturadas eleva las calorías totales y puede afectar el peso corporal."}
+      }
+    }
+    if(objetivo == 'grasas_trans'){
+      if(division >= 90 && division <= 100){
+        alertas[objetivo] = {estado: "Atencion", mensaje: "Las grasas trans no deben de exceder tu objetivo para una mejor salud"};
+      } else if(division < 90){
+        alertas[objetivo] = {estado: 'Aceptable', mensaje: "No hay problema, las grasas trans deben evitarse completamente."}
+      } else if(division > 100){
+        alertas[objetivo] = {estado: 'Peligro', mensaje: "Las grasas trans son dañinas incluso en pequeñas cantidades. Aumentan el colesterol LDL y reducen el HDL (‘bueno’), elevando el riesgo cardiovascular."}
+      }
+    }
+    if(objetivo == 'sodio'){
+      if(division >= 80 && division <= 110){
+        alertas[objetivo] = {estado: "Aceptable", mensaje: "El sodio está dentro del rango recomendado para una buena salud cardiovascular."};
+      } else if(division < 80){
+        alertas[objetivo] = {estado: 'Alerta', mensaje: "Muy poco sodio puede provocar calambres, mareos y deshidratación."}
+      } else if(division > 110){
+        alertas[objetivo] = {estado: 'Alerta', mensaje: "El exceso de sodio puede elevar la presión arterial y aumentar el riesgo de enfermedades cardíacas y renales."}
+      }
+    }
+  });
+  return alertas;
 }

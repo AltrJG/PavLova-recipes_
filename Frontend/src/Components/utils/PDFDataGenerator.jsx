@@ -151,6 +151,8 @@ export async function generarRecetaPDF(recetaData, porciones, insertarPlan = fal
   let porcentajePorCalorias = calcularNutrienteAporteCalorias(porcionIndividual);
   let porcentajeNutricionalDiario = calcularPorcentajesVDR(porcionIndividual);
 
+  page.drawText((`${porciones}`), { x: 383, y: height - 60, size: 20, font, maxWidth: 60 });
+
   // Llenar los campos con la informacion nutricional
   page.drawText((`${nutrientes.calorias.toFixed(2)} g`), { x: 355, y: height - 120, size: 20, font, maxWidth: 300 });
   page.drawText((`${nutrientes.carbohidratos.toFixed(2)} g`), { x: 355, y: height - 160, size: 20, font, maxWidth: 300 });
@@ -172,6 +174,7 @@ export async function generarRecetaPDF(recetaData, porciones, insertarPlan = fal
   page.drawText((`${porcentajeNutricionalDiario.proteina}%`), { x: 330, y: height - 733, size: 16, font, maxWidth: 300 });
   page.drawText((`${porcentajeNutricionalDiario.carbohidratos}%`), { x: 415, y: height - 733, size: 16, font, maxWidth: 300 });
   page.drawText((`${porcentajeNutricionalDiario.calorias}%`), { x: 510, y: height - 733, size: 16, font, maxWidth: 300 });
+  page.drawText((`${porcentajeNutricionalDiario.sodio}%`), { x: 320, y: height - 765, size: 16, font, maxWidth: 300 });
 
   pdfDoc.removePage(1);
   pdfDoc.removePage(1);
@@ -185,7 +188,7 @@ export async function generarRecetaPDF(recetaData, porciones, insertarPlan = fal
   }
 }
 
-export async function generarPlanDiaPDF(recetas, porciones, objetivos, nutrientesCalorias, infoNutricional, diaRef, ingredientes, cantidadPersonas){
+export async function generarPlanDiaPDF(recetas, porciones, objetivos, nutrientesCalorias, infoNutricional, diaRef, ingredientes, cantidadPersonas, nutritionalAlerts){
   const existingPdfBytes = await fetch(nutritionalPdf).then(res => res.arrayBuffer());
   const pdfDoc = await PDFDocument.load(existingPdfBytes);
   let page = pdfDoc.getPages()[0];
@@ -200,7 +203,6 @@ export async function generarPlanDiaPDF(recetas, porciones, objetivos, nutriente
   const addTemplatePage2 = async () => {
     let currentIndex = pdfDoc.getPages().indexOf(page);
     currentIndex == 0 && currentIndex++;
-    currentIndex == 1 && currentIndex++;
     if(currentIndex >= paginasGeneradas[paginasGeneradas.length -1]){
         const [copiedPage] = await pdfDoc.copyPages(pdfDoc, [1]);
         let newPage = pdfDoc.addPage(copiedPage);
@@ -256,7 +258,7 @@ export async function generarPlanDiaPDF(recetas, porciones, objetivos, nutriente
   };
 
   // 📝 Información principal
-  page.drawText(`(${diaRef})`, { x: 230, y: height - 90, size: 25, font, maxWidth: 500, color: rgb(.9607, .368, 0) });
+  page.drawText(`(${diaRef.dia})`, { x: 230, y: height - 90, size: 25, font, maxWidth: 500, color: rgb(.9607, .368, 0) });
   page.drawText(`${infoNutricional.tiempo_preparacion} Minutos`, { x: 280, y: height - 135, size: 14, font });
   page.drawText(`${infoNutricional.tiempo_coccion} Minutos`, { x: 460, y: height - 135, size: 14, font });
 
@@ -270,6 +272,14 @@ export async function generarPlanDiaPDF(recetas, porciones, objetivos, nutriente
   for (let ing of ingredientes) {
     const text = `• ${ing.text}`;
     ({ page, y: yIngredientes } = await drawWrappedText({ page, text, x: margin, y: yIngredientes, size: 12, maxWidth: 190 }));
+  }
+
+  page = firstPage;
+
+  let yAlertas = height - 620;
+  for (let key of Object.keys(nutritionalAlerts)) {
+    const text = `${nutritionalAlerts[key].estado}: ${nutritionalAlerts[key].mensaje}`;
+    ({ page, y: yAlertas } = await drawWrappedText({ page, text, x: 230, y: yAlertas, size: 12, maxWidth: 360 }));
   }
 
   page = firstPage;
@@ -292,11 +302,11 @@ export async function generarPlanDiaPDF(recetas, porciones, objetivos, nutriente
   page.drawText((`${infoNutricional.grasas_trans.toFixed(2)} g (${((infoNutricional.grasas_trans/(objetivos.grasas_trans*cantidadPersonas))*100).toFixed(1)}%)`), { x: 438, y: height - 363, size: 12, font, maxWidth: 300 });
   page.drawText((`${infoNutricional.sodio.toFixed(2)} mg (${((infoNutricional.sodio/(objetivos.sodio*cantidadPersonas))*100).toFixed(1)}%)`), { x: 438, y: height - 390, size: 12, font, maxWidth: 300 });
 
-  page.drawText((`${nutrientesCalorias[0].value}%`), { x: 445, y: height - 695, size: 16, font, maxWidth: 300 });
-  page.drawText((`${nutrientesCalorias[1].value}%`), { x: 335, y: height - 695, size: 16, font, maxWidth: 300 });
-  page.drawText((`${nutrientesCalorias[2].value}%`), { x: 280, y: height - 575, size: 16, font, maxWidth: 300 });
-  page.drawText((`${nutrientesCalorias[3].value}%`), { x: 385, y: height - 575, size: 16, font, maxWidth: 300 });
-  page.drawText((`${nutrientesCalorias[4].value}%`), { x: 495, y: height - 575, size: 16, font, maxWidth: 300 });
+  page.drawText((`${nutrientesCalorias[0].value}%`), { x: 435, y: height - 580, size: 16, font, maxWidth: 300 });
+  page.drawText((`${nutrientesCalorias[1].value}%`), { x: 320, y: height - 580, size: 16, font, maxWidth: 300 });
+  page.drawText((`${nutrientesCalorias[2].value}%`), { x: 263, y: height - 512, size: 16, font, maxWidth: 300 });
+  page.drawText((`${nutrientesCalorias[3].value}%`), { x: 385, y: height - 515, size: 16, font, maxWidth: 300 });
+  page.drawText((`${nutrientesCalorias[4].value}%`), { x: 495, y: height - 515, size: 16, font, maxWidth: 300 });
 
   pdfDoc.removePage(1);
   
@@ -313,5 +323,5 @@ export async function generarPlanDiaPDF(recetas, porciones, objetivos, nutriente
 
   const pdfBytes = await pdfDoc.save();
   const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-  saveAs(blob, `${diaRef.replace(/ /g, "_")}__planAlimenticio.pdf`);
+  saveAs(blob, `${diaRef.dia}_planAlimenticio.pdf`);
 }

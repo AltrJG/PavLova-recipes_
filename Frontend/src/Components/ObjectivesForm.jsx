@@ -93,7 +93,7 @@ export default function ObjectivesForm(){
         <div className={styles.changeProfileForm}>
             <h3 className={styles.formDescription}>Cambiar Objetivos Nutricionales</h3>
             <RightSidebarErrors errors={errorsHandler} />
-
+            <p className={styles.nutritionWarning}>ATENCION: Solo modifica los valores nutricionales si sabes lo que haces. En caso contrario, pide ayuda a un nutriologo.</p>
             <RightSidebarForms twoOnOne={true} action={handleChangeInformation} formOptions={mainFormOptions} setData={setNutritionalObjectives} data={nutritionalObjectives}>
                 <div className={styles.portionSliderContainer}>
                     <p className={styles.portionSliderText}>Personas: <span className={styles.portionSliderValue}>{personas}</span></p>

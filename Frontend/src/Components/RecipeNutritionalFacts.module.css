@@ -36,6 +36,15 @@
     gap: 1rem;
 }
 
+.advise{
+    font-size: 1.6rem;
+    color: white;
+    margin: 1rem 3rem 0 3rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: 600;
+    text-align: justify;
+}
+
 @media(max-width: 68.75em){
     .recipeHeaderRatingFormContainer{
         width: 100% !important;

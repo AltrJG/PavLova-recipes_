@@ -2,7 +2,7 @@ import React from 'react';
 import { RadialBarChart, RadialBar, Legend, ResponsiveContainer } from 'recharts';
 
 const style = {
-  top: '8%',
+  top: '6%',
   right: 0,
   transform: 'translate(0, -50%)',
   lineHeight: '24px',
@@ -18,7 +18,7 @@ const RadialChartComponent = ({data}) => {
         cx="50%"
         cy="50%"
         innerRadius="40%"
-        outerRadius="110%"
+        outerRadius="100%"
         barSize={18}
         data={data}
       >

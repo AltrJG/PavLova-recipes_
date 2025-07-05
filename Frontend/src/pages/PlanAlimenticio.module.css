@@ -197,7 +197,7 @@
 .objectiveChartSingle{
     opacity: 1;
     visibility: visible;
-    height: 25rem;
+    height: 30rem;
     width: 100%;
     background-color: rgba(255, 255, 255, 0.293);
     border: .1rem solid white;
@@ -206,6 +206,95 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.118);
     border-radius: 2rem;
     transition: .5s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.objectiveChartSingle p{
+    width: max-content;
+    font-weight: 600;
+    border-radius: 1rem;
+    padding: .2rem .5rem;
+    position: relative;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1.5rem 1rem 0 1rem;
+    font-size: 1.4rem;
+    text-align: center;
+    font-family: 'Lato', sans-serif;
+    color: black;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.objectiveChartSingle .visualAlert{
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    width: 25rem;
+    top: -350%;
+    background-color: #23130d;
+    color: white;
+    border-radius: 2rem;
+    padding: 1rem;
+    font-size: 1.2rem;
+}
+
+.objectiveChartSingle .visualAlert::after{
+    content: "";
+    position: absolute;
+    display: block;
+    width: 2rem;
+    height: 2rem;
+    background-color: #23130d;
+    left: 50%;
+    top: 85%;
+    transform: translateX(-50%);
+    clip-path: polygon(50% 100%, 0 0, 100% 0);
+}
+
+.objectiveChartSingle p:hover .visualAlert{
+    opacity: 1;
+    visibility: visible;
+}
+
+.aceptable{
+    background-color: rgba(0, 182, 0, 0.336);
+    border: .1rem rgb(0, 182, 0) solid;
+}
+
+.aceptable:hover{
+    color: white;
+    background-color: rgb(0, 182, 0);
+}
+
+.alerta{
+    background-color: rgba(206, 141, 0, 0.336);
+    border: .1rem rgb(255, 174, 0) solid;
+}
+
+.alerta:hover{
+    color: white;
+    background-color: rgb(255, 174, 0);
+}
+
+.peligro{
+    background-color: rgba(182, 42, 0, 0.336);
+    border: .1rem rgb(182, 42, 0) solid;
+}
+
+.peligro:hover{
+    color: white;
+    background-color: rgb(182, 42, 0);
+}
+
+.objectiveChartSingle p svg{
+    width: 2.2rem;
+    height: 2.2rem;
 }
 
 .timePreparation{

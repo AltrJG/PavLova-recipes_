@@ -25,11 +25,11 @@ export default function RecipeNutritionalFacts(){
     }, [nutritionalValues]);
 
     const nutritionalBadges = [
-        { title: "Grasa saturada", unit: "Cal/kcal", value: nutritionalPercentages.grasas_saturadas, isNumber: false },
-        { title: "Grasa insaturada", unit: "Cal/kcal", value: nutritionalPercentages.grasas_insaturadas, isNumber: false },
-        { title: "Grasa Trans", unit: "Cal/kcal", value: nutritionalPercentages.grasas_trans, isNumber: false },
-        { title: "Proteina", unit: "mg/g", value: nutritionalPercentages.proteina, isNumber: false },
-        { title: "Carbohi dratos", unit: "Cal/kcal", value: nutritionalPercentages.carbohidratos, isNumber: false },
+        { title: "Grasa saturada", unit: "%", value: nutritionalPercentages.grasas_saturadas, isNumber: false },
+        { title: "Grasa insaturada", unit: "%", value: nutritionalPercentages.grasas_insaturadas, isNumber: false },
+        { title: "Grasa Trans", unit: "%", value: nutritionalPercentages.grasas_trans, isNumber: false },
+        { title: "Proteina", unit: "%", value: nutritionalPercentages.proteina, isNumber: false },
+        { title: "Carbohi dratos", unit: "%", value: nutritionalPercentages.carbohidratos, isNumber: false },
       ];
 
     return(
@@ -49,6 +49,7 @@ export default function RecipeNutritionalFacts(){
                     />
                 ))}
             </div>
+            <p className={styles.advise}>ATENCION: Puede que estos valores sean aproximaciones cercanas y no exactos, consulta a tu nutriólogo para mas informacion de esta receta. </p>
         </div>
     )
 }

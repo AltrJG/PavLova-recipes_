@@ -20,7 +20,7 @@ import flameIcon from '../assets/Iconos/flame.svg';
 import timeIcon from '../assets/Iconos/timer.svg';
 import { useBackground } from '../context/BackgroundProvider';
 import { generarPlanDiaPDF } from '../Components/utils/PDFDataGenerator';
-import { calcularNutrienteAporteCalorias, calcularNutrientes, combineIngredients } from '../Components/utils/calculadorNutrientes';
+import { calcularNutrienteAporteCalorias, calcularNutrientes, calculateNutritionalValuesObjectives, combineIngredients } from '../Components/utils/calculadorNutrientes';
 import DateRangeSlider from '../Components/DateRangeSlider';
 import backendAPI from '../api/axiosConfig';
 import Swal from 'sweetalert2';
@@ -55,6 +55,7 @@ export default function PlanAlimenticio(){
     const [ ingredientesView, setIngredientesView ] = useState([]);
     const [ activeRecipes, setActiveRecipes ] = useState([]);
     const [ recipeProportions, setRecipeProportions ] = useState({});
+    const [ nutritionalAlerts, setNutritionalAlerts ] = useState([]);
     const [ nutritionalObjectives, setNutritionalObjectives ] = useState({
         calorias: 2000,               // kcal
         proteina: 50,                 // g
@@ -229,11 +230,13 @@ export default function PlanAlimenticio(){
             return acc;
         }, {});
         setCurrentNutritionalValues(resultado);
+        setNutritionalAlerts(calculateNutritionalValuesObjectives(resultado, nutritionalObjectives, personas));
         setIngredientesView(combineIngredients(activeRecipes, recipeProportions));
     }, [activeRecipes, recipeProportions]);
 
     const generarPlanDia = async () =>{
-        await generarPlanDiaPDF(activeRecipes, recipeProportions, nutritionalObjectives, nutrientesPorCalorias, currentNutritionalValues, '01-01-2001', ingredientesView, personas);
+        const match = days.find(dia => dia.value === activeDay);
+        await generarPlanDiaPDF(activeRecipes, recipeProportions, nutritionalObjectives, nutrientesPorCalorias, currentNutritionalValues, match, ingredientesView, personas, nutritionalAlerts);
     }
 
     const formatDate = (date) => {
@@ -318,7 +321,33 @@ export default function PlanAlimenticio(){
                     </div>
                     <div className={styles.objectiveCharts}>
                         <p className={`${activeRecipes.length > 0 ? styles.hiddenTip : ""} ${styles.addRecipesTip}`}>Comienza agregando una receta, ya sea propia o favorita</p>
-                        {Object.keys(nutritionalObjectives).map(key => <div key={key} className={`${activeRecipes.length > 0 ? "" : styles.hiddenChart} ${styles.objectiveChartSingle}`}><h4>{key.toUpperCase().replace('_', ' ')}</h4><RadialChartComponent data={[{name: `Objetivo: ${nutritionalObjectives[key]*personas}`, uv: (nutritionalObjectives[key]*personas), fill: '#FF9900'},{name: `Meta: ${currentNutritionalValues[key]?.toFixed(2)}`, uv: (currentNutritionalValues[key])?.toFixed(2), fill: '#FF5E00'}]}/></div>)}
+                        {Object.keys(nutritionalObjectives).map((key) => (
+                        <div
+                            key={key}
+                            className={`${activeRecipes.length > 0 ? "" : styles.hiddenChart} ${styles.objectiveChartSingle}`}
+                        >
+                            <h4>{key.toUpperCase().replace('_', ' ')}</h4>
+                            <p className={nutritionalAlerts[key]?.estado == 'Alerta' ? styles.alerta : (nutritionalAlerts[key]?.estado == 'Aceptable' ? styles.aceptable : styles.peligro)}><ReactSVG src={`/src/assets/Iconos/${nutritionalAlerts[key]?.estado == 'Alerta' ? 'alert-circle' : (nutritionalAlerts[key]?.estado == 'Aceptable' ? 'checkmark-circle' : 'close-circle') }.svg`}/><span className={styles.visualAlert}>{nutritionalAlerts[key]?.mensaje}</span>{nutritionalAlerts[key]?.estado}</p>
+                            <RadialChartComponent
+                            data={[
+                                {
+                                name: `Objetivo: ${(nutritionalObjectives[key] ?? 0) * personas}`,
+                                uv: (nutritionalObjectives[key] ?? 0) * personas,
+                                fill: '#FF9900',
+                                },
+                                {
+                                name: `Meta: ${
+                                    currentNutritionalValues[key] != null
+                                    ? currentNutritionalValues[key].toFixed(2)
+                                    : 0
+                                }`,
+                                uv: currentNutritionalValues[key] ?? 0,
+                                fill: '#FF5E00',
+                                },
+                            ]}
+                            />
+                        </div>
+                        ))}                        
                         <button onClick={() => openNutritionalObjectivesForm(nutritionalObjectives, planID)} className={`${activeRecipes.length > 0 ? "" : styles.hiddenChart} ${styles.addRecipes}`}><span className={styles.recipeAddIcon}><ReactSVG src={CalendarIcon}/></span>Cambiar Objetivos...</button>
                     </div></> 
                     : <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>}

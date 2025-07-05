@@ -241,11 +241,13 @@
     width: 3rem;
     vertical-align: middle;
     height: 70% !important;
-    border-radius: 0 !important;
+    border-radius: 0rem !important;
 }
 
 .sliderProportionsSlider::-webkit-slider-thumb{
     margin-top: 0;
+    border-radius: 0 !important;
+    clip-path: polygon(50% 0%, 100% 0, 100% 100%, 50% 100%, 0 50%);
 }
 
 .sliderProportionsSlider::-webkit-slider-runnable-track{
