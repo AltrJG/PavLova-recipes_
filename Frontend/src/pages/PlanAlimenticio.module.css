@@ -369,6 +369,10 @@
     .planImportantData{
         margin-right: 0;
     }
+    
+    .objectiveCharts{
+        padding-right: 0;
+    }
 
     .addRecipesTip{
         font-size: 2rem;

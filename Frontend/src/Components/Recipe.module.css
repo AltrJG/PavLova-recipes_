@@ -290,4 +290,8 @@
     .separationPicker .recipeAuthor{
         padding-right: 4rem !important;
     }
+
+    .visibilityIndicator{
+        top: 8rem;
+    }
 }

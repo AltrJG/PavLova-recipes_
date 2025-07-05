@@ -13,7 +13,7 @@ export default function RecetaFormOptions({activeOption, setActiveOption}){
         <div className={styles.recetaFormOptionsContainer}>
             {recipeOptions.map(option => <div onClick={() => setActiveOption(option.type)} key={option.type} className={`${activeOption == option.type ? styles.active : ""} ${styles.recetaFormOption}`}>
                 <div className={styles.recetaFormOptionIcon}>
-                    <ReactSVG src={`/src/assets/Iconos/${option.icon}.svg`}/>
+                    <ReactSVG src={`/src/assets/Iconos/${option.icon}${activeOption == option.type ? "" : "-outline"}.svg`}/>
                 </div>
                 <div className={styles.recetaFormOptionText}>
                     <h4 className={styles.recetaFormOptionTitle}>{option.label}</h4>

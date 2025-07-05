@@ -48,6 +48,7 @@
     height: 4.5rem;
     margin-right: 1.5rem;
     flex-shrink: 0;
+    color: #4b2c20;
   }
   
   .recetaFormOptionIcon svg {

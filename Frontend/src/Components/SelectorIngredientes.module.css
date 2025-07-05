@@ -103,12 +103,12 @@
 
 .ingredientInputs input,
 .ingredientInputs select{
-  background: white;
+  background: rgb(243, 243, 243);
   border-radius: 1rem;
   font-size: 1.2rem;
   padding: .5rem;
   transition: 0.3s ease;
-  border: .1rem gray solid;
+  border: .1rem rgb(180, 180, 180) solid;
   outline: none;
 }
 
@@ -117,12 +117,13 @@
   box-shadow: 0px 6px 14px rgba(252, 115, 2, 0.5);
   border: .1rem orange solid;
   transform: scale(1.02);
+  background-color: white;
 }
-
 
 .portionSliderContainer{
   display: flex;
   align-items: center;
+  border: .2rem solid white;
   background-color: rgba(255, 255, 255, 0.53);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   border-radius: 1rem;

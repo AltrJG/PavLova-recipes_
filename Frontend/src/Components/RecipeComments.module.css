@@ -27,9 +27,3 @@
     font-weight: 500;
     margin-bottom: 1rem;
 }
-
-@media(max-width: 37.5em){
-    .recipeCommentsContainer{
-        margin-top: 0;
-    }
-}
