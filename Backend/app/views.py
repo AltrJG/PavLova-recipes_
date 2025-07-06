@@ -6,13 +6,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from django.shortcuts import get_object_or_404
-from .models import User, EmailVerificationCode, Ingrediente, Categoria, Etiqueta, Receta, Comentario, RecetaFavorito, PlanAlimenticio, PlanAlimenticioDia
+from .models import User, EmailVerificationCode, Ingrediente, Categoria, Etiqueta, Receta, Comentario, RecetaFavorito, PlanAlimenticio, PlanAlimenticioDia, PlanAlimenticioDiaReceta
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate, update_session_auth_hash
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer, ComentarioSerializer, RecetaFavoritoSerializer, PlanAlimenticioSerializer, PlanAlimenticioDiaSerializer
+from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer, ComentarioSerializer, RecetaFavoritoSerializer, PlanAlimenticioSerializer, PlanAlimenticioDiaSerializer, PlanAlimenticioDiaRecetaSerializer
 from .permissions import IsModeratorOrAdmin, IsSuperUserOrReadOnly, IsStaffOrSuperUserOrReadOnly, IsOwnerOrStaffOrSuperUser
 from .filters import UserFilter, IngredienteFilter, EtiquetaFilter, CategoriaFilter, RecetaFilter, MisRecetasFilter, MisFavoritosFilter
 from django.core.mail import send_mail
@@ -897,3 +897,98 @@ class PlanAlimenticioDiaViewSet(viewsets.ModelViewSet):
 
         serializer = PlanAlimenticioDiaSerializer(dia, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class PlanAlimenticioDiaRecetaViewSet(viewsets.ModelViewSet):
+    serializer_class = PlanAlimenticioDiaRecetaSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return PlanAlimenticioDiaReceta.objects.filter(plan_alimenticio_dia__plan_alimenticio__usuario=self.request.user)
+    
+    @action(detail=True, methods=['put'], url_path='actualizar-recetas')
+    def actualizar_recetas(self, request, pk=None):
+        
+        user = request.user
+        dia_id = request.data.get("dia_id")
+        recetas_ids = request.data.get("recetas", [])
+
+        if not dia_id:
+            return Response({"error": "Se requiere 'dia_id'."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        plan = get_object_or_404(PlanAlimenticio, id=pk)
+
+        if plan.usuario != user:
+            return Response({"error": "No tienes permiso para modificar este plan alimenticio."}, status=status.HTTP_403_FORBIDDEN)
+        
+        dia = get_object_or_404(PlanAlimenticioDia, id=dia_id, plan_alimenticio=plan)
+
+        recetas_existentes = PlanAlimenticioDiaReceta.objects.filter(plan_alimenticio_dia=dia)
+
+        recetas_en_tabla = set(recetas_existentes.values_list("receta_id", flat=True))
+        recetas_enviadas = set(recetas_ids)
+
+        nuevas_recetas_ids = recetas_enviadas - recetas_en_tabla
+        for receta_id in nuevas_recetas_ids:
+            try:
+                receta = Receta.objects.get(id=receta_id)
+
+                if receta.visibilidad or receta.creador == user:
+                    PlanAlimenticioDiaReceta.objects.create(
+                        plan_alimenticio_dia=dia,
+                        receta=receta,
+                        porcion=1.0
+                    )
+            except Receta.DoesNotExist:
+                continue
+
+        recetas_a_eliminar = recetas_en_tabla - recetas_enviadas
+        PlanAlimenticioDiaReceta.objects.filter(
+            plan_alimenticio_dia=dia,
+            receta_id__in=recetas_a_eliminar
+        ).delete()
+
+        recetas_actualizadas = PlanAlimenticioDiaReceta.objects.filter(plan_alimenticio_dia=dia)
+        serializer = PlanAlimenticioDiaRecetaSerializer(recetas_actualizadas, many=True, context={"request": request})
+
+        return Response({'mensaje': 'Recetas del plan alimenticio actualizadas correctamente.'}, status=status.HTTP_200_OK)
+    
+    @action(detail=True, methods=["patch"], url_path="actualizar-porcion")
+    def editar_porcion(self, request, pk=None):
+        
+        user = request.user
+        dia_id = request.data.get("dia_id")
+        receta_id = request.data.get("receta_id")
+        nueva_porcion = request.data.get("nueva_porcion")
+
+
+        if not (dia_id and receta_id and nueva_porcion is not None):
+            return Response({"error": "Se requieren 'dia_id', 'receta_id' y 'nueva_porcion'."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        plan = get_object_or_404(PlanAlimenticio, id=pk)
+        if plan.usuario != user:
+            return Response({"error": "No tienes permiso para modificar este plan alimenticio."}, status=status.HTTP_403_FORBIDDEN)
+
+
+        dia = get_object_or_404(PlanAlimenticioDia, id=dia_id, plan_alimenticio=plan)
+
+
+        dia_receta = PlanAlimenticioDiaReceta.objects.filter(
+            plan_alimenticio_dia=dia, receta_id=receta_id
+        ).first()
+
+        if not dia_receta:
+            return Response({"error": "La receta no pertenece a este dia del plan alimenticio."}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            nueva_porcion = float(nueva_porcion)
+            if nueva_porcion <= 0:
+                raise ValueError
+        except ValueError:
+            return Response({"error": "La porcion debe ser un numero mayor que 0."}, status=status.HTTP_400_BAD_REQUEST)
+
+        dia_receta.porcion = nueva_porcion
+        dia_receta.save()
+
+        serializer = PlanAlimenticioDiaRecetaSerializer(dia_receta, context={"request": request})
+        return Response({'mensaje': 'Porcion actualizada correctamente.'}, status=status.HTTP_200_OK)
