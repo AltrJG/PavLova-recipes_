@@ -27,8 +27,8 @@ export default function Recipe({ removeFromPlan, proportion, handlePortionChange
             {portionPicker 
             && <form className={styles.sliderProportionsForm}>
                     <button onClick={() => handlePortionChange(.5, recipe.id, true)} className={styles.sliderProportionsButton} type="button">+</button>
-                    <input step={'0.5'} min={.5} max={20} value={proportion} onChange={e => handlePortionChange(e.target.value, recipe.id)} orient="vertical" type="range" className={styles.sliderProportionsSlider}/>
-                    <p className={styles.sliderProportionsRef}>{proportion.toFixed(1)}</p>
+                    <input step={'0.5'} min={.5} max={20} value={proportion?.value} onChange={e => handlePortionChange(e.target.value, recipe.id)} orient="vertical" type="range" className={styles.sliderProportionsSlider}/>
+                    <p className={styles.sliderProportionsRef}>{proportion?.value.toFixed(1)}</p>
                     <button onClick={() => handlePortionChange((-.5), recipe.id, true)} className={styles.sliderProportionsButton} type="button">-</button>
             </form>}
             { isModificationAllowed && <CardButton

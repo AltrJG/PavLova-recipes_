@@ -408,6 +408,10 @@ class RecetaResumenSerializer(serializers.ModelSerializer):
     categoria = serializers.CharField(source='categoria.nombre', read_only=True)
     creador_nombre = serializers.CharField(source='creador.name', read_only=True)
     foto_receta = serializers.SerializerMethodField()
+    ingredientes = RecetaIngredienteSerializer(source="receta_ingredientes", many=True, required=False)
+    procedimiento = serializers.CharField(read_only=True, required=False)
+    porciones = serializers.IntegerField(read_only=True, required=False)
+    frase = serializers.CharField(read_only=True, required=False)
 
     class Meta:
         model = Receta
@@ -421,6 +425,10 @@ class RecetaResumenSerializer(serializers.ModelSerializer):
             'creador_nombre',
             'rating_promedio',
             'visibilidad',
+            'ingredientes',
+            'procedimiento',
+            'porciones',
+            'frase'
         ]
     
     def get_foto_receta(self, obj):

@@ -1,6 +1,7 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import templatePdf from '../../assets/recetas_plantilla.pdf';
 import nutritionalPdf from '../../assets/planAlimenticio_plantilla.pdf';
+import resumePdf from '../../assets/planAlimenticioResumen_plantilla.pdf';
 import { saveAs } from 'file-saver';
 import { calcularNutrientes, calcularNutrienteAporteCalorias, calcularPorcentajesVDR } from './calculadorNutrientes';
 
@@ -105,14 +106,14 @@ export async function generarRecetaPDF(recetaData, porciones, insertarPlan = fal
   page.drawText(recetaData.nombre, { x: 75, y: height - 90, size: 20, font, maxWidth: 500 });
   page.drawText(`${recetaData.tiempo_preparacion} Minutos`, { x: 340, y: height - 135, size: 14, font });
   page.drawText(`${recetaData.tiempo_coccion} Minutos`, { x: 490, y: height - 135, size: 14, font });
-  page.drawText(`Porciones: ${porciones}`, { x: 65, y: height - 355, size: 10, font });
+  page.drawText(`Porciones: ${(porciones?.value ?? porciones)}`, { x: 65, y: height - 355, size: 10, font });
 
   let yFrase = height - 170;
   ({ page, y: yFrase } = await drawWrappedText({ page, text: `"${recetaData.frase}"`, x: 300, y: yFrase, size: 14, maxWidth: 280 }));
 
   let yIngredientes = height - 375;
   for (let ing of recetaData.ingredientes) {
-    const text = `• ${((ing.cantidad/recetaData.porciones)*porciones).toFixed(1)} ${ing.unidad == 'numerica' ? (ing.ingrediente.consistencia == 'solido' ? "g" : "ml") : ing.unidad == 'cucharadita' ? "cdta." : (ing.unidad == "cucharada" ? "cda." : (ing.unidad == "taza" ? "taza" : ""))} de ${ing.ingrediente.nombre}`;
+    const text = `• ${((ing.cantidad/recetaData.porciones)*(porciones?.value ?? porciones)).toFixed(1)} ${ing.unidad == 'numerica' ? (ing.ingrediente.consistencia == 'solido' ? "g" : "ml") : ing.unidad == 'cucharadita' ? "cdta." : (ing.unidad == "cucharada" ? "cda." : (ing.unidad == "taza" ? "taza" : ""))} de ${ing.ingrediente.nombre}`;
     ({ page, y: yIngredientes } = await drawWrappedText({ page, text, x: margin, y: yIngredientes, size: 12, maxWidth: 190 }));
   }
 
@@ -146,12 +147,12 @@ export async function generarRecetaPDF(recetaData, porciones, insertarPlan = fal
   page = nutritionalPage;
 
   // Calcular Valores nutricionales
-  let nutrientes = calcularNutrientes(recetaData.ingredientes, recetaData.porciones, porciones);
+  let nutrientes = calcularNutrientes(recetaData.ingredientes, recetaData.porciones, (porciones?.value ?? porciones));
   let porcionIndividual = calcularNutrientes(recetaData.ingredientes, recetaData.porciones, 1);
   let porcentajePorCalorias = calcularNutrienteAporteCalorias(porcionIndividual);
   let porcentajeNutricionalDiario = calcularPorcentajesVDR(porcionIndividual);
 
-  page.drawText((`${porciones}`), { x: 383, y: height - 60, size: 20, font, maxWidth: 60 });
+  page.drawText((`${(porciones?.value ?? porciones)}`), { x: 383, y: height - 60, size: 20, font, maxWidth: 60 });
 
   // Llenar los campos con la informacion nutricional
   page.drawText((`${nutrientes.calorias.toFixed(2)} g`), { x: 355, y: height - 120, size: 20, font, maxWidth: 300 });
@@ -188,7 +189,7 @@ export async function generarRecetaPDF(recetaData, porciones, insertarPlan = fal
   }
 }
 
-export async function generarPlanDiaPDF(recetas, porciones, objetivos, nutrientesCalorias, infoNutricional, diaRef, ingredientes, cantidadPersonas, nutritionalAlerts){
+export async function generarPlanDiaPDF(recetas, porciones, objetivos, nutrientesCalorias, infoNutricional, diaRef, ingredientes, cantidadPersonas, nutritionalAlerts, willBundle = false){
   const existingPdfBytes = await fetch(nutritionalPdf).then(res => res.arrayBuffer());
   const pdfDoc = await PDFDocument.load(existingPdfBytes);
   let page = pdfDoc.getPages()[0];
@@ -232,7 +233,7 @@ export async function generarPlanDiaPDF(recetas, porciones, objetivos, nutriente
     return lines;
   };
 
-  const drawWrappedText = async ({ page, text, x, y, size = 12, maxWidth = 260 }) => {
+  const drawWrappedText = async ({ page, text, x, y, size = 12, maxWidth = 260, color = rgb(0,0,0) }) => {
     if (text == "") {
         y -= lineHeight;
         if (y < 40) {
@@ -250,7 +251,7 @@ export async function generarPlanDiaPDF(recetas, porciones, objetivos, nutriente
         y = height - 40;
       }
   
-      page.drawText(line, { x, y, size, font, color: rgb(0, 0, 0) });
+      page.drawText(line, { x, y, size, font, color});
       y -= lineHeight;
     }
   
@@ -264,7 +265,7 @@ export async function generarPlanDiaPDF(recetas, porciones, objetivos, nutriente
 
   let yRecetas = height - 125;
   for (let receta of recetas) {
-    const text = `• ${receta.nombre} (${porciones[receta.id]} Porciones)`;
+    const text = `• ${receta.nombre} (${porciones[receta.id].value} Porciones)`;
     ({ page, y: yRecetas } = await drawWrappedText({ page, text, x: margin, y: yRecetas, size: 12, maxWidth: 190 }));
   }
 
@@ -279,7 +280,7 @@ export async function generarPlanDiaPDF(recetas, porciones, objetivos, nutriente
   let yAlertas = height - 620;
   for (let key of Object.keys(nutritionalAlerts)) {
     const text = `${nutritionalAlerts[key].estado}: ${nutritionalAlerts[key].mensaje}`;
-    ({ page, y: yAlertas } = await drawWrappedText({ page, text, x: 230, y: yAlertas, size: 12, maxWidth: 360 }));
+    ({ page, y: yAlertas } = await drawWrappedText({ page, text, x: 230, y: yAlertas, size: 12, maxWidth: 360, color: (nutritionalAlerts[key].estado == 'Aceptable' ? rgb(.4588, 0.8118, 0) : (nutritionalAlerts[key].estado == 'Alerta' ? rgb(1, 0.7451, 0) : rgb(1, 0, 0))) }));
   }
 
   page = firstPage;
@@ -322,6 +323,86 @@ export async function generarPlanDiaPDF(recetas, porciones, objetivos, nutriente
   }
 
   const pdfBytes = await pdfDoc.save();
-  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-  saveAs(blob, `${diaRef.dia}_planAlimenticio.pdf`);
+  if(willBundle){
+    return pdfBytes;
+  } else{
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    saveAs(blob, `${diaRef.dia}_planAlimenticio.pdf`);
+  }
+}
+
+export async function generarPlanResumenPDF(objetivos, infoNutricional, cantidadPersonas, nutritionalAlerts, diaInicio, diaFinal, willBundle = false){
+  const existingPdfBytes = await fetch(resumePdf).then(res => res.arrayBuffer());
+  const pdfDoc = await PDFDocument.load(existingPdfBytes);
+  let page = pdfDoc.getPages()[0];
+  const { height } = page.getSize();
+  const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+  const lineHeight = 16;
+
+  const wrapText = (text, maxWidth, font, fontSize) => {
+    const words = text.split(' ');
+    const lines = [];
+    let currentLine = '';
+
+    for (let word of words) {
+      const testLine = currentLine + (currentLine ? ' ' : '') + word;
+      const testWidth = font.widthOfTextAtSize(testLine, fontSize);
+      if (testWidth > maxWidth) {
+        if (currentLine) lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = testLine;
+      }
+    }
+    if (currentLine) lines.push(currentLine);
+    return lines;
+  };
+
+  const drawWrappedText = async ({ page, text, x, y, size = 12, maxWidth = 260, color = rgb(0,0,0) }) => {
+    if (text == "") {
+        y -= lineHeight;    
+        return { page, y };
+      }
+    const lines = wrapText(text, maxWidth, font, size);
+    for (let line of lines) {
+      page.drawText(line, { x, y, size, font, color});
+      y -= lineHeight;
+    }
+  
+    return { page, y };
+  };
+
+  let yAlertas = height - 440;
+  for (let key of Object.keys(nutritionalAlerts)) {
+    const text = `${nutritionalAlerts[key].estado}: ${nutritionalAlerts[key].mensaje}`;
+    ({ page, y: yAlertas } = await drawWrappedText({ page, text, x: 44, y: yAlertas, size: 12, maxWidth: 535, color: (nutritionalAlerts[key].estado == 'Aceptable' ? rgb(.4588, 0.8118, 0) : (nutritionalAlerts[key].estado == 'Alerta' ? rgb(1, 0.7451, 0) : rgb(1, 0, 0))) }));
+  }
+
+  page.drawText(`(${diaInicio} - ${diaFinal})`, { x: 70, y: height - 100, size: 12, font, maxWidth: 300, color: rgb(.9607, .368, 0) });
+  // Llenar los campos con la informacion nutricional
+  page.drawText((`${(objetivos.calorias*cantidadPersonas).toFixed(2)} kcal`), { x: 223, y: height - 198, size: 12, font, maxWidth: 300 });
+  page.drawText((`${(objetivos.carbohidratos*cantidadPersonas).toFixed(2)} g`), { x: 223, y: height - 232, size: 12, font, maxWidth: 300 });
+  page.drawText((`${(objetivos.proteina*cantidadPersonas).toFixed(2)} g`), { x: 223, y: height - 266, size: 12, font, maxWidth: 300 });
+  page.drawText((`${(objetivos.grasas_saturadas*cantidadPersonas).toFixed(2)} g`), { x: 223, y: height - 299, size: 12, font, maxWidth: 300 });
+  page.drawText((`${(objetivos.grasas_insaturadas*cantidadPersonas).toFixed(2)} g`), { x: 223, y: height - 331, size: 12, font, maxWidth: 300 });
+  page.drawText((`${(objetivos.grasas_trans*cantidadPersonas).toFixed(2)} g`), { x: 223, y: height - 360, size: 12, font, maxWidth: 300 });
+  page.drawText((`${(objetivos.sodio*cantidadPersonas).toFixed(2)} mg`), { x: 223, y: height - 392, size: 12, font, maxWidth: 300 });
+
+  // Llenar los campos con la informacion nutricional
+  page.drawText((`${infoNutricional.calorias.toFixed(2)} kcal (${((infoNutricional.calorias/(objetivos.calorias*cantidadPersonas))*100).toFixed(1)}%)`), { x: 353, y: height - 198, size: 13, font, maxWidth: 300 });
+  page.drawText((`${infoNutricional.carbohidratos.toFixed(2)} g (${((infoNutricional.carbohidratos/(objetivos.carbohidratos*cantidadPersonas))*100).toFixed(1)}%)`), { x: 353, y: height - 232, size: 13, font, maxWidth: 300 });
+  page.drawText((`${infoNutricional.proteina.toFixed(2)} g (${((infoNutricional.proteina/(objetivos.proteina*cantidadPersonas))*100).toFixed(1)}%)`), { x: 353, y: height - 266, size: 13, font, maxWidth: 300 });
+  page.drawText((`${infoNutricional.grasas_saturadas.toFixed(2)} g (${((infoNutricional.grasas_saturadas/(objetivos.grasas_saturadas*cantidadPersonas))*100).toFixed(1)}%)`), { x: 353, y: height - 299, size: 13, font, maxWidth: 300 });
+  page.drawText((`${infoNutricional.grasas_insaturadas.toFixed(2)} g (${((infoNutricional.grasas_insaturadas/(objetivos.grasas_insaturadas*cantidadPersonas))*100).toFixed(1)}%)`), { x: 353, y: height - 331, size: 13, font, maxWidth: 300 });
+  page.drawText((`${infoNutricional.grasas_trans.toFixed(2)} g (${((infoNutricional.grasas_trans/(objetivos.grasas_trans*cantidadPersonas))*100).toFixed(1)}%)`), { x: 353, y: height - 360, size: 13, font, maxWidth: 300 });
+  page.drawText((`${infoNutricional.sodio.toFixed(2)} mg (${((infoNutricional.sodio/(objetivos.sodio*cantidadPersonas))*100).toFixed(1)}%)`), { x: 353, y: height - 392, size: 13, font, maxWidth: 300 });
+
+  const pdfBytes = await pdfDoc.save();
+  if(willBundle){
+    return pdfBytes;
+  } else{
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    saveAs(blob, `resumen_planAlimenticio.pdf`);
+  }
 }

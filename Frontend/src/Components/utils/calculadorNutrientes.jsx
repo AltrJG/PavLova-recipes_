@@ -10,7 +10,6 @@ export const calcularNutrientes = (ingredientes, porcionInicial, porcionFinal) =
         grasas_trans: 0,
         sodio: 0
     }
-    console.log(ingredientes);
     ingredientes.map(ingredient => {
         let metrica = ingredient.unidad == 'cucharadita' ? 5 : (ingredient.unidad == 'cucharada' ? 15 : (ingredient.unidad == 'taza' ? 250 : 1));
         let conversion = ((ingredient.cantidad*metrica)/porcionInicial) * (porcionFinal);
@@ -80,7 +79,7 @@ export const combineIngredients = (recetas, porciones) => {
   let porcionUtilizar;
   recetas.forEach(receta => {
     // Retorna la porcion a utilizar
-    porcionUtilizar = porciones[receta['id']];
+    porcionUtilizar = porciones[receta['id']].value;
     receta.ingredientes.forEach(ingrediente => {
       if(!resultado[ingrediente['unidad']]){
         // Crear la separacion de la unidad como arreglo vacio y que este el ingrediente forme parte de el

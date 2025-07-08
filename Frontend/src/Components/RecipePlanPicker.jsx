@@ -10,8 +10,9 @@ import { useAuth } from '../context/AuthProvider';
 import { FadeLoader } from 'react-spinners';
 import backendAPI from '../api/axiosConfig';
 
-export default function RecipePlanPicker({currentProportions, activeRecipes, setProportions, setActiveRecipes, activePicker, setActivePicker}){
+export default function RecipePlanPicker({updateRecipes, currentProportions, activeRecipes, setProportions, setActiveRecipes, activePicker, setActivePicker}){
     const [ loading, setLoading ] = useState(true);
+    const [ triggerUpdateData, setTriggerUpdateData ] = useState(false);
     const [ nextPage, setNextPage ] = useState(null);
     const [ previousPage, setPreviousPage ] = useState(null);
     const [ count, setCount ] = useState(0);
@@ -41,7 +42,6 @@ export default function RecipePlanPicker({currentProportions, activeRecipes, set
 
     const getRecipes = async (previous = null, next = null) => {
         setLoading(true);
-        console.log('why tho');
         try{
             let url = previous 
             ? previous.split('app')[1] 
@@ -68,7 +68,6 @@ export default function RecipePlanPicker({currentProportions, activeRecipes, set
             setPreviousPage(response.data.previous);
             setRecipes(response.data.results);
         } catch(error){
-            console.log(error);
             if(error.response?.status == 401){
                 await refreshAccessToken(getRecipes);
             }
@@ -78,16 +77,17 @@ export default function RecipePlanPicker({currentProportions, activeRecipes, set
     }
 
     const handleActiveRecipes = async () => {
-        setActiveRecipes(selectedRecipes);
         let proportions = selectedRecipes.reduce((acc, selectedRecipe) => {
             console.log(selectedRecipe);
             if (selectedRecipe['id'] !== undefined && selectedRecipe['porciones'] !== undefined) {
-                acc[selectedRecipe['id']] = currentProportions[selectedRecipe['id']] ?? 1;
+                acc[(selectedRecipe['id'])] = { value: currentProportions[selectedRecipe['id']]?.value ?? 1, wasUpdated: false };
             }
             return acc;
         }, {});
+        setActiveRecipes(selectedRecipes);
         setProportions(proportions);
         setActivePicker(false);
+        setTriggerUpdateData(true);
     }
 
     const handleSelectedRecipes = recipe => {
@@ -115,7 +115,6 @@ export default function RecipePlanPicker({currentProportions, activeRecipes, set
                 },
                 rating_promedio: recipe.receta_rating_promedio
             }
-            console.log(fixedRecipe);
           }
           if(index === -1) {
               return [...selectedRecipes, fixedRecipe];
@@ -134,6 +133,11 @@ export default function RecipePlanPicker({currentProportions, activeRecipes, set
             setSelectedRecipes(activeRecipes);
         }
     }, [activePicker]);
+
+    useEffect(() => {
+        updateRecipes(selectedRecipes);
+        setTriggerUpdateData(false);
+    }, [triggerUpdateData]);
     
     return(
         <>
