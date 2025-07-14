@@ -28,6 +28,7 @@ import { FadeLoader } from 'react-spinners';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import FileGenerating from '../Components/FileGenerating';
+import { formatDate } from '../Components/utils/helpers';
 
 export default function PlanAlimenticio(){
 
@@ -438,6 +439,7 @@ export default function PlanAlimenticio(){
                 sodio: updatedObjectives.sodio                  
             });
             setPersonas(updatedObjectives.personas);
+            setNutritionalAlerts(calculateNutritionalValuesObjectives(currentNutritionalValues, updatedObjectives, personas));
             resetNewObjectives();
         }
     }, [updatedObjectives]);

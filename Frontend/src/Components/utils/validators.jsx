@@ -333,3 +333,43 @@ export const validateChangeVisibility = (visibilityData) => {
     }
     return errors;
 }
+
+export const validateAutomaticData = (automaticData) => {
+    let errors = {};
+
+    // Validar campos numéricos
+    if (isNaN(automaticData.peso) || automaticData.peso <= 0) {
+        errors.peso = "El peso debe ser un número mayor a 0.";
+    }
+
+    if (isNaN(automaticData.altura) || automaticData.altura <= 0) {
+        errors.altura = "La altura debe ser un número mayor a 0.";
+    }
+
+    if (isNaN(automaticData.edad) || automaticData.edad <= 0) {
+        errors.edad = "La edad debe ser un número mayor a 0.";
+    }
+
+    // Validar selects
+    const generoOptions = ["Masculino", "Femenino"];
+    if (!generoOptions.includes(automaticData.genero)) {
+        errors.genero = "El género seleccionado no es válido.";
+    }
+
+    const frecuenciaOptions = [
+        "Nada",
+        "1 dia",
+        "2 dias",
+        "3 dias",
+        "4 dias",
+        "5 dias",
+        "6 dias",
+        "7 dias",
+        "Intensivo, todos los dias"
+    ];
+    if (!frecuenciaOptions.includes(automaticData.frecuencia_ejercicio)) {
+        errors.frecuencia_ejercicio = "La frecuencia de ejercicio seleccionada no es válida.";
+    }
+
+    return errors;
+};

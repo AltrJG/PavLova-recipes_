@@ -97,7 +97,7 @@ export default function RightSidebarForms({twoOnOne = false, action, formOptions
                                                 }))
                                             }
                                         />
-                                    ) : <p className={styles.sliderValue}>{data[formInput.name]}%</p>}
+                                    ) : <p className={styles.sliderValue}>{data[formInput.name]}{formInput.additionalText}</p>}
                                 </div> 
                                 : <input
                                 id={formInput.name}

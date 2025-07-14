@@ -136,9 +136,9 @@ export const calculateNutritionalValuesObjectives = (resultado, objetivos, perso
       }
     }
     if(objetivo == 'carbohidratos'){
-      if(division >= 90 && division <= 110){
+      if(division >= 80 && division <= 110){
         alertas[objetivo] = {estado: "Aceptable", mensaje: "Los carbohidratos se ajustan aproximadamente a tu objetivo, bien hecho!"};
-      } else if(division < 90){
+      } else if(division < 80){
         alertas[objetivo] = {estado: 'Alerta', mensaje: "Muy pocos carbohidratos pueden producir fatiga, dificultad para concentrarse y mal funcionamiento del sistema nervioso."}
       } else if(division > 110){
         alertas[objetivo] = {estado: 'Alerta', mensaje: "El consumo elevado de carbohidratos, especialmente azúcares simples, puede causar picos de glucosa y contribuir al sobrepeso."}
@@ -149,7 +149,7 @@ export const calculateNutritionalValuesObjectives = (resultado, objetivos, perso
         alertas[objetivo] = {estado: "Aceptable", mensaje: "Las grasas saturadas se ajustan aproximadamente a tu objetivo, considera mantener este valor lo mas bajo posible"};
       } else if(division < 90){
         alertas[objetivo] = {estado: 'Aceptable', mensaje: "Reducir las grasas saturadas suele ser positivo para la salud cardiovascular."}
-      } else if(division > 110){
+      } else if(division > 105){
         alertas[objetivo] = {estado: 'Peligro', mensaje: "El exceso de grasas saturadas puede aumentar el colesterol LDL (‘malo’) y el riesgo de enfermedades cardiovasculares."}
       }
     }
@@ -175,7 +175,7 @@ export const calculateNutritionalValuesObjectives = (resultado, objetivos, perso
       if(division >= 80 && division <= 110){
         alertas[objetivo] = {estado: "Aceptable", mensaje: "El sodio está dentro del rango recomendado para una buena salud cardiovascular."};
       } else if(division < 80){
-        alertas[objetivo] = {estado: 'Alerta', mensaje: "Muy poco sodio puede provocar calambres, mareos y deshidratación."}
+        alertas[objetivo] = {estado: 'Alerta', mensaje: "Muy poco sodio puede provocar calambres, mareos y deshidratación. (El minimo recomendado son 500mg)"}
       } else if(division > 110){
         alertas[objetivo] = {estado: 'Alerta', mensaje: "El exceso de sodio puede elevar la presión arterial y aumentar el riesgo de enfermedades cardíacas y renales."}
       }

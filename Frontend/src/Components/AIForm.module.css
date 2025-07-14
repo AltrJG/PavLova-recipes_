@@ -24,6 +24,10 @@
     margin: 0 2rem;
 }
 
+.preconfigContainer button{
+    margin: 2rem 2rem 0 2rem;
+}
+
 @media(max-width: 31.25em){
     .preconfiguracionesContainer{
         grid-template-columns: 1fr;

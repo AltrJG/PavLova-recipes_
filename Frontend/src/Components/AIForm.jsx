@@ -90,13 +90,20 @@ export default function AIForm(){
     ]
 
     const ManageIngredientsFormOptions = [
-        { type: "slider", step: "1", name: "proteinas", label: "Proteinas (%)", defaultValue: 100, max: 200, min: 0, showInput: false},
-        { type: "slider", step: "1", name: "carbohidratos", label: "Carbohidratos (%)", defaultValue: 100, max: 200, min: 0, showInput: false},
-        { type: "slider", step: "1", name: "grasas_saturadas", label: "Grasas Saturadas (%)", defaultValue: 100, max: 200, min: 0, showInput: false},
-        { type: "slider", step: "1", name: "grasas_insaturadas", label: "Grasas Insaturadas (%)", defaultValue: 100, max: 200, min: 0, showInput: false},
-        { type: "slider", step: "1", name: "grasas_trans", label: "Grasas Trans (%)", defaultValue: 100, max: 200, min: 0, showInput: false},
-        { type: "slider", step: "1", name: "sodio", label: "Sodio (%)", defaultValue: 15, max: 100, min: 0, showInput: false},
+        { type: "slider", step: "1", name: "proteinas", label: "Proteinas (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
+        { type: "slider", step: "1", name: "carbohidratos", label: "Carbohidratos (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
+        { type: "slider", step: "1", name: "grasas_saturadas", label: "Grasas Saturadas (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
+        { type: "slider", step: "1", name: "grasas_insaturadas", label: "Grasas Insaturadas (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
+        { type: "slider", step: "1", name: "grasas_trans", label: "Grasas Trans (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
+        { type: "slider", step: "1", name: "sodio", label: "Sodio (%)", defaultValue: 15, max: 100, min: 0, showInput: false, additionalText: '%'},
+        { type: "slider", step: "1", name: "cantRecetas", label: "Cantidad de recetas por dia:", defaultValue: 1, max: 6, min: 1, showInput: false, additionalText: ''},
+        { type: "select", name: "ajusteObjetivos", label: "Ajustar automaticamente a los objetivos nutricionales?:", defaultOption: "Si", options: ["Si", "No"]}
     ];
+
+    const RecipesPerDayFormOptions = [
+        { type: "slider", step: "1", name: "cantRecetas", label: "Cantidad de recetas por dia:", defaultValue: 1, max: 6, min: 1, showInput: false, additionalText: ''},
+        { type: "select", name: "ajusteObjetivos", label: "Ajustar automaticamente a los objetivos nutricionales?:", defaultOption: "Si", options: ["Si", "No"]}
+    ]
 
     const options = [
         { type: 'preconfiguracion', icon: 'hardware-chip', label: 'Preconfigurado' },
@@ -109,10 +116,13 @@ export default function AIForm(){
         grasas_saturadas: 100,
         grasas_insaturadas: 100,
         grasas_trans: 100,
-        sodio: 15
+        sodio: 15,
+        cantRecetas: 1,
+        ajusteObjetivos: "Si"
     });
-    const [ visibilityData, setVisibilityData ] = useState({
-        visibilidad: "Personal",
+    const [ recipesPerDayData, setRecipesPerDayData ] = useState({
+        cantRecetas: 1,
+        ajusteObjetivos: "Si"
     });
 
     /*const handleChangeInformation = async e => {
@@ -238,18 +248,19 @@ export default function AIForm(){
 
             {activeOption === "avanzado" && (
                 <RightSidebarForms twoOnOne={false} formOptions={ManageIngredientsFormOptions} setData={setIngredientData} data={ingredientData}>
-                    <MainButton disabled={loading} type="submit" icon="nutrition" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={"Seleccionar Ingredientes"}/>
+                    <MainButton disabled={loading} type="submit" icon="restaurant" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={"Seleccionar Recetas"}/>
                 </RightSidebarForms> 
             )}
 
             {activeOption === "preconfiguracion" && (
-                <div className={styles.preconfiguracionesMainContainer}>
+                <div className={styles.preconfigContainer}><div className={styles.preconfiguracionesMainContainer}>
                     <div className={styles.preconfiguracionesContainer}>
                         {dummySettings.map(preconfiguracion => <PreconfiguracionIA key={preconfiguracion.id} activeSetting={activeSetting} handleSetting={handleSetting} data={preconfiguracion} isDataOnForm={true}/>)}
                     </div>
-                    <MainButton disabled={loading} type="submit" icon="nutrition" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={"Seleccionar Ingredientes"}/>
                 </div>
-            )}
+                <RightSidebarForms twoOnOne={false} formOptions={RecipesPerDayFormOptions} setData={setRecipesPerDayData} data={recipesPerDayData}/>
+                <MainButton disabled={loading} type="submit" icon="restaurant" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={"Seleccionar Recetas"}/>
+            </div>)}
         </div>
     )
 }

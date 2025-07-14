@@ -17,12 +17,14 @@ import { useAuth } from "../context/AuthProvider";
 import { generarRecetaPDF } from "./utils/PDFDataGenerator";
 import NotFound404 from "../pages/NotFound404";
 import { useNutritionalDataRecipeProvider } from "../context/NutritionalDataRecipeProvider";
+import { useRightSidebar } from "../context/RightSidebarProvider";
 
 export default function RecipeHeader(){
 
     let { recipe_id } = useParams();
     const { refreshAccessToken, isSuperUser, isStaff, user, isAuthenticated } = useAuth();
     const { porciones } = useNutritionalDataRecipeProvider();
+    const { openHealthScoreForm } = useRightSidebar();
     const [ receta, setReceta ] = useState({});
     const [ updateRecipe, setUpdateRecipe ] = useState(false);
     const [ loadingFavorite, setLoadingFavorite ] = useState(false);
@@ -170,6 +172,7 @@ export default function RecipeHeader(){
                         {receta?.creador_info?.id != user?.id && isAuthenticated && <CircleButton text={favorito != -1 ? 'Eliminar de favoritos?' : 'Agregar a favoritos'} action={toggleFavorito} args={[]} iconName={favorito != -1 ? 'heart' : "heart-outline"} iconSize="3.5rem"/>}
                         <CircleButton action={(Object.keys(user).length != 0) ? generarRecetaPDF : navigateLogIn} args={[receta, porciones]} text="Descargar PDF" iconName={"document-attach"} iconSize="3.5rem"/>
                         { (isSuperUser || isStaff || receta?.creador_info?.id === user?.id) && <CircleButton action={navigate} args={[`/crear-receta?recetaEditar=${receta.id}`]} text="Editar Receta" iconName={"create"} iconSize="3.5rem"/> }
+                        { (isSuperUser || isStaff) && <CircleButton action={openHealthScoreForm} args={[receta?.id, receta?.nombre]} text="Otorgar puntuacion de salud" iconName={"fitness"} iconSize="3.5rem"/>}
                     </div>
                 </div>
                 <RecipeContents recipe={receta}/>

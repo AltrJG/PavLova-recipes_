@@ -33,6 +33,7 @@ export default function IngredientsForm(){
         { type: "number", name: "grasasInsaturadas", label: "Grasas Insaturadas (g):"},
         { type: "number", name: "grasasTrans", label: "Grasas Trans (g):"},
         { type: "number", name: "sodio", label: "Sodio (mg):"},
+        { type: 'number', name: 'escala_agua', label: "Peso con respecto al agua" },
         { type: "imageSingle", name: "imagenIngrediente", label: "Imagen del ingrediente (Opcional):", imageData: imagen, setImageData: setImagen }
     ];
 
@@ -54,7 +55,8 @@ export default function IngredientsForm(){
         grasasSaturadas: '0',
         grasasInsaturadas: '0',
         grasasTrans: '0',
-        sodio: '0'
+        sodio: '0',
+        escala_agua: '1'
     });
     const [ visibilityData, setVisibilityData ] = useState({
         visibilidad: "Personal",

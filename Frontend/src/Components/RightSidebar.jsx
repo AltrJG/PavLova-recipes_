@@ -5,6 +5,7 @@ import ChangeProfileForm from './ChangeProfileForm';
 import ChangeUserPermissions from './ChangeUserPermissions';
 import ChangeVisibilityForm from './ChangeVisibilityForm';
 import EtiquetaCategoriaForm from './EtiquetaCategoriaForm';
+import HealthScoreForm from './HealthScoreForm';
 import IngredientsForm from './IngredientsForm';
 import ObjectivesForm from './ObjectivesForm';
 import RecipeAdvanceFilters from './RecipeAdvanceFilters';
@@ -12,7 +13,19 @@ import styles from './RightSidebar.module.css';
 
 export default function RightSidebar(){
 
-    const { isOpen, closeRightSidebar, modifyProfile, updatePermissions, ingredientForm, categoriaEtiquetaForm, nutritionalObjectivesForm, recipeAdvanceFiltersForm, aiForm, aiFormSettings, changeVisibilityForm } = useRightSidebar();
+    const { 
+        isOpen, 
+        closeRightSidebar, 
+        modifyProfile, 
+        updatePermissions, 
+        ingredientForm, 
+        categoriaEtiquetaForm, 
+        nutritionalObjectivesForm, 
+        recipeAdvanceFiltersForm, 
+        aiForm, 
+        aiFormSettings, 
+        changeVisibilityForm,
+        healthScoreForm } = useRightSidebar();
 
     return(
         <>
@@ -26,6 +39,7 @@ export default function RightSidebar(){
                 {aiForm && <AIForm/>}
                 {aiFormSettings && <AIFormSettings/>}
                 {changeVisibilityForm && <ChangeVisibilityForm/>}
+                {healthScoreForm && <HealthScoreForm/>}
             </div>
             <div onClick={closeRightSidebar} className={`${styles.rightSidebarFilter} ${isOpen ? styles.rightSidebarFilterOpen : ""}`}></div>
             <div className={`${styles.rightSidebarClose} ${isOpen ? styles.rightSidebarCloseActive : ""}`} onClick={closeRightSidebar}>X</div>
