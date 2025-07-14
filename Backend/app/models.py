@@ -6,6 +6,7 @@ from PIL import Image
 from io import BytesIO
 import uuid
 from django.utils.deconstruct import deconstructible
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 
@@ -197,6 +198,7 @@ class Ingrediente(models.Model):
         blank=True,
         related_name='ingredientes'
     )
+    escala_agua = models.FloatField(default=1.0, validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
 
     def __str__(self):
         return f"{self.nombre} ({self.get_tipo_display()})"
@@ -451,3 +453,24 @@ class PlanAlimenticioDiaReceta(models.Model):
 
     def __str__(self):
         return f"{self.porcion} porciones de {self.receta.nombre} - {self.plan_alimenticio_dia.fecha_objetivo}"
+    
+#---------------------------AI-------------------------------#
+
+class ObjetivosAI(models.Model):
+    objetivo_proteina = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(200)])
+    objetivo_carbohidrato = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(200)])
+    objetivo_grasa_saturada = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(200)])
+    objetivo_grasa_insaturada = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(200)])
+    objetivo_grasa_trans = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(200)])
+    objetivo_sodio = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(200)])
+    nombre = models.CharField(max_length=100, unique=True)
+    descripcion = models.TextField(blank=True, default='')
+
+    def __str__(self):
+        return self.nombre
+    
+class PromedioCalorias(models.Model):
+    calorias_promedio = models.FloatField(default=0.0)
+
+    def __str__(self):
+        return f"Calorías promedio: {self.calorias_promedio}"    
