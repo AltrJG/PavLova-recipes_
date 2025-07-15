@@ -6,13 +6,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from django.shortcuts import get_object_or_404
-from .models import User, EmailVerificationCode, Ingrediente, Categoria, Etiqueta, Receta, Comentario, RecetaFavorito, PlanAlimenticio, PlanAlimenticioDia, PlanAlimenticioDiaReceta
+from .models import User, EmailVerificationCode, Ingrediente, Categoria, Etiqueta, Receta, Comentario, RecetaFavorito, PlanAlimenticio, PlanAlimenticioDia, PlanAlimenticioDiaReceta, ObjetivosAI
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate, update_session_auth_hash
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer, ComentarioSerializer, RecetaFavoritoSerializer, PlanAlimenticioSerializer, PlanAlimenticioDiaSerializer, PlanAlimenticioDiaRecetaSerializer
+from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer, ComentarioSerializer, RecetaFavoritoSerializer, PlanAlimenticioSerializer, PlanAlimenticioDiaSerializer, PlanAlimenticioDiaRecetaSerializer, ObjetivosAISerializer
 from .permissions import IsModeratorOrAdmin, IsSuperUserOrReadOnly, IsStaffOrSuperUserOrReadOnly, IsOwnerOrStaffOrSuperUser
 from .filters import UserFilter, IngredienteFilter, EtiquetaFilter, CategoriaFilter, RecetaFilter, MisRecetasFilter, MisFavoritosFilter
 from django.core.mail import send_mail
@@ -992,3 +992,12 @@ class PlanAlimenticioDiaRecetaViewSet(viewsets.ModelViewSet):
 
         serializer = PlanAlimenticioDiaRecetaSerializer(dia_receta, context={"request": request})
         return Response({'mensaje': 'Porcion actualizada correctamente.'}, status=status.HTTP_200_OK)
+    
+class ObjetivosAIViewSet(viewsets.ModelViewSet):
+    queryset = ObjetivosAI.objects.all()
+    serializer_class = ObjetivosAISerializer
+
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsModeratorOrAdmin()]
+        return [IsAuthenticated()]

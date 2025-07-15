@@ -11,6 +11,7 @@ import backendAPI from "../api/axiosConfig";
 import { useRightSidebar } from "../context/RightSidebarProvider";
 import { useUpdateData } from "../context/UpdateDataProvider";
 import PreconfiguracionIA from "./PreconfiguracionIA";
+import { FadeLoader } from "react-spinners";
 
 
 export default function AIForm(){
@@ -18,76 +19,23 @@ export default function AIForm(){
     const [ loading, setLoading ] = useState(false);
     const [ errorsHandler, setErrorsHandler ] = useState({});
     const [ activeSetting, setActiveSetting ] = useState(-1);
+    const [ presets, setPresets ] = useState([]);
+    const [ loadingPresets, setLoadingPresets ] = useState(false);
     const { refreshAccessToken, isSuperUser, isStaff } = useAuth();
 
-    const dummySettings = [
-        {
-            id: 1,
-            title: "Saludable",
-            description: "Si quieres elegir una configuracion saludable",
-            sodio: 0,
-            proteinas: 100,
-            carbohidratos: 100,
-            grasas_saturadas: 100,
-            grasas_insaturadas: 100,
-            grasas_trans: 100
-        },
-        {
-            id: 2,
-            title: "Alta en proteínas",
-            description: "Ideal para quienes buscan aumentar masa muscular",
-            sodio: 0,
-            proteinas: 150,
-            carbohidratos: 80,
-            grasas_saturadas: 90,
-            grasas_insaturadas: 110,
-            grasas_trans: 50
-        },
-        {
-            id: 3,
-            title: "Baja en carbohidratos",
-            description: "Para dietas bajas en azúcares y almidones",
-            sodio: 0,
-            proteinas: 110,
-            carbohidratos: 40,
-            grasas_saturadas: 70,
-            grasas_insaturadas: 100,
-            grasas_trans: 30
-        },
-        {
-            id: 4,
-            title: "Vegana",
-            description: "Sin productos de origen animal",
-            sodio: 0,
-            proteinas: 90,
-            carbohidratos: 100,
-            grasas_saturadas: 60,
-            grasas_insaturadas: 120,
-            grasas_trans: 0
-        },
-        {
-            id: 5,
-            title: "Alta energía",
-            description: "Para quienes necesitan muchas calorías diarias",
-            sodio: 0,
-            proteinas: 130,
-            carbohidratos: 160,
-            grasas_saturadas: 130,
-            grasas_insaturadas: 110,
-            grasas_trans: 70
-        },
-        {
-            id: 6,
-            title: "Keto",
-            description: "Para dietas cetogénicas con muy bajo consumo de carbohidratos",
-            sodio: 0,
-            proteinas: 100,
-            carbohidratos: 20,
-            grasas_saturadas: 110,
-            grasas_insaturadas: 140,
-            grasas_trans: 10
-        }    
-    ]
+    const getPresets = async () => {
+        setLoadingPresets(true);
+        try{
+            const response = await backendAPI.get(`objetivos_ai/`);
+            setPresets(response.data.results);
+        } catch(error){
+            if(error.response?.status == 401){
+                await refreshAccessToken(getPresets);
+            }
+        } finally{
+            setLoadingPresets(false);
+        }
+    }
 
     const ManageIngredientsFormOptions = [
         { type: "slider", step: "1", name: "proteinas", label: "Proteinas (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
@@ -220,7 +168,11 @@ export default function AIForm(){
         } else{
             setActiveSetting(id);
         }
-    }
+    };
+
+    useEffect(() => {
+        getPresets();
+    }, [])
 
     return(
         <div className={styles.changeProfileForm}>
@@ -255,7 +207,7 @@ export default function AIForm(){
             {activeOption === "preconfiguracion" && (
                 <div className={styles.preconfigContainer}><div className={styles.preconfiguracionesMainContainer}>
                     <div className={styles.preconfiguracionesContainer}>
-                        {dummySettings.map(preconfiguracion => <PreconfiguracionIA key={preconfiguracion.id} activeSetting={activeSetting} handleSetting={handleSetting} data={preconfiguracion} isDataOnForm={true}/>)}
+                        {loadingPresets ? <FadeLoader color='rgba(252,115,2,1)'/> : (presets.length == 0 ? <p className={styles.noPresets}>No hay preconfiguraciones disponibles, usa la configuracion personalizada.</p> : presets.map(preconfiguracion => <PreconfiguracionIA key={preconfiguracion.id} activeSetting={activeSetting} handleSetting={handleSetting} data={preconfiguracion} isDataOnForm={true}/>))}
                     </div>
                 </div>
                 <RightSidebarForms twoOnOne={false} formOptions={RecipesPerDayFormOptions} setData={setRecipesPerDayData} data={recipesPerDayData}/>

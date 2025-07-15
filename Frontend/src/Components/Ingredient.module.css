@@ -31,7 +31,7 @@
     text-align: center;
     font-size: 2rem;
     font-family: 'Oswald', sans-serif;
-    margin: 1rem 1rem 2rem 1rem;
+    margin: 1rem 1rem 0rem 1rem;
 }
 
 .ingredientTypeContainer{
@@ -102,6 +102,21 @@
     font-family: 'Oswald', sans-serif;
 }
 
+.scaleWater{
+    text-align: center;
+    font-size: 1.3rem;
+    margin: 0 1rem 1rem 1rem;
+    font-family: 'Lato', sans-serif;
+}
+
+.scaleWater span{
+    text-align: center;
+    font-size: 1.35rem;
+    font-family: 'Lato', sans-serif;
+    font-weight: 600;
+    color: rgb(255, 102, 0);
+}
+
 @media(max-width: 81.25em){
     .ingredientContainer button{
         opacity: 1;
@@ -125,9 +140,15 @@
     }
     .ingredientType{
         margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .ingredientSimpleData{
+        margin-left: 1rem;
     }
     .ingredientContainer{
-        height: 40rem;
+        height: 38rem;
     }
 }
 

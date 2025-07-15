@@ -28,6 +28,15 @@
     margin: 2rem 2rem 0 2rem;
 }
 
+.noPresets{
+    font-size: 1.6rem;
+    color: white;
+    font-family: 'Lato', sans-serif;
+    grid-column: -1;
+    font-weight: 600;
+    text-align: center;
+}
+
 @media(max-width: 31.25em){
     .preconfiguracionesContainer{
         grid-template-columns: 1fr;

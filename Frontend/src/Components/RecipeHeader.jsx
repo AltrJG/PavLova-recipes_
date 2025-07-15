@@ -175,7 +175,7 @@ export default function RecipeHeader(){
                         { (isSuperUser || isStaff) && <CircleButton action={openHealthScoreForm} args={[receta?.id, receta?.nombre]} text="Otorgar puntuacion de salud" iconName={"fitness"} iconSize="3.5rem"/>}
                     </div>
                 </div>
-                <RecipeContents recipe={receta}/>
+                <RecipeContents admin={isSuperUser} staff={isStaff} recipe={receta}/>
                 <RecipeNutritionalFacts/>
                 <div className={`${styles.recipeHeaderShowTwo} ${user?.id == receta?.creador_info?.id ? styles.recipeHeaderNoComments : ''}`}>
                     {user?.id != receta?.creador_info?.id && <RecipeRating userComentario={userComentario} recipe_id={receta?.id} setUpdateRecipe={setUpdateRecipe}/>}

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import FondoPavlova from "../Components/FondoPavlova";
 import Help from "../Components/Help";
 import MainButton from "../Components/MainButton";
@@ -6,11 +6,20 @@ import PreconfiguracionIA from "../Components/PreconfiguracionIA";
 import { useRightSidebar } from "../context/RightSidebarProvider";
 import styles from './AISettings.module.css';
 import { useBackground } from "../context/BackgroundProvider";
+import backendAPI from "../api/axiosConfig";
+import { useUpdateData } from "../context/UpdateDataProvider";
+import { useAuth } from "../context/AuthProvider";
+import { FadeLoader } from "react-spinners";
+import Swal from "sweetalert2";
 
 export default function AISettings(){
 
     const { openAiFormSettings } = useRightSidebar();
     const { addPavlorficAero } = useBackground();
+    const { refreshAccessToken } = useAuth();
+    const { updatedPreset, createdPreset, resetPresetData }= useUpdateData();
+    const [ presets, setPresets ] = useState([]);
+    const [ loading, setLoading ] = useState(false);
 
     const dummySettings = [
         {
@@ -81,17 +90,95 @@ export default function AISettings(){
         }    
     ];
 
+    const getPresets = async () => {
+        setLoading(true);
+        try{
+            const response = await backendAPI.get(`objetivos_ai/`);
+            setPresets(response.data.results);
+        } catch(error){
+            if(error.response?.status == 401){
+                await refreshAccessToken(getPresets);
+            }
+        } finally{
+            setLoading(false);
+        }
+    }
+
+    const openCreateForm = () => {
+        openAiFormSettings(null);
+    }
+
+    const deletePresetAsk = (nombre, id) => {
+        Swal.fire({
+            title: "Eliminar Preajuste",
+            icon: "question",
+            text: `Estas seguro de eliminar la preconfiguracion '${nombre}'`,
+            customClass: {
+                title: "swal_title",
+                icon: "swal_icon",
+                htmlContainer: "swal_text",
+                confirmButton: "swal_confirm"
+            },
+            showCancelButton: true,
+            cancelButtonText: "Cancelar",
+            confirmButtonText: "Eliminar",
+            allowOutsideClick: () => !Swal.isLoading()
+          }).then((result) => {
+            if (result.isConfirmed) {
+                deletePreset(nombre, id);
+            }
+        });
+    }
+
+    const deletePreset = async (nombre, id) => {
+        try{
+            await backendAPI.delete(`objetivos_ai/${id}/`);
+            Swal.fire({
+                icon: "success",
+                title: "Eliminado!",
+                text: `La preconfiguracion '${nombre}' fue eliminado con exito`,
+                showConfirmButton: true,
+                customClass: {
+                    title: "swal_title",
+                    icon: "swal_icon",
+                    htmlContainer: "swal_text",
+                    confirmButton: "swal_confirm"
+                }
+            });
+            let newData = presets.filter(preset => preset.id != id);
+            setPresets(newData);
+        } catch(error){
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
         addPavlorficAero();
+        getPresets();
     }, []);
+
+    useEffect(() => {
+        if(Object.keys(createdPreset).length > 1){
+            setPresets([...presets, createdPreset]);
+            resetPresetData();
+        }
+        if(Object.keys(updatedPreset).length > 1){
+            let newData = presets.filter(preset => preset.id != updatedPreset.id);
+            newData.push(updatedPreset);
+            setPresets(newData);
+            resetPresetData();
+        }
+    }, [updatedPreset, createdPreset]);
+    
+    if (loading) return <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
 
     return(
         <>
             <Help title={"Inteligencia Artificial"} description={"Gestiona las preconfiguraciones"}>
-                <MainButton action={openAiFormSettings} disabled={false} type={'button'} icon={"hardware-chip"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Gestionar IA"}/>
+                <MainButton action={openCreateForm} disabled={false} type={'button'} icon={"hardware-chip"} iconSize={"2.5"} fontSize={"2"} color={"primary"} borderRadius={'1'} text={"Gestionar IA"}/>
             </Help>
             <div className={`${styles.preconfiguracionesContainer} preconfiguracionesContent`}>
-                {dummySettings.map(preconfiguracion => <PreconfiguracionIA key={preconfiguracion.id} data={preconfiguracion} isDataOnForm={false}/>)}
+                {presets.map(preconfiguracion => <PreconfiguracionIA deleteAction={deletePresetAsk} editAction={openAiFormSettings} key={preconfiguracion.id} data={preconfiguracion} isDataOnForm={false}/>)}
             </div>
             <div className="mobileSpace"></div>
         </>

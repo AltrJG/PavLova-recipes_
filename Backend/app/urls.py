@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.documentation import include_docs_urls
 from rest_framework import routers
 from app import views
-from .views import RegisterView, LoginView, LogoutView, UserInfoView, CustomTokenRefreshView, UpdateUserProfileView, UpdateUserPasswordView, UpdateUserEmailView, ProfilePictureUpdateView, UserViewSet, UserUpdateViewSet, GetUsuarioById, PasswordResetRequestView, PasswordResetView, VerifyEmailView, IngredienteViewSet, CategoriaViewSet, EtiquetaViewSet, RecetaViewSet, ComentarioViewSet, RecetaFavoritoViewSet, PlanAlimenticioViewSet, PlanAlimenticioDiaViewSet, PlanAlimenticioDiaRecetaViewSet
+from .views import RegisterView, ObjetivosAIViewSet, LoginView, LogoutView, UserInfoView, CustomTokenRefreshView, UpdateUserProfileView, UpdateUserPasswordView, UpdateUserEmailView, ProfilePictureUpdateView, UserViewSet, UserUpdateViewSet, GetUsuarioById, PasswordResetRequestView, PasswordResetView, VerifyEmailView, IngredienteViewSet, CategoriaViewSet, EtiquetaViewSet, RecetaViewSet, ComentarioViewSet, RecetaFavoritoViewSet, PlanAlimenticioViewSet, PlanAlimenticioDiaViewSet, PlanAlimenticioDiaRecetaViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user') # /users/
@@ -16,6 +16,7 @@ router.register(r'favoritos', RecetaFavoritoViewSet, basename='favoritos') # /fa
 router.register(r'plan_alimenticio', PlanAlimenticioViewSet, basename='plan_alimenticio') # /plan-alimenticio/ /plan-alimenticio/<id>/ /plan-alimenticio/plan-actual/ /plan-alimenticio/<id>/actualizar-objetivos/
 router.register(r'plan_alimenticio_dia', PlanAlimenticioDiaViewSet, basename='plan_alimenticio_dia') # /plan-alimenticio-dia/ /plan-alimenticio-dia/<id>/
 router.register(r'plan_alimenticio_dia_receta', PlanAlimenticioDiaRecetaViewSet, basename='plan_alimenticio_dia_receta') # /plan-alimenticio-dia-receta/ /plan-alimenticio-dia-receta/<id>/ /plan-alimenticio-dia-receta/<id_plan>/actualizar-recetas/ /plan-alimenticio-dia-receta/<id_plan>/actualizar-porcion/
+router.register(r'objetivos_ai', ObjetivosAIViewSet, basename='objetivos_ai') # /objetivos_ai/
 
 urlpatterns = [
     path('', include(router.urls)),

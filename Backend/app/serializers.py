@@ -1,4 +1,4 @@
-from .models import User, PasswordResetToken, Ingrediente, Categoria, Etiqueta, Receta, RecetaIngrediente, Comentario, RecetaFavorito, PlanAlimenticio, PlanAlimenticioDia, PlanAlimenticioDiaReceta
+from .models import User, PasswordResetToken, ObjetivosAI, Ingrediente, Categoria, Etiqueta, Receta, RecetaIngrediente, Comentario, RecetaFavorito, PlanAlimenticio, PlanAlimenticioDia, PlanAlimenticioDiaReceta
 from rest_framework import serializers
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -460,3 +460,8 @@ class PlanAlimenticioSerializer(serializers.ModelSerializer):
             'objetivo_proteinas', 'objetivo_carbohidratos', 'objetivo_grasas_saturadas',
             'objetivo_grasas_insaturadas', 'objetivo_grasas_trans', 'objetivo_sodio',
             'personas',]
+        
+class ObjetivosAISerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ObjetivosAI
+        fields = '__all__'

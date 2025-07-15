@@ -48,3 +48,9 @@
     opacity: 1;
     visibility: visible;
 }
+
+@media(max-width: 28.125em){
+    .showImageContainer{
+        width: 100%;
+    }
+}

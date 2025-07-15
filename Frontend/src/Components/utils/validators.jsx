@@ -373,3 +373,46 @@ export const validateAutomaticData = (automaticData) => {
 
     return errors;
 };
+
+export const validateObjetivosData = (data) => {
+    let errors = {};
+
+    // 📝 Validar y sanitizar los textos
+    const safeTitulo = DOMPurify.sanitize(data.nombre);
+    if (safeTitulo !== data.nombre) {
+        errors.nombre = "El nombre contiene código no permitido.";
+    }
+    if (validator.isEmpty(data.nombre.trim())) {
+        errors.nombre = "El nombre no puede estar vacío.";
+    }
+
+    const safeDescripcion = DOMPurify.sanitize(data.descripcion);
+    if (safeDescripcion !== data.descripcion) {
+        errors.descripcion = "La descripción contiene código no permitido.";
+    }
+    if (validator.isEmpty(data.descripcion.trim())) {
+        errors.descripcion = "La descripción no puede estar vacía.";
+    }
+
+    // 🔢 Validar números de 0 a 200
+    const numericFields = [
+        "proteinas",
+        "carbohidratos",
+        "grasas_saturadas",
+        "grasas_insaturadas",
+        "grasas_trans",
+        "sodio",
+    ];
+
+    numericFields.forEach((field) => {
+        const value = data[field];
+
+        if (!validator.isNumeric(String(value))) {
+            errors[field] = `El campo ${field} debe ser un número.`;
+        } else if (value < 0 || value > 200) {
+            errors[field] = `El campo ${field} debe estar entre 0 y 200.`;
+        }
+    });
+
+    return errors;
+};

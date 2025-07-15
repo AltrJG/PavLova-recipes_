@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useNutritionalDataRecipeProvider } from '../context/NutritionalDataRecipeProvider';
 import { calcularNutrientes } from './utils/calculadorNutrientes';
 
-export default function RecipeContents({recipe}){
+export default function RecipeContents({recipe, admin=false, staff=false}){
 
     const { ingredientesView, setIngredientesView, changePortion, porciones, setInitialPortion, setPorciones, setIngredientes, setNutritionalValues } = useNutritionalDataRecipeProvider();
 
@@ -16,7 +16,7 @@ export default function RecipeContents({recipe}){
         setNutritionalValues(nutrientes);
         let newIngredientValues = recipe.ingredientes.map(ingredient => {
             return {
-                text: `${(ingredient.cantidad.toFixed(2))} ${ingredient.unidad == 'numerica' ? (ingredient.ingrediente.consistencia == 'solido' ? "g" : "ml") : ingredient.unidad == 'cucharadita' ? "cdta." : (ingredient.unidad == "cucharada" ? "cda." : (ingredient.unidad == "taza" ? "taza" : ""))} de ${ingredient.ingrediente.nombre}`,
+                text: `${(ingredient.cantidad.toFixed(2))} ${ingredient.unidad == 'numerica' ? (ingredient.ingrediente.consistencia == 'solido' ? "g" : "ml") : ingredient.unidad == 'cucharadita' ? "cdta." : (ingredient.unidad == "cucharada" ? "cda." : (ingredient.unidad == "taza" ? "taza" : ""))} de ${ingredient.ingrediente.nombre} ${(admin || staff) ? `(EA: ${ingredient.ingrediente.escala_agua})` : ""}`,
                 image: ingredient.ingrediente.foto_ingrediente.includes('ingrediente_placeholder') ? null : ingredient.ingrediente.foto_ingrediente
             }
         });

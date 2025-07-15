@@ -51,6 +51,7 @@ export default function Ingredient({askDelete, user_id, isStaff, isSuperUser, ac
                         <img src={ingredient?.foto_ingrediente} alt="Ingredient" />
                     </div>
                     <h4 className={styles.ingredientName}>{ingredient?.nombre}</h4>
+                    <p className={styles.scaleWater}>Escala con respecto al agua: <span>{ingredient?.escala_agua}</span></p>
                     <div className={styles.ingredientTypeContainer}>
                         <div className={styles.ingredientType}>
                             <ReactSVG src={eye}/>

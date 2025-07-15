@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthProvider";
 import OptionButton from "./OptionButton";
 import RightSidebarForms from "./RightSidebarForms";
 import MainButton from "./MainButton";
-import { validateIngredientData } from "./utils/validators";
+import { validateIngredientData, validateObjetivosData } from "./utils/validators";
 import Swal from "sweetalert2";
 import backendAPI from "../api/axiosConfig";
 import { useRightSidebar } from "../context/RightSidebarProvider";
@@ -17,17 +17,20 @@ export default function AIFormSettings(){
     const [ activeOption, setActiveOption ] = useState("avanzado");
     const [ loading, setLoading ] = useState(false);
     const [ errorsHandler, setErrorsHandler ] = useState({});
+    const [ updateID, setUpdateID ] = useState(-1);
     const { refreshAccessToken, isSuperUser, isStaff } = useAuth();
+    const { aiFormUpdatePreset } = useRightSidebar();
+    const { setCreatedPreset, setUpdatedPreset } = useUpdateData();
 
     const ManageIngredientsFormOptions = [
-        { type: "text", name: "titulo", label: "Titulo:"},
+        { type: "text", name: "nombre", label: "Nombre de la preconfiguracion:"},
         { type: "text", name: "descripcion", label: "Descripcion:"},
-        { type: "slider", step: "1", name: "proteinas", label: "Proteinas (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
-        { type: "slider", step: "1", name: "carbohidratos", label: "Carbohidratos (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
-        { type: "slider", step: "1", name: "grasas_saturadas", label: "Grasas Saturadas (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
-        { type: "slider", step: "1", name: "grasas_insaturadas", label: "Grasas Insaturadas (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
-        { type: "slider", step: "1", name: "grasas_trans", label: "Grasas Trans (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
-        { type: "slider", step: "1", name: "sodio", label: "Sodio (%)", defaultValue: 15, max: 100, min: 0, showInput: false, additionalText: '%'},
+        { type: "slider", step: "5", name: "proteinas", label: "Proteinas (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
+        { type: "slider", step: "5", name: "carbohidratos", label: "Carbohidratos (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
+        { type: "slider", step: "5", name: "grasas_saturadas", label: "Grasas Saturadas (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
+        { type: "slider", step: "5", name: "grasas_insaturadas", label: "Grasas Insaturadas (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
+        { type: "slider", step: "5", name: "grasas_trans", label: "Grasas Trans (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
+        { type: "slider", step: "5", name: "sodio", label: "Sodio (%)", defaultValue: 15, max: 100, min: 0, showInput: false, additionalText: '%'},
     ];
 
     const options = [
@@ -36,7 +39,7 @@ export default function AIFormSettings(){
     ];
 
     const [ preconfiguracionData, setPreconfiguracionData ] = useState({
-        titulo: "",
+        nombre: "",
         descripcion: "",
         proteinas: 100,
         carbohidratos: 100,
@@ -46,34 +49,39 @@ export default function AIFormSettings(){
         sodio: 15
     });
 
-    /*const handleChangeInformation = async e => {
+    const handleChangeInformation = async e => {
         e.preventDefault();
         setLoading(true);
-        let errors = validateIngredientData(ingredientData);
+        let errors = validateObjetivosData(preconfiguracionData);
         setErrorsHandler(errors);
         if(Object.keys(errors).length === 0){
-            const formData = new FormData();
             try{
-                // Preparado de la informacion
-                formData.append('nombre', ingredientData.nombre);
-                formData.append('consistencia', ingredientData.consistencia.toLowerCase());
-                formData.append('calorias', parseFloat(ingredientData.calorias)/100);
-                formData.append('carbohidratos', parseFloat(ingredientData.carbohidratos)/100);
-                formData.append('proteinas', parseFloat(ingredientData.proteinas)/100);
-                formData.append('grasas_saturadas', parseFloat(ingredientData.grasasSaturadas)/100);
-                formData.append('grasas_insaturadas', parseFloat(ingredientData.grasasInsaturadas)/100);
-                formData.append('grasas_trans', parseFloat(ingredientData.grasasTrans)/100);
-                formData.append('sodio', parseFloat(ingredientData.sodio)/100);
-                formData.append('tipo', visibilityData.visibilidad.toLowerCase());
-                if(imagen.length == 1){
-                    formData.append('foto_ingrediente', imagen[0]);
-                }
-                if(willUserModifyIngredient){
-                    const response = await backendAPI.put(`ingredientes/${ingredientModify.id}/`, formData);
+                if(updateID == -1){
+                    const response = await backendAPI.post('objetivos_ai/', {
+                        nombre: preconfiguracionData.nombre,
+                        descripcion: preconfiguracionData.descripcion,
+                        objetivo_carbohidrato: preconfiguracionData.carbohidratos,
+                        objetivo_proteina: preconfiguracionData.proteinas,
+                        objetivo_grasa_saturada: preconfiguracionData.grasas_saturadas,
+                        objetivo_grasa_insaturada: preconfiguracionData.grasas_insaturadas,
+                        objetivo_grasa_trans: preconfiguracionData.grasas_trans,
+                        objetivo_sodio: preconfiguracionData.sodio 
+                    });
+                    setPreconfiguracionData({
+                        nombre: "",
+                        descripcion: "",
+                        proteinas: 100,
+                        carbohidratos: 100,
+                        grasas_saturadas: 100,
+                        grasas_insaturadas: 100,
+                        grasas_trans: 100,
+                        sodio: 15
+                    });
+                    setCreatedPreset(response.data);
                     Swal.fire({
                         icon: "success",
-                        title: "Ingrediente Modificado",
-                        text: response.data.message,
+                        title: "Preconfiguracion creada",
+                        text: 'Ahora estara disponibles en el plan alimenticio!',
                         showConfirmButton: true,
                         customClass: {
                             title: "swal_title",
@@ -82,26 +90,22 @@ export default function AIFormSettings(){
                             confirmButton: "swal_confirm"
                         }
                     });
-                    setUpdatedIngredient(response.data);
                 } else{
-                    const response = await backendAPI.post('ingredientes/', formData);
-                    setIngredientData({
-                        nombre: "",
-                        consistencia: "Liquido",
-                        calorias: '0',
-                        carbohidratos: '0',
-                        proteinas: '0',
-                        grasasSaturadas: '0',
-                        grasasInsaturadas: '0',
-                        grasasTrans: '0',
-                        sodio: '0'
+                    const response = await backendAPI.put(`objetivos_ai/${updateID}/`, {
+                        nombre: preconfiguracionData.nombre,
+                        descripcion: preconfiguracionData.descripcion,
+                        objetivo_carbohidrato: preconfiguracionData.carbohidratos,
+                        objetivo_proteina: preconfiguracionData.proteinas,
+                        objetivo_grasa_saturada: preconfiguracionData.grasas_saturadas,
+                        objetivo_grasa_insaturada: preconfiguracionData.grasas_insaturadas,
+                        objetivo_grasa_trans: preconfiguracionData.grasas_trans,
+                        objetivo_sodio: preconfiguracionData.sodio 
                     });
-                    setImagen([]);
-                    setVisibilityData({visibilidad: 'Personal'});
-                    ({
+                    setUpdatedPreset(response.data);
+                    Swal.fire({
                         icon: "success",
-                        title: "Ingrediente Creado",
-                        text: response.data.message,
+                        title: "Preconfiguracion modificada",
+                        text: 'Se actualizaron los datos del preajuste!',
                         showConfirmButton: true,
                         customClass: {
                             title: "swal_title",
@@ -110,7 +114,6 @@ export default function AIFormSettings(){
                             confirmButton: "swal_confirm"
                         }
                     });
-                    setCreatedIngredient(response.data);
                 }
             } catch(error){
                 console.log(error);
@@ -124,16 +127,42 @@ export default function AIFormSettings(){
             }
         }
         setLoading(false);
-    }*/
-
-    const handleChangeVisibility = async e => {
-        e.preventDefault();
     }
 
     const changeActiveOption = type => {
         setActiveOption(type);
         setErrorsHandler({});
     }
+
+    useEffect(() => {
+        if(Object.keys(aiFormUpdatePreset).length >= 1){
+                        console.log(aiFormUpdatePreset);
+
+            setUpdateID(aiFormUpdatePreset.id);
+            setPreconfiguracionData({
+                nombre: aiFormUpdatePreset.nombre,
+                descripcion: aiFormUpdatePreset.descripcion,
+                proteinas: aiFormUpdatePreset.objetivo_proteina,
+                carbohidratos: aiFormUpdatePreset.objetivo_carbohidrato,
+                grasas_saturadas: aiFormUpdatePreset.objetivo_grasa_saturada,
+                grasas_insaturadas: aiFormUpdatePreset.objetivo_grasa_insaturada,
+                grasas_trans: aiFormUpdatePreset.objetivo_grasa_trans,
+                sodio: aiFormUpdatePreset.objetivo_sodio
+            });
+        } else{
+            setUpdateID(-1);
+            setPreconfiguracionData({
+                nombre: "",
+                descripcion: "",
+                proteinas: 100,
+                carbohidratos: 100,
+                grasas_saturadas: 100,
+                grasas_insaturadas: 100,
+                grasas_trans: 100,
+                sodio: 15
+            })
+        }
+    }, [aiFormUpdatePreset]);
 
     return(
         <div className={styles.changeProfileForm}>
@@ -161,7 +190,7 @@ export default function AIFormSettings(){
 
             {activeOption === "avanzado" && (
                 <RightSidebarForms twoOnOne={false} formOptions={ManageIngredientsFormOptions} setData={setPreconfiguracionData} data={preconfiguracionData}>
-                    <MainButton disabled={loading} type="submit" icon="hardware-chip" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={"Crear Preajuste"}/>
+                    <MainButton action={handleChangeInformation} disabled={loading} type="submit" icon="hardware-chip" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={loading ? (updateID != -1 ? "Editando..." : "Creando...")  : (updateID != -1 ? "Editar Preajuste" : "Crear Preajuste")}/>
                 </RightSidebarForms> 
             )}
 

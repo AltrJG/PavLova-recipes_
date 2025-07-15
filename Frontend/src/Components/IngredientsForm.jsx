@@ -56,7 +56,7 @@ export default function IngredientsForm(){
         grasasInsaturadas: '0',
         grasasTrans: '0',
         sodio: '0',
-        escala_agua: '1'
+        escala_agua: '1.0'
     });
     const [ visibilityData, setVisibilityData ] = useState({
         visibilidad: "Personal",
@@ -81,6 +81,7 @@ export default function IngredientsForm(){
                 formData.append('grasas_trans', parseFloat(ingredientData.grasasTrans)/100);
                 formData.append('sodio', parseFloat(ingredientData.sodio)/100);
                 formData.append('tipo', visibilityData.visibilidad.toLowerCase());
+                formData.append("escala_agua", parseFloat(ingredientData.escala_agua));
                 if(imagen.length == 1){
                     formData.append('foto_ingrediente', imagen[0]);
                 }
@@ -129,7 +130,6 @@ export default function IngredientsForm(){
                     setCreatedIngredient(response.data);
                 }
             } catch(error){
-                console.log(error);
                 if(error.response?.status == 401){
                     await refreshAccessToken(handleChangeInformation, e);
                 } else{
@@ -162,7 +162,8 @@ export default function IngredientsForm(){
                 grasasSaturadas: ingredientModify?.grasas_saturadas,
                 grasasInsaturadas: ingredientModify?.grasas_insaturadas,
                 grasasTrans: ingredientModify?.grasas_trans,
-                sodio: ingredientModify?.sodio
+                sodio: ingredientModify?.sodio,
+                escala_agua: ingredientModify?.escala_agua
             });
             setVisibilityData({ visibilidad: ingredientModify?.tipo?.replace(/^./, char => char.toUpperCase()) });
         } else{
@@ -175,7 +176,8 @@ export default function IngredientsForm(){
                 grasasSaturadas: '0',
                 grasasInsaturadas: '0',
                 grasasTrans: '0',
-                sodio: 0
+                sodio: 0,
+                escala_agua: 1.0
             });
             setVisibilityData({ visibilidad: "Personal" });
         }
