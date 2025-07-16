@@ -303,12 +303,14 @@ class RecetaSerializer(serializers.ModelSerializer):
     creador_info = UsuarioSerializer(source='creador', read_only=True)
     rating_promedio = serializers.FloatField(read_only=True, default=0.0)
     visibilidad_estado = serializers.SerializerMethodField(read_only=True)
+    verificado = serializers.BooleanField(read_only=True)
+    puntuacion = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Receta
         fields = [
             'id', 'nombre', 'porciones', 'frase', 'foto_receta', 'procedimiento',
-            'tiempo_preparacion', 'tiempo_coccion', 'visibilidad', 'visibilidad_estado', 'categoria', 'categoria_info',
+            'tiempo_preparacion', 'tiempo_coccion', 'visibilidad', 'visibilidad_estado', 'verificado', 'puntuacion', 'categoria', 'categoria_info',
             'etiquetas', 'etiquetas_info', 'ingredientes', 'creador', 'creador_info', 'rating_promedio',
         ]
 
@@ -381,12 +383,14 @@ class RecetaFavoritoSerializer(serializers.ModelSerializer):
     porciones = serializers.IntegerField(source='receta.porciones', read_only=True)
     frase = serializers.CharField(source='receta.frase', read_only=True, required=False)
     procedimiento = serializers.CharField(source='receta.procedimiento', read_only=True, required=False)
+    verificado = serializers.BooleanField(source='receta.verificado', read_only=True)
+    puntuacion = serializers.IntegerField(source='receta.puntuacion', read_only=True)
 
     class Meta:
         model = RecetaFavorito
         fields = [
             'id', 'usuario_id', 'receta', 'receta_nombre', 'receta_imagen_url',
-            'receta_categoria', 'receta_tiempo_preparacion', 'porciones', 'ingredientes', 'visibilidad_estado', 'visibilidad', 'receta_tiempo_coccion',
+            'receta_categoria', 'receta_tiempo_preparacion', 'porciones', 'ingredientes', 'visibilidad_estado', 'visibilidad', 'verificado', 'puntuacion', 'receta_tiempo_coccion',
             'receta_rating_promedio', 'creador_nombre', 'frase', 'procedimiento'
         ]
         read_only_fields = ['id', 'usuario_id', 'creador_nombre']
@@ -425,6 +429,8 @@ class RecetaResumenSerializer(serializers.ModelSerializer):
             'creador_nombre',
             'rating_promedio',
             'visibilidad',
+            'verificado',
+            'puntuacion',
             'ingredientes',
             'procedimiento',
             'porciones',

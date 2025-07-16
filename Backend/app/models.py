@@ -323,7 +323,7 @@ class Receta(models.Model):
     tiempo_coccion = models.IntegerField(default=0)
     visibilidad = models.BooleanField(default=True)
     verificado = models.BooleanField(default=False)
-    puntuacion = models.FloatField(default=0.0) # <-- IA
+    puntuacion = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(500)]) # <-- IA
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True, related_name='recetas')
     ingredientes = models.ManyToManyField(Ingrediente, through='RecetaIngrediente', related_name='recetas')
     etiquetas = models.ManyToManyField(Etiqueta, related_name='recetas')

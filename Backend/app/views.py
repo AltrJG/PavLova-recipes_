@@ -594,6 +594,33 @@ class RecetaViewSet(viewsets.ModelViewSet):
             'mensaje': f'La receta ahora es {"pública" if receta.visibilidad else "privada"}.',
             'visibilidad': receta.visibilidad
         }, status=status.HTTP_200_OK)
+    
+    @action(detail=True, methods=['patch'], url_path='actualizar-puntuacion', permission_classes=[IsModeratorOrAdmin])
+    def actualizar_puntuacion(self, request, pk=None):
+        receta = self.get_object()
+        puntuacion = request.data.get('puntuacion')
+        verificado = request.data.get('verificado')
+
+        if puntuacion is None and verificado is None:
+            return Response({'error': 'Debes proporcionar al menos uno de los campos: "puntuacion" o "verificado".'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if puntuacion is not None:
+            try:
+                puntuacion = int(puntuacion)
+                if puntuacion % 10 != 0 or puntuacion < 0 or puntuacion > 500:
+                    return Response({'error': 'La puntuación debe ser un múltiplo de 10 entre 0 y 500.'}, status=status.HTTP_400_BAD_REQUEST)
+                receta.puntuacion = puntuacion
+            except (ValueError, TypeError):
+                return Response({'error': 'La puntuación debe ser un número entero.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if verificado is not None:
+            if not isinstance(verificado, bool):
+                return Response({'error': '"verificado" debe ser un valor booleano (true o false).'}, status=status.HTTP_400_BAD_REQUEST)
+            receta.verificado = verificado
+
+        receta.save()
+
+        return Response({'mensaje': 'Puntuación actualizada correctamente.'}, status=status.HTTP_200_OK)
 
 class ComentarioViewSet(viewsets.ModelViewSet):
     queryset = Comentario.objects.all()
