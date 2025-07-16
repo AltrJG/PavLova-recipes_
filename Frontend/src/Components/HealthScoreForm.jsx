@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthProvider";
 import RightSidebarForms from "./RightSidebarForms";
 import MainButton from "./MainButton";
-import { validateChangeVisibility } from "./utils/validators";
+import { validateChangeVisibility, validateHealthData } from "./utils/validators";
 import Swal from "sweetalert2";
 import backendAPI from "../api/axiosConfig";
 import { useRightSidebar } from "../context/RightSidebarProvider";
+import { useUpdateData } from "../context/UpdateDataProvider";
 
 
 export default function HealthScoreForm(){
@@ -15,30 +16,33 @@ export default function HealthScoreForm(){
     const [ errorsHandler, setErrorsHandler ] = useState({});
     const { refreshAccessToken } = useAuth();
     const { healthScoreData } = useRightSidebar();
+    const { setNewRecipeScoreData } = useUpdateData();
 
     const HealthOptions = [
         { type: 'slider', name: "puntuacion", min: 0, max: 500, step: '10', defaultValue: 0, label: "Puntuacion (0-500)", additionalText: '' },
-        { type: "select", name: "verificado", defaultOption: "Verdadero", label: "Fue verificada?:", options: ["Verdadero", "Falso"]},
+        { type: "select", name: "verificado", defaultOption: "Verdadero", label: "Permitir su uso para el entrenamiento?:", options: ["Utilizar", "No Utilizar"]},
     ];
 
     const [ healthData, setHealthData ] = useState({
-        puntuacion: 0,
-        verificado: 'Verdadero',
+        puntuacion: healthScoreData.scores.puntuacion,
+        verificado: healthScoreData.scores.verificado ? 'Utilizar' : 'No Utilizar',
     });
 
     const handleChangeInformation = async e => {
         e.preventDefault();
         setLoading(true);
-        /*let errors = validateChangeVisibility(visibilityData);
+        let errors = validateHealthData(healthData);
         setErrorsHandler(errors);
         if(Object.keys(errors).length === 0){
             try{
-                const response = await backendAPI.patch(`recetas/${changeVisibilityData.id}/cambiar-visibilidad/`, {visibilidad: visibilityData.visibilidad == 'Publica' ? true : false});
-                console.log(response.data);
+                const response = await backendAPI.patch(`recetas/${healthScoreData.id}/actualizar-puntuacion/`, {
+                    puntuacion: healthData.puntuacion,
+                    verificado: healthData.verificado == "Utilizar" ? true : false
+                });
                 Swal.fire({
                     icon: "success",
-                    title: "Visibilidad modificada",
-                    text: response.data.mensaje,
+                    title: "Puntuacion actualizada",
+                    text: 'La puntuacion y uso en el modelo se actualizo con exito',
                     showConfirmButton: true,
                     customClass: {
                         title: "swal_title",
@@ -47,6 +51,7 @@ export default function HealthScoreForm(){
                         confirmButton: "swal_confirm"
                     }
                 });
+                setNewRecipeScoreData({puntuacion: healthData.puntuacion, verificado: healthData.verificado == "Utilizar" ? true : false});
             } catch(error){
                 if(error.response?.status == 401){
                     await refreshAccessToken(handleChangeInformation, e);
@@ -57,13 +62,16 @@ export default function HealthScoreForm(){
             } finally{
                 setLoading(false);
             }
-        }*/
+        }
         setLoading(false);
     }
 
-    //useEffect(() => {
-    
-    //}, [changeVisibilityData]);
+    useEffect(() => {
+        setHealthData({
+            puntuacion: healthScoreData.scores.puntuacion,
+            verificado: healthScoreData.scores.verificado ? 'Utilizar' : 'No Utilizar',
+        })
+    }, [healthScoreData]);
 
     return(
         <div className={styles.changeProfileForm}>

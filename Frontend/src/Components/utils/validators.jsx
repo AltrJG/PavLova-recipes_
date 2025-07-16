@@ -416,3 +416,25 @@ export const validateObjetivosData = (data) => {
 
     return errors;
 };
+
+export const validateHealthData = (healthData) => {
+    let errors = {};
+
+    // Validar puntuacion
+    if (
+        isNaN(healthData.puntuacion) ||                      // Check if it's a number
+        healthData.puntuacion < 0 ||                         // Check min
+        healthData.puntuacion > 500 ||                       // Check max
+        healthData.puntuacion % 10 !== 0                     // Check multiple of 10
+    ) {
+        errors.puntuacion = "La puntuación debe ser un número múltiplo de 10 entre 0 y 500.";
+    }
+
+    // Validar verificado
+    const verificadoOptions = ["Utilizar", "No Utilizar"];
+    if (!verificadoOptions.includes(healthData.verificado)) {
+        errors.verificado = "La opción seleccionada no es válida.";
+    }
+
+    return errors;
+};

@@ -18,6 +18,7 @@ import { generarRecetaPDF } from "./utils/PDFDataGenerator";
 import NotFound404 from "../pages/NotFound404";
 import { useNutritionalDataRecipeProvider } from "../context/NutritionalDataRecipeProvider";
 import { useRightSidebar } from "../context/RightSidebarProvider";
+import { useUpdateData } from "../context/UpdateDataProvider";
 
 export default function RecipeHeader(){
 
@@ -25,6 +26,7 @@ export default function RecipeHeader(){
     const { refreshAccessToken, isSuperUser, isStaff, user, isAuthenticated } = useAuth();
     const { porciones } = useNutritionalDataRecipeProvider();
     const { openHealthScoreForm } = useRightSidebar();
+    const { newRecipeScoreData, resetNewRecipeScoreData } = useUpdateData();
     const [ receta, setReceta ] = useState({});
     const [ updateRecipe, setUpdateRecipe ] = useState(false);
     const [ loadingFavorite, setLoadingFavorite ] = useState(false);
@@ -123,6 +125,13 @@ export default function RecipeHeader(){
         }
     }, [updateRecipe]);
 
+    useEffect(() => {
+        if(Object.keys(newRecipeScoreData).length > 0){
+            setReceta({...receta, puntuacion: newRecipeScoreData.puntuacion, verificado: newRecipeScoreData.verificado});
+            resetNewRecipeScoreData();
+        }
+    }, [newRecipeScoreData])
+
     const getStarIcon = (index, value) => {
         if (value >= index + 1) {
           return "star";
@@ -166,13 +175,14 @@ export default function RecipeHeader(){
                     <div className={styles.timesContainer}>
                         <div className={styles.timePreparation}><ReactSVG src={timeIcon}/> {`${receta.tiempo_preparacion} Minutos`}</div>
                         <div className={styles.timePreparation}><ReactSVG src={flameIcon}/> {`${receta.tiempo_coccion} Minutos`}</div>
+                        {(isSuperUser || isStaff) && <div className={`${styles.recipeHealthScore} ${receta?.verificado ? styles.verified : styles.notVerified}`}><ReactSVG src={`/src/assets/Iconos/fitness.svg`}/> {` ${receta?.puntuacion}`}</div>}
                     </div>
                     <p className={styles.recipeHeaderQuote}>{receta.frase}</p>
                     <div className={styles.recipeHeaderActions}>
                         {receta?.creador_info?.id != user?.id && isAuthenticated && <CircleButton text={favorito != -1 ? 'Eliminar de favoritos?' : 'Agregar a favoritos'} action={toggleFavorito} args={[]} iconName={favorito != -1 ? 'heart' : "heart-outline"} iconSize="3.5rem"/>}
                         <CircleButton action={(Object.keys(user).length != 0) ? generarRecetaPDF : navigateLogIn} args={[receta, porciones]} text="Descargar PDF" iconName={"document-attach"} iconSize="3.5rem"/>
                         { (isSuperUser || isStaff || receta?.creador_info?.id === user?.id) && <CircleButton action={navigate} args={[`/crear-receta?recetaEditar=${receta.id}`]} text="Editar Receta" iconName={"create"} iconSize="3.5rem"/> }
-                        { (isSuperUser || isStaff) && <CircleButton action={openHealthScoreForm} args={[receta?.id, receta?.nombre]} text="Otorgar puntuacion de salud" iconName={"fitness"} iconSize="3.5rem"/>}
+                        { (isSuperUser || isStaff) && <CircleButton action={openHealthScoreForm} args={[receta?.id, receta?.nombre, {puntuacion: receta?.puntuacion, verificado: receta?.verificado}]} text="Otorgar puntuacion de salud" iconName={"fitness"} iconSize="3.5rem"/>}
                     </div>
                 </div>
                 <RecipeContents admin={isSuperUser} staff={isStaff} recipe={receta}/>

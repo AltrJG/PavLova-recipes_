@@ -126,7 +126,8 @@
 }
 
 .recipeTime,
-.recipeDifficulty{
+.recipeDifficulty,
+.recipeHealthScore{
     color: rgb(49, 49, 49);
     margin: .5rem 0;
     padding-left: 1rem;
@@ -141,6 +142,17 @@
         height: 2.2rem;
     }
 }
+
+.notVerified{
+    color: red;
+    font-weight: 700;
+}
+
+.verified{
+    color: green;
+    font-weight: 700;
+}
+
 
 .recipeContainer:hover{
     transform: translateY(-3px) scale(1.03);

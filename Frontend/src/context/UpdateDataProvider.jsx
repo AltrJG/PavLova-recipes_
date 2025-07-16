@@ -20,7 +20,8 @@ const initialState = {
         selected_etiquetas: []
     },
     createdPreset: {},
-    updatedPreset: {}
+    updatedPreset: {},
+    newRecipeScoreData: {}
 }
 
 function reducer(state, action){
@@ -63,11 +64,15 @@ function reducer(state, action){
             return { ...state, updatedPreset: action.payload }
         case 'updateData/resetPresetData':
             return { ...state, updatedPreset: {}, createdPreset: {} }
+        case 'updateData/newRecipeScoreData':
+            return { ...state, newRecipeScoreData: action.payload }
+        case 'updateData/resetNewRecipeScoreData':
+            return { ...state, newRecipeScoreData: {} }
     }
 }
 
 const UpdateDataProvider = ({ children }) => {
-    const [{ updatedUser, disabledUser, createdIngredient, updatedIngredient, createdEtiqueta, updatedEtiqueta, createdCategoria, updatedCategoria, updatedObjectives, recipeFilters, createdPreset, updatedPreset }, dispatch] = useReducer(reducer, initialState);
+    const [{ updatedUser, disabledUser, createdIngredient, updatedIngredient, createdEtiqueta, updatedEtiqueta, createdCategoria, updatedCategoria, updatedObjectives, recipeFilters, createdPreset, updatedPreset, newRecipeScoreData }, dispatch] = useReducer(reducer, initialState);
 
     function setUpdatedUser(user){
         dispatch({type: 'updateData/updateUser', payload: user});
@@ -142,6 +147,14 @@ const UpdateDataProvider = ({ children }) => {
         dispatch({type: "updateData/resetPresetData"});
     }
 
+    function setNewRecipeScoreData(scoreData){
+        dispatch({type: "updateData/newRecipeScoreData", payload: scoreData});
+    }
+
+    function resetNewRecipeScoreData(){
+        dispatch({type: "updateData/resetNewRecipeScoreData"});
+    }
+
     return (
         <UpdateDataContext.Provider value={{
             updatedUser,
@@ -156,6 +169,7 @@ const UpdateDataProvider = ({ children }) => {
             recipeFilters,
             updatedPreset,
             createdPreset,
+            newRecipeScoreData,
             setUpdatedUser,
             setDisabledUser,
             setCreatedIngredient,
@@ -173,7 +187,9 @@ const UpdateDataProvider = ({ children }) => {
             resetRecipeFilters,
             setCreatedPreset,
             setUpdatedPreset,
-            resetPresetData
+            resetPresetData,
+            setNewRecipeScoreData,
+            resetNewRecipeScoreData
         }}>
             {children}
         </UpdateDataContext.Provider>

@@ -23,6 +23,7 @@ export default function Recipe({ removeFromPlan, proportion, handlePortionChange
                 <p className={styles.recipeAuthor}>{recipe?.creador_info?.name || recipe?.creador_nombre}</p>
                 <div className={styles.recipeTime}><ReactSVG src={`/src/assets/Iconos/timer.svg`}/> {` ${recipe?.tiempo_preparacion || recipe?.receta_tiempo_preparacion} Minutos`}</div>
                 <div className={styles.recipeDifficulty}><ReactSVG src={`/src/assets/Iconos/flame.svg`}/> {` ${recipe?.tiempo_coccion || recipe?.receta_tiempo_coccion} Minutos`}</div>
+                {(isSuperUser || isStaff) && <div className={`${styles.recipeHealthScore} ${recipe?.verificado ? styles.verified : styles.notVerified}`}><ReactSVG src={`/src/assets/Iconos/fitness.svg`}/> {` ${recipe?.puntuacion}`}</div>}
             </Link>
             {portionPicker 
             && <form className={styles.sliderProportionsForm}>

@@ -178,6 +178,30 @@
     fill: #f1b434;
 }
 
+.recipeHealthScore{
+    color: rgb(49, 49, 49);
+    margin: .5rem 0;
+    display: flex;
+    align-items: center;
+    font-size: 1.6rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    & svg{
+        margin-right: .6rem;
+        width: 2.7rem;
+        height: 2.7rem;
+    }
+}
+
+.notVerified{
+    color: red;
+    font-weight: 700;
+}
+
+.verified{
+    color: green;
+    font-weight: 700;
+}
+
 @media(max-width: 68.75em){
     .recipeHeaderContainer{
         position: relative;
@@ -299,5 +323,17 @@
     }
     .recipeHeaderRatingFormContainer{
         margin-top: 2rem;
+    }
+}
+
+@media(max-width: 25em){
+    .timesContainer{
+        justify-content: space-around;
+    }
+    .timePreparation,
+    .recipeHealthScore{
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 }

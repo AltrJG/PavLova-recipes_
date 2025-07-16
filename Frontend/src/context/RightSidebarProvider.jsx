@@ -148,9 +148,9 @@ const RightSidebarProvider = ({ children }) => {
         dispatch({type: 'rightSidebar/openChangeVisibilty', payload: {id, nombre, visibilidad}});
     }
 
-    function openHealthScoreForm(id, nombre){
+    function openHealthScoreForm(id, nombre, scores){
         openRightSidebar();
-        dispatch({type: 'rightSidebar/openHealthScoreForm', payload: {id, nombre}});
+        dispatch({type: 'rightSidebar/openHealthScoreForm', payload: {id, nombre, scores}});
     }
 
     return (
