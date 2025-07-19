@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from .models import User, EmailVerificationCode, Ingrediente, Categoria, Etiqueta, Receta, Comentario, RecetaFavorito, PlanAlimenticio, PlanAlimenticioDia, PlanAlimenticioDiaReceta, ObjetivosAI
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate, update_session_auth_hash
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer, ComentarioSerializer, RecetaFavoritoSerializer, PlanAlimenticioSerializer, PlanAlimenticioDiaSerializer, PlanAlimenticioDiaRecetaSerializer, ObjetivosAISerializer
@@ -23,6 +23,7 @@ from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 from datetime import timedelta, date
+from app.machine_learning.entrenamiento import entrenar_modelo
 
 #Miscellaneous>>>>>>>>>>>>>>>>>>>
 
@@ -1028,3 +1029,14 @@ class ObjetivosAIViewSet(viewsets.ModelViewSet):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [IsModeratorOrAdmin()]
         return [IsAuthenticated()]
+    
+class ModeloEntrenamientoViewSet(viewsets.ViewSet):
+    permission_classes = [IsAdminUser]
+
+    @action(detail=False, methods=['post'], url_path='entrenar-modelo')
+    def entrenar_modelo(self, request):
+        try:
+            resultado = entrenar_modelo()
+            return Response(resultado, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
