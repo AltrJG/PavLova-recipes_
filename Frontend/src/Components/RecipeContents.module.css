@@ -153,8 +153,5 @@ input[type="range"] {
   }
 
   @media(max-width: 28.125em){
-      /***** Estilo para Firefox *****/
-    input[type="range"]{
-      width: 100%;
-    }
+
   }

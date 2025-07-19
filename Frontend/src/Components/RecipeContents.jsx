@@ -38,7 +38,7 @@ export default function RecipeContents({recipe, admin=false, staff=false}){
                 />
             </div>
             <div className={styles.recipeContentsUsefulData}>
-                { ingredientesView.map(ingredient => <ShowImage key={ingredient.text} text={ingredient.text} position={ingredient.text.length > 20 ? 'Top' : 'Right'} width={'17'} height={'12'} hasImage={ingredient.image != null} image={ingredient.image}/>)}
+                { ingredientesView.map(ingredient => <ShowImage key={ingredient.text} text={ingredient.text} position={'Top'} width={'17'} height={'12'} hasImage={ingredient.image != null} image={ingredient.image}/>)}
             </div>
         </div>
     )

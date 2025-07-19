@@ -5,10 +5,12 @@ import CardButton from "./CardButton";
 import visibilityOnIcon from '../assets/Iconos/eye.svg';
 import visibilityOffIcon from '../assets/Iconos/eye-off-outline.svg';
 import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function Recipe({ removeFromPlan, proportion, handlePortionChange = null, portionPicker = false, activeRecipes, recipePickerAction = null, recipePickerActive = false, canUserViewVisibility = false, handleVisibility = null, isModificationAllowed = false, recipe, deleteAction, cristal = false, user, isSuperUser, isStaff }){
 
     const navigate = useNavigate();
+    const [ editorView, setEditorView ] = useState(false);
 
     return(
         <div onClick={() => recipePickerActive && recipePickerAction(recipe)} className={`${styles.recipeContainer}  ${cristal ? styles.cristal : ""} ${recipePickerActive && (activeRecipes.findIndex(activeRecipe => activeRecipe.id == (recipe?.receta || recipe?.id)) != -1) && styles.selectedRecipe}`}>
@@ -33,30 +35,20 @@ export default function Recipe({ removeFromPlan, proportion, handlePortionChange
                     <button onClick={() => handlePortionChange((-.5), recipe.id, true)} className={styles.sliderProportionsButton} type="button">-</button>
             </form>}
             { isModificationAllowed && <CardButton
-                text="Cambiar Visibilidad"
-                hoverWidth="16rem"
+                text={editorView ? "Cerrar Menu" : "Gestionar Receta"}
+                hoverWidth="13rem"
                 top={.5}
                 left={2}
-                icon="eye"
-                onClick={() => handleVisibility(recipe.id, recipe.nombre, recipe.visibilidad_estado)}
+                icon="ellipsis-vertical-sharp"
+                onClick={() => setEditorView(!editorView)}
             /> }
-            { isModificationAllowed && (isSuperUser || isStaff || recipe?.creador_info?.id === user?.id) && <CardButton
-                text="Editar"
-                hoverWidth="8rem"
-                top={4.5}
-                left={2}
-                icon="create"
-                onClick={() => navigate(`/crear-receta?recetaEditar=${recipe?.receta || recipe?.id}`)}
-            /> }
-            { isModificationAllowed && (isSuperUser || isStaff || recipe?.creador_info?.id === user?.id) && <CardButton
-                text="Eliminar"
-                hoverWidth="10rem"
-                top={.5}
-                left={80}
-                showRight={true}
-                icon="trash"
-                onClick={() => deleteAction(recipe)}
-            /> }
+            <div className={`${styles.editorContainer} ${(editorView && isModificationAllowed) ? styles.editorOpen : styles.editorClosed}`}>
+                <div className={styles.buttonOptions}>
+                    <button className={styles.buttonAction} onClick={() => handleVisibility(recipe.id, recipe.nombre, recipe.visibilidad_estado)}><ReactSVG src={`/src/assets/Iconos/eye.svg`}/>Cambiar Visibilidad</button>
+                    <button className={styles.buttonAction} onClick={() => navigate(`/crear-receta?recetaEditar=${recipe?.receta || recipe?.id}`)}><ReactSVG src={`/src/assets/Iconos/create.svg`}/>Editar Receta</button>
+                    <button className={styles.buttonAction} onClick={() => deleteAction(recipe)}><ReactSVG src={`/src/assets/Iconos/trash.svg`}/>Eliminar Receta</button>
+                </div>
+            </div>
             { portionPicker && <CardButton
                 text="Eliminar del dia"
                 hoverWidth="13rem"

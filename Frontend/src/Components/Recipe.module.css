@@ -266,6 +266,72 @@
     margin: .5rem 0 .5rem 0;
 }
 
+.editorContainer{
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background: rgb(241,180,52);
+    background: -moz-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: -webkit-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    backface-visibility: hidden;
+    transform-origin: top left;
+    border-radius: 2rem;
+    transition: .4s;
+}
+
+.editorClosed{
+    transform: scale(0);
+}
+
+.editorOpen{
+    transform: scale(1);
+}
+
+.buttonOptions{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    padding: 2rem;
+}
+
+.buttonAction{
+    opacity: 1 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-size: 2rem;
+    width: 100%;
+    padding: 1rem 0;
+    color: white;
+    font-weight: 600;
+    font-family: 'Oswald', sans-serif;
+    background-color: rgba(233, 223, 213, 0.342);
+    border: rgb(255, 239, 224) .2rem solid;
+    cursor: pointer;
+    margin: .5rem;
+    border-radius: 2rem;
+}
+
+.buttonAction:hover{
+    background-color: rgb(255, 239, 224);
+    color: #ff8800;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.897);
+}
+
+.buttonAction svg{
+    width: 2.8rem;
+    height: 2.8rem;
+}
+
 @media(max-width: 81.25em){
     .recipeContainer button,
     .recipeContainer input{
@@ -276,6 +342,13 @@
 @media(max-width: 34.375em){
     .recipeImage{
         height: 11rem;
+    }
+    .buttonAction{
+        font-size: 1.6rem;
+    }
+    .buttonAction svg{
+        width: 2.5rem;
+        height: 2.5rem;
     }
     .recipeRating{
         top: 8.5rem;

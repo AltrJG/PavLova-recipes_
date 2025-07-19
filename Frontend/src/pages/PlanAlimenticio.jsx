@@ -535,7 +535,7 @@ export default function PlanAlimenticio(){
                     <div className={styles.recipeContentsUsefulData}>
                         <h4 className={styles.recipeContentsText}>Ingredientes:</h4>
                         <div className={styles.ingredientsContainer}>
-                            { ingredientesView.map(ingredient => <ShowImage key={ingredient.text} text={ingredient.text} position={ingredient.text.length > 20 ? 'Top' : 'Right'} width={'17'} height={'12'} hasImage={ingredient.image != null} image={ingredient.image}/>)}
+                            { ingredientesView.map(ingredient => <ShowImage key={ingredient.text} text={ingredient.text} position={'Top'} width={'17'} height={'12'} hasImage={ingredient.image != null} image={ingredient.image}/>)}
                         </div>
                     </div>
                 </div>

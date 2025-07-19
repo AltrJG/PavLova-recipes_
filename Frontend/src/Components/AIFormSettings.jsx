@@ -11,15 +11,17 @@ import backendAPI from "../api/axiosConfig";
 import { useRightSidebar } from "../context/RightSidebarProvider";
 import { useUpdateData } from "../context/UpdateDataProvider";
 import PreconfiguracionIA from "./PreconfiguracionIA";
+import FileGenerating from "./FileGenerating";
 
 
 export default function AIFormSettings(){
     const [ activeOption, setActiveOption ] = useState("avanzado");
     const [ loading, setLoading ] = useState(false);
     const [ errorsHandler, setErrorsHandler ] = useState({});
+    const [ trainingModel, setTrainingModel ] = useState(false);
     const [ updateID, setUpdateID ] = useState(-1);
     const { refreshAccessToken, isSuperUser, isStaff } = useAuth();
-    const { aiFormUpdatePreset } = useRightSidebar();
+    const { aiFormUpdatePreset, closeRightSidebar } = useRightSidebar();
     const { setCreatedPreset, setUpdatedPreset } = useUpdateData();
 
     const ManageIngredientsFormOptions = [
@@ -129,6 +131,81 @@ export default function AIFormSettings(){
         setLoading(false);
     }
 
+    const trainModelAsk = () => {
+        Swal.fire({
+            title: `Reentrenar modelo?`,
+            icon: "question",
+            text: `Estas a punto de reentrenar el modelo, lo cual toma recursos y tiempo al servidor, estas seguro de continuar?`,
+            customClass: {
+                title: "swal_title",
+                icon: "swal_icon",
+                htmlContainer: "swal_text",
+                confirmButton: "swal_confirm"
+            },
+            showCancelButton: true,
+            cancelButtonText: "Cancelar",
+            confirmButtonText: "Reentrenar",
+            allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+            if (result.isConfirmed) {
+                trainModel();
+            }
+        });
+    }
+
+    const trainModel = async () => {
+        setTrainingModel(true);
+        closeRightSidebar();
+        try{
+            const respuesta = await backendAPI.post('/modelo/entrenar-modelo/');
+            Swal.fire({
+                icon: "success",
+                title: "Modelo Entrenado Correctamente",
+                html: `
+                    <div style="font-size: 2.2rem; line-height: 1.5;">
+                        <p>📊 Modelo: ${respuesta.data.modelo}</p>
+                        <p>🎲 Semilla: ${respuesta.data.semilla}</p>
+                        <p>🔄 K-Folds: ${respuesta.data.k_folds}</p>
+                        <p>🔥 Calorías promedio: ${respuesta.data.calorias_promedio}</p>
+                        <p>📉 RMSE promedio: ${respuesta.data.rmse_promedio}</p>
+                        <p>🎯 Tolerancia (10%): ${respuesta.data['tolerancia_10%']}</p>
+                        <p>📐 Error: ${respuesta.data['error_%']}&#37;</p>
+                        <p style="margin-top:10px; color:green;">
+                             ${respuesta.data.message}
+                        </p>
+                    </div>
+                `,
+                showConfirmButton: true,
+                confirmButtonText: "Entendido",
+                customClass: {
+                    title: "swal_title",
+                    icon: "swal_icon",
+                    htmlContainer: "swal_text",
+                    confirmButton: "swal_confirm"
+                }
+            });
+        } catch(error){
+            if(error.response?.status == 401){
+                await refreshAccessToken(trainModel);
+            } else{
+                Swal.fire({
+                    icon: "error",
+                    title: "Algo salio mal",
+                    text: error,
+                    showConfirmButton: true,
+                    customClass: {
+                        title: "swal_title",
+                        icon: "swal_icon",
+                        htmlContainer: "swal_text",
+                        confirmButton: "swal_confirm"
+                    }
+                });
+            }
+        } finally{
+            setTrainingModel(false);
+        }
+    }
+
     const changeActiveOption = type => {
         setActiveOption(type);
         setErrorsHandler({});
@@ -165,6 +242,8 @@ export default function AIFormSettings(){
     }, [aiFormUpdatePreset]);
 
     return(
+        <>
+        <FileGenerating text={'Entrenando el modelo...'} canShow={trainingModel} svg_start={'restaurant'} svg_end={'hardware-chip'}/>
         <div className={styles.changeProfileForm}>
 
             {isSuperUser && <div className={styles.formOptions}>
@@ -197,9 +276,10 @@ export default function AIFormSettings(){
             {activeOption === "entrenamiento" && isSuperUser && (
                 <div className={styles.retrainModelContainer}>
                     <p className={styles.retrainWarning}>ATENCION: Esta accion reentrenara el modelo con la informacion de recetas que tengan calificacion actual, ademas, esta accion tomara tiempo!</p>
-                    <MainButton disabled={loading} type="submit" icon="hardware-chip" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={"Reentrenar"}/>
+                    <MainButton action={trainModelAsk} disabled={loading} type="submit" icon="hardware-chip" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={"Reentrenar"}/>
                 </div>
             )}
         </div>
+        </>
     )
 }
