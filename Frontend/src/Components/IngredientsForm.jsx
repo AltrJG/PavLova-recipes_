@@ -56,7 +56,7 @@ export default function IngredientsForm(){
         grasasInsaturadas: '0',
         grasasTrans: '0',
         sodio: '0',
-        escala_agua: '1.0'
+        escala_agua: 1.0
     });
     const [ visibilityData, setVisibilityData ] = useState({
         visibilidad: "Personal",

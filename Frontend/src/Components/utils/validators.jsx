@@ -203,7 +203,7 @@ export const validateIngredientData = (ingredientData) => {
     // Validate numeric fields
     const numericFields = [
         "calorias", "carbohidratos", "proteinas", "grasasSaturadas", 
-        "grasasInsaturadas", "grasasTrans", "sodio"
+        "grasasInsaturadas", "grasasTrans", "sodio", "escala_agua"
     ];
 
     numericFields.forEach(field => {
