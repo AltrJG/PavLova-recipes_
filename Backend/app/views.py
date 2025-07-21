@@ -23,7 +23,9 @@ from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 from datetime import timedelta, date
-from app.machine_learning.entrenamiento import entrenar_modelo
+from app.machine_learning.training import entrenar_modelo
+from app.machine_learning.prediction import predecir_puntuacion
+from app.machine_learning.load_model import get_modelo
 
 #Miscellaneous>>>>>>>>>>>>>>>>>>>
 
@@ -1038,5 +1040,32 @@ class ModeloEntrenamientoViewSet(viewsets.ViewSet):
         try:
             resultado = entrenar_modelo()
             return Response(resultado, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class ModeloPrediccionViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['post'], url_path='predecir-puntuacion')
+    def predecir_puntuacion(self, request):
+        ids = request.data.get('ids', [])
+
+        if not isinstance(ids, list) or not all(isinstance(i, int) for i in ids):
+            return Response({'error': 'Debes enviar una lista de IDs de recetas válidos.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            resultado = predecir_puntuacion(ids)
+            return Response({'resultados': resultado}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class ModeloRecargarViewSet(viewsets.ViewSet):
+    permission_classes = [IsAdminUser]
+
+    @action(detail=False, methods=['post'], url_path='recargar-modelo')
+    def recargar_modelo(self, request):
+        try:
+            get_modelo(force_reload=True)
+            return Response({'mensaje': 'Modelo recargado correctamente.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

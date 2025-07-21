@@ -5,59 +5,10 @@ from sklearn.impute import SimpleImputer
 import pandas as pd
 import joblib
 import random
-from decimal import Decimal, ROUND_HALF_UP, getcontext
 import numpy as np
-from datetime import datetime
+from .utils import calcular_nutrientes
 
-from app.models import Receta, RecetaIngrediente, PromedioCalorias
-
-getcontext().prec = 6
-
-def redondear(valor):
-    return Decimal(valor).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-
-def calcular_nutrientes(receta, porcion_final=1):
-    info = {
-        'calorias': Decimal(0),
-        'proteina': Decimal(0),
-        'carbohidratos': Decimal(0),
-        'grasas_saturadas': Decimal(0),
-        'grasas_insaturadas': Decimal(0),
-        'grasas_trans': Decimal(0),
-        'sodio': Decimal(0)
-    }
-
-    porcion_inicial = receta.porciones
-    receta_ingredientes = RecetaIngrediente.objects.filter(receta=receta).select_related('ingrediente')
-
-    for ri in receta_ingredientes:
-        ingrediente = ri.ingrediente
-        unidad = ri.unidad.lower()
-        escala_agua = Decimal(ingrediente.escala_agua or 1)
-
-        if unidad == 'cucharadita':
-            metrica = Decimal(5) * escala_agua
-        elif unidad == 'cucharada':
-            metrica = Decimal(15) * escala_agua
-        elif unidad == 'taza':
-            metrica = Decimal(250) * escala_agua
-        else:
-            metrica = Decimal(1)
-
-        conversion = (Decimal(ri.cantidad) * metrica / porcion_inicial) * porcion_final
-
-        info['calorias'] += Decimal(ingrediente.calorias) * conversion
-        info['proteina'] += Decimal(ingrediente.proteinas) * conversion
-        info['carbohidratos'] += Decimal(ingrediente.carbohidratos) * conversion
-        info['grasas_saturadas'] += Decimal(ingrediente.grasas_saturadas) * conversion
-        info['grasas_insaturadas'] += Decimal(ingrediente.grasas_insaturadas) * conversion
-        info['grasas_trans'] += Decimal(ingrediente.grasas_trans) * conversion
-        info['sodio'] += Decimal(ingrediente.sodio) * conversion
-
-    info = {k: redondear(v) for k, v in info.items()}
-
-    #print(f'Nutrientes calculados para receta "{receta.nombre}": {info}')
-    return info
+from app.models import Receta, PromedioCalorias
 
 def entrenar_modelo():
     recetas = Receta.objects.filter(verificado=True).exclude(puntuacion=0)
@@ -96,6 +47,9 @@ def entrenar_modelo():
     df = df.drop(columns=['calorias'])
     df = pd.get_dummies(df, columns=['categoria'])
 
+    cols_dummies = [col for col in df.columns if col.startswith('categoria_')]
+    df[cols_dummies] = df[cols_dummies].astype(int)
+
     X = df.drop(columns=['puntuacion'])
     y = df['puntuacion']
 
@@ -110,8 +64,7 @@ def entrenar_modelo():
 
     modelo.fit(X, y)
 
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    modelo_filename = f'modelo_randomforest_{timestamp}_{seed}_{round(rmse, 2)}.pkl'
+    modelo_filename = f'modelo_randomforest.pkl'
 
     joblib.dump(modelo, modelo_filename)
 

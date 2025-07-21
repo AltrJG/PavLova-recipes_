@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.documentation import include_docs_urls
 from rest_framework import routers
 from app import views
-from .views import RegisterView, ObjetivosAIViewSet, LoginView, LogoutView, UserInfoView, CustomTokenRefreshView, UpdateUserProfileView, UpdateUserPasswordView, UpdateUserEmailView, ProfilePictureUpdateView, UserViewSet, UserUpdateViewSet, GetUsuarioById, PasswordResetRequestView, PasswordResetView, VerifyEmailView, IngredienteViewSet, CategoriaViewSet, EtiquetaViewSet, RecetaViewSet, ComentarioViewSet, RecetaFavoritoViewSet, PlanAlimenticioViewSet, PlanAlimenticioDiaViewSet, PlanAlimenticioDiaRecetaViewSet, ModeloEntrenamientoViewSet
+from .views import RegisterView, ObjetivosAIViewSet, LoginView, LogoutView, UserInfoView, CustomTokenRefreshView, UpdateUserProfileView, UpdateUserPasswordView, UpdateUserEmailView, ProfilePictureUpdateView, UserViewSet, UserUpdateViewSet, GetUsuarioById, PasswordResetRequestView, PasswordResetView, VerifyEmailView, IngredienteViewSet, CategoriaViewSet, EtiquetaViewSet, RecetaViewSet, ComentarioViewSet, RecetaFavoritoViewSet, PlanAlimenticioViewSet, PlanAlimenticioDiaViewSet, PlanAlimenticioDiaRecetaViewSet, ModeloEntrenamientoViewSet, ModeloPrediccionViewSet, ModeloRecargarViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user') # /users/
@@ -18,6 +18,8 @@ router.register(r'plan_alimenticio_dia', PlanAlimenticioDiaViewSet, basename='pl
 router.register(r'plan_alimenticio_dia_receta', PlanAlimenticioDiaRecetaViewSet, basename='plan_alimenticio_dia_receta') # /plan-alimenticio-dia-receta/ /plan-alimenticio-dia-receta/<id>/ /plan-alimenticio-dia-receta/<id_plan>/actualizar-recetas/ /plan-alimenticio-dia-receta/<id_plan>/actualizar-porcion/
 router.register(r'objetivos_ai', ObjetivosAIViewSet, basename='objetivos_ai') # /objetivos_ai/
 router.register(r'modelo', ModeloEntrenamientoViewSet, basename='modelo_entrenamiento') # /modelo/entrenar-modelo/
+router.register(r'prediccion', ModeloPrediccionViewSet, basename='modelo_prediccion') # /prediccion/predecir-puntuacion/
+router.register(r'recargar', ModeloRecargarViewSet, basename='modelo_recargar') # /recargar/recargar-modelo/
 
 urlpatterns = [
     path('', include(router.urls)),
