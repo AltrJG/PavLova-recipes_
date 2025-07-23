@@ -29,6 +29,7 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import FileGenerating from '../Components/FileGenerating';
 import { formatDate } from '../Components/utils/helpers';
+import generarPlanAlimenticio from '../Components/utils/generarPlan';
 
 export default function PlanAlimenticio(){
 
@@ -43,7 +44,7 @@ export default function PlanAlimenticio(){
 
     const { openNutritionalObjectivesForm, openAiForm } = useRightSidebar();
     const { addOllaHirviendo } = useBackground();
-    const { updatedObjectives, resetNewObjectives } = useUpdateData();
+    const { updatedObjectives, resetNewObjectives, aiDataPlan, resetAiDataPlan } = useUpdateData();
     const { refreshAccessToken } = useAuth();
     const [ loadingPlan, setLoadingPlan ] = useState(true);
     const [ updateRecipesData, setUpdateRecipesData ] = useState(false);
@@ -62,6 +63,9 @@ export default function PlanAlimenticio(){
     const [ planGenerando, setPlanGenerando ] = useState(false);
     const [ recipeProportions, setRecipeProportions ] = useState({});
     const [ nutritionalAlerts, setNutritionalAlerts ] = useState([]);
+    const [ aiPicker, setAiPicker ] = useState(false);
+    const [ datesForm, setDatesForm ] = useState({});
+    const [ aiPlanLoading, setAiPlanLoading ] = useState(false);
     const [ nutritionalObjectives, setNutritionalObjectives ] = useState({
         calorias: 2000,               // kcal
         proteina: 50,                 // g
@@ -135,7 +139,7 @@ export default function PlanAlimenticio(){
     }
 
     const handleOpenAiForm = () => {
-        openAiForm()
+        openAiForm(new Date(datesForm.startDate + 'T00:00:00'), new Date(datesForm.endDate + 'T00:00:00'));
     };
 
     const saveProportionChange = async () => {
@@ -194,6 +198,7 @@ export default function PlanAlimenticio(){
         setLoadingPlan(true);
         try{
             const response = await backendAPI.get('/plan_alimenticio/plan-actual/');
+            setDatesForm({ startDate: response.data.plan.fecha_inicio, endDate: response.data.plan.fecha_finalizacion });
             setDatePickerForm(false);
             setDays(response.data.plan.ids_fechas.map(dia => { return {value: dia.id, dia: dia.fecha}}));
             setActiveDay(response.data.primer_dia.id);
@@ -408,6 +413,35 @@ export default function PlanAlimenticio(){
         }
     }
 
+    const crearPlanAutomatico = async recetas => {
+        setAiPlanLoading(true);
+        setAiPicker(false);
+        setActivePicker(false);
+        try{
+            await generarPlanAlimenticio(recetas, aiDataPlan, nutritionalObjectives, personas, days, planID);
+            await checkDay(activeDay);
+            Swal.fire({
+                icon: "success",
+                title: "Plan alimenticio creado!",
+                text: 'Se ha creado el plan alimenticio de los dias seleccionados!',
+                showConfirmButton: true,
+                customClass: {
+                    title: "swal_title",
+                    icon: "swal_icon",
+                    htmlContainer: "swal_text",
+                    confirmButton: "swal_confirm"
+                }
+            });
+        } catch(error){
+            if(error.response?.status == 401){
+                await refreshAccessToken(crearPlanAutomatico, recetas);
+            } 
+        } finally{
+            setAiPlanLoading(false);
+        }
+        
+    }
+
     useEffect(() => {
         if(updateRecipesData){
             updateRecipes(activeRecipes);
@@ -444,11 +478,20 @@ export default function PlanAlimenticio(){
         }
     }, [updatedObjectives]);
 
+    useEffect(() => {
+        if(Object.keys(aiDataPlan).length != 0){
+            setAiPicker(true);
+            setActivePicker(true);
+        } else{
+            setAiPicker(false);
+        }
+    }, [aiDataPlan]);
+
     if(loadingPlan) return <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
 
     return(
         <section className={styles.planAlimenticioContainer}>
-            <FileGenerating text={'Generando archivo del plan alimenticio'} canShow={planGenerando} svg_start={'calendar'} svg_end={'document-attach'}/>
+            <FileGenerating text={aiPlanLoading ? "Generando plan alimenticio" : 'Generando archivo del plan alimenticio'} canShow={planGenerando || aiPlanLoading} svg_start={aiPlanLoading ? "hardware-chip" : 'calendar'} svg_end={aiPlanLoading ? "calendar" : 'document-attach'}/>
             {datePickerForm 
             ? <div className={styles.datePicker}>
                 <div className={styles.datePickerContainer}>
@@ -463,9 +506,9 @@ export default function PlanAlimenticio(){
                     </div>
                 </div>
             </div>
-            : <><RecipePlanPicker updateRecipes={updateRecipes} currentProportions={recipeProportions} setProportions={setRecipeProportions} activeRecipes={activeRecipes} setActiveRecipes={setActiveRecipes} activePicker={activePicker} setActivePicker={setActivePicker}/>
+            : <><RecipePlanPicker aiAction={crearPlanAutomatico} updateRecipes={updateRecipes} currentProportions={recipeProportions} setProportions={setRecipeProportions} activeRecipes={activeRecipes} setActiveRecipes={setActiveRecipes} activePicker={activePicker} setActivePicker={setActivePicker} aiPicker={aiPicker} resetAiDataPlan={resetAiDataPlan} setAiPicker={setAiPicker}/>
             <Help title={'Plan alimenticio'} description={'Crea tu plan alimenticio'}>
-                <MainButton action={handleOpenAiForm} disabled={false} type="button" icon="hardware-chip" iconSize="3" fontSize="2.5" color="primary" borderRadius="1.5" text={"Plan AI"}/>
+                <MainButton action={handleOpenAiForm} disabled={false} type="button" icon="hardware-chip" iconSize="3" fontSize="2.5" color="primary" borderRadius="1.5" text={"Generar Automaticamente"}/>
             </Help>
             <div className={styles.planAlimenticioSeparation}>
                 <div className={styles.planMainContent}>

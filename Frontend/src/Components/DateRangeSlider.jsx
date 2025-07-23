@@ -19,7 +19,7 @@ function formatDate(date) {
   return `${year}-${month}-${day}`;
 }
 
-const DateRangeSlider = ({ startDate, endDate, onChange }) => {
+const DateRangeSlider = ({ startDate, endDate, onChange, margin = 1 }) => {
   const sliderRef = useRef(null);
   const [selectedRange, setSelectedRange] = useState([startDate, endDate]);
 
@@ -40,7 +40,7 @@ const DateRangeSlider = ({ startDate, endDate, onChange }) => {
         max: totalDays
       },
       step: 1,
-      margin: 1,
+      margin,
       tooltips: true,
       format: {
         to: value => {

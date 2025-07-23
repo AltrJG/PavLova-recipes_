@@ -158,6 +158,7 @@ export default function AIFormSettings(){
         closeRightSidebar();
         try{
             const respuesta = await backendAPI.post('/modelo/entrenar-modelo/');
+            await backendAPI.post('/recargar/recargar-modelo/');
             Swal.fire({
                 icon: "success",
                 title: "Modelo Entrenado Correctamente",

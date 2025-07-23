@@ -10,7 +10,7 @@ import { useAuth } from '../context/AuthProvider';
 import { FadeLoader } from 'react-spinners';
 import backendAPI from '../api/axiosConfig';
 
-export default function RecipePlanPicker({updateRecipes, currentProportions, activeRecipes, setProportions, setActiveRecipes, activePicker, setActivePicker}){
+export default function RecipePlanPicker({aiAction, updateRecipes, currentProportions, activeRecipes, setProportions, setActiveRecipes, activePicker, setActivePicker, aiPicker, setAiPicker, resetAiDataPlan}){
     const [ loading, setLoading ] = useState(true);
     const [ triggerUpdateData, setTriggerUpdateData ] = useState(false);
     const [ nextPage, setNextPage ] = useState(null);
@@ -77,17 +77,21 @@ export default function RecipePlanPicker({updateRecipes, currentProportions, act
     }
 
     const handleActiveRecipes = async () => {
-        let proportions = selectedRecipes.reduce((acc, selectedRecipe) => {
-            console.log(selectedRecipe);
-            if (selectedRecipe['id'] !== undefined && selectedRecipe['porciones'] !== undefined) {
-                acc[(selectedRecipe['id'])] = { value: currentProportions[selectedRecipe['id']]?.value ?? 1, wasUpdated: false };
-            }
-            return acc;
-        }, {});
-        setActiveRecipes(selectedRecipes);
-        setProportions(proportions);
-        setActivePicker(false);
-        setTriggerUpdateData(true);
+        if(aiPicker){
+            aiAction(selectedRecipes);
+        } else{
+            let proportions = selectedRecipes.reduce((acc, selectedRecipe) => {
+                console.log(selectedRecipe);
+                if (selectedRecipe['id'] !== undefined && selectedRecipe['porciones'] !== undefined) {
+                    acc[(selectedRecipe['id'])] = { value: currentProportions[selectedRecipe['id']]?.value ?? 1, wasUpdated: false };
+                }
+                return acc;
+            }, {});
+            setActiveRecipes(selectedRecipes);
+            setProportions(proportions);
+            setActivePicker(false);
+            setTriggerUpdateData(true);
+        }
     }
 
     const handleSelectedRecipes = recipe => {
@@ -124,13 +128,23 @@ export default function RecipePlanPicker({updateRecipes, currentProportions, act
       });
     }
 
+    const closePicker = () => {
+        if(aiPicker){
+            resetAiDataPlan();
+            setAiPicker(false);
+        }
+        setActivePicker(false);
+    }
+
     useEffect(() => {
         getRecipes();
     }, [searchOption]);
 
     useEffect(() => {
-        if(activePicker){
+        if(activePicker && !aiPicker){
             setSelectedRecipes(activeRecipes);
+        } else{
+            setSelectedRecipes([]);
         }
     }, [activePicker]);
 
@@ -142,14 +156,14 @@ export default function RecipePlanPicker({updateRecipes, currentProportions, act
     return(
         <>
             <div className={`${styles.darkenedBack} ${activePicker ? styles.activeDarkenedBack : ""}`}></div>
-            <div onClick={() => setActivePicker(false)} className={`${styles.rightSidebarClose} ${activePicker ? styles.activeClose : ""}`}>X</div>
+            <div onClick={() => closePicker()} className={`${styles.rightSidebarClose} ${activePicker ? styles.activeClose : ""}`}>X</div>
             <div className={`${styles.recipePickerContainer} ${activePicker ? styles.activePicker : ""}`}>
-            <Help title={"Elegir Recetas"} description={"Elige entre tus recetas seleccionadas"}>
+            <Help title={"Elegir Recetas"} description={aiPicker ? "Elige las recetas a usar y crear el plan automaticamente" : "Elige entre tus recetas seleccionadas"}>
                 <div className={styles.filterOptionsContainer}>
                     <div className={styles.filterOptions}>
                         { searchOptions.map(option => <OptionButton key={option.label} option={option} active={searchOption} setData={setSearchOption} icon={option.icon} makeRowOnMobile={false}/>)}
                     </div>
-                    <MainButton action={handleActiveRecipes} disabled={false} type={'button'} icon={"save"} iconSize={"2.1"} fontSize={"1.8"} color={"primary"} borderRadius={'1'} text={"Guardar Cambios."}/>
+                    <MainButton action={handleActiveRecipes} disabled={false} type={'button'} icon={ aiPicker ? "hardware-chip" : "save"} iconSize={"2.1"} fontSize={"1.8"} color={"primary"} borderRadius={'1'} text={aiPicker ? "Generar plan" : "Guardar Cambios."}/>
                 </div>
             </Help>
             <div className={styles.recipePicker}>
