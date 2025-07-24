@@ -26,6 +26,10 @@ from datetime import timedelta, date
 from app.machine_learning.training import entrenar_modelo
 from app.machine_learning.prediction import predecir_puntuacion
 from app.machine_learning.load_model import get_modelo
+from .throttles import LoginThrottle
+from axes.helpers import get_client_ip_address
+from axes.handlers.proxy import AxesProxyHandler
+from axes.utils import reset
 
 #Miscellaneous>>>>>>>>>>>>>>>>>>>
 
@@ -78,13 +82,28 @@ class RegisterView(APIView):
             return Response({'error': 'Ocurrió un problema al registrar el usuario.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class LoginView(APIView):
+    throttle_classes = [LoginThrottle]
+
     def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
 
         user = authenticate(request, username=email, password=password)
         if user is None:
+            AxesProxyHandler().user_login_failed(
+                sender=LoginView,
+                credentials={'username': email},
+                request=request
+            )
             return Response({'error': 'Credenciales inválidas.'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        AxesProxyHandler().user_logged_in(
+            sender=LoginView,
+            request=request,
+            user=user
+        )
+
+        reset(get_client_ip_address(request))
         
         tokens = OutstandingToken.objects.filter(user=user)
         for token in tokens:
