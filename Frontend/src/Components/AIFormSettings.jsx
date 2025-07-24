@@ -118,7 +118,6 @@ export default function AIFormSettings(){
                     });
                 }
             } catch(error){
-                console.log(error);
                 if(error.response?.status == 401){
                     await refreshAccessToken(handleChangeInformation, e);
                 } else{
@@ -214,8 +213,6 @@ export default function AIFormSettings(){
 
     useEffect(() => {
         if(Object.keys(aiFormUpdatePreset).length >= 1){
-                        console.log(aiFormUpdatePreset);
-
             setUpdateID(aiFormUpdatePreset.id);
             setPreconfiguracionData({
                 nombre: aiFormUpdatePreset.nombre,

@@ -32,7 +32,6 @@ export default function ChangeVisibilityForm(){
         if(Object.keys(errors).length === 0){
             try{
                 const response = await backendAPI.patch(`recetas/${changeVisibilityData.id}/cambiar-visibilidad/`, {visibilidad: visibilityData.visibilidad == 'Publica' ? true : false});
-                console.log(response.data);
                 Swal.fire({
                     icon: "success",
                     title: "Visibilidad modificada",
@@ -49,7 +48,6 @@ export default function ChangeVisibilityForm(){
                 if(error.response?.status == 401){
                     await refreshAccessToken(handleChangeInformation, e);
                 } else{
-                    console.log(error);
                     setErrorsHandler(error.response.data);
                 }
             } finally{

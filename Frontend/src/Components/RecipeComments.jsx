@@ -7,6 +7,7 @@ import backendAPI from '../api/axiosConfig';
 import { FadeLoader } from 'react-spinners';
 import Swal from 'sweetalert2';
 import UserComment from './UserComment';
+import { useAuth } from '../context/AuthProvider';
 
 export default function RecipeComments({recipeId, isSuperUser, isStaff, user, recipeCreator}){
     
@@ -16,6 +17,7 @@ export default function RecipeComments({recipeId, isSuperUser, isStaff, user, re
     const [ previousPage, setPreviousPage ] = useState(null);
     const [ count, setCount ] = useState(0);
     const [ currentPage, setCurrentPage ] = useState(1);
+    const { refreshAccessToken } = useAuth();
 
     const getComments = async (previous = null, next = null) => {
         try{
@@ -62,7 +64,9 @@ export default function RecipeComments({recipeId, isSuperUser, isStaff, user, re
             setLoading(true);
             await getComments();
         } catch(error){
-            console.log(error);
+            if(error.response?.status == 401){
+                await refreshAccessToken(deleteComment, nombre, id);
+            }
         }
     }
 

@@ -246,7 +246,6 @@ export default function PlanAlimenticio(){
             if(error.response?.status == 401){
                 await refreshAccessToken(checkDay);
             }
-            console.log(error);
         } finally{
             setLoadingDay(false);
         }
@@ -439,7 +438,51 @@ export default function PlanAlimenticio(){
         } finally{
             setAiPlanLoading(false);
         }
-        
+    }
+
+    const deletePlanAsk = () => {
+        Swal.fire({
+            title: `Borrar plan alimenticio?`,
+            icon: "question",
+            text: `Estas a punto de eliminar tu plan alimenticio, estas seguro de continuar?`,
+            customClass: {
+                title: "swal_title",
+                icon: "swal_icon",
+                htmlContainer: "swal_text",
+                confirmButton: "swal_confirm"
+            },
+            showCancelButton: true,
+            cancelButtonText: "Cancelar",
+            confirmButtonText: "Eliminar",
+            allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+            if (result.isConfirmed) {
+                deletePlan();
+            }
+        });
+    }
+
+    const deletePlan = async () => {
+        try{
+            await backendAPI.delete(`/plan_alimenticio/${planID}/`);
+            setDatePickerForm(true);
+            Swal.fire({
+                icon: "success",
+                title: "Plan eliminado!",
+                text: 'Se elimino tu plan alimenticio.',
+                showConfirmButton: true,
+                customClass: {
+                    title: "swal_title",
+                    icon: "swal_icon",
+                    htmlContainer: "swal_text",
+                    confirmButton: "swal_confirm"
+                }
+            });
+        } catch(error){
+            if(error.response?.status == 401){
+                await refreshAccessToken(deletePlan);
+            }
+        }
     }
 
     useEffect(() => {
@@ -518,6 +561,7 @@ export default function PlanAlimenticio(){
                         </div>
                         { activeRecipes.length > 0 && !loadingDay && <CircleButton action={generarPlanDia} args={[]} text="Descargar PDF de este dia" iconName={"document-attach"} iconSize="3rem"/>}
                         { !loadingDay && <CircleButton action={generatePlanZIP} args={[]} text="Descargar PDF del Plan" iconName={"folder-with-document"} iconSize="3rem"/>}
+                        <CircleButton action={deletePlanAsk} args={[]} text="Borrar Plan Alimenticio" iconName={"close"} iconSize="3rem"/>                    
                     </div>
                     {!loadingDay 
                     ? <><div className={styles.selectedRecipes}>

@@ -49,8 +49,6 @@ export default function RecipeHeader(){
         } catch(error){
             if(error.response?.status == 401){
                 await refreshAccessToken(getReceta);
-            } else{
-                console.log(error);
             }
         } finally{
             setLoading(false);
@@ -62,7 +60,6 @@ export default function RecipeHeader(){
             const response = await backendAPI.get(`favoritos/favorito-usuario/?receta=${recipe_id}`);
             setFavorito(response.data.id);
         } catch(error){
-            console.log(error);
             if(error.response?.status == 404){ // No hay comentario
                 setFavorito(-1);
             } else if(error.response?.status == 401){
@@ -76,7 +73,6 @@ export default function RecipeHeader(){
             const response = await backendAPI.get(`comentarios/mi-comentario/?receta=${recipe_id}`);
             setUserComentario(response.data);
         } catch(error){
-            console.log(error);
             if(error.response?.status == 404){
                 setUserComentario({});
             } else if(error.response?.status == 401){
@@ -141,6 +137,10 @@ export default function RecipeHeader(){
         return "star-outline";
       };
 
+    const back = () => {
+        navigate(-1);
+    }
+
     if (loading) return <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>
     if (Object.keys(receta).length == 0) return <NotFound404 text={"No se encontro la receta."}/>
 
@@ -148,7 +148,7 @@ export default function RecipeHeader(){
         <div className={styles.recipeHeaderContainer}>
             <div className={styles.recipeHeaderDataContainer}>
                 <div className={styles.recipeHeaderData}>
-                    <h3 className={styles.recipeHeaderName}>{receta.nombre}</h3>
+                    <h3 className={styles.recipeHeaderName}><CircleButton top={true} action={back} args={[]} text="Volver" iconName={"arrow-back"} iconSize="2.5rem"/>{receta.nombre}</h3>
                     { receta.categoria_info?.nombre != null 
                     ? <p className={styles.recipeHeaderType}>{receta.categoria_info?.nombre}</p>
                     : isSuperUser && isStaff && <p className={styles.recipeHeaderTypeNoData}>Sin categoria</p> }

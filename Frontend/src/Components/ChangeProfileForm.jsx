@@ -110,7 +110,6 @@ export default function ChangeProfileForm(){
                     }
                 });
             } catch(error){
-                console.log(error);
                 if(error.response?.status == 401){
                     await refreshAccessToken(handleChangeInformation, e);
                 }
@@ -147,7 +146,6 @@ export default function ChangeProfileForm(){
                     newPasswordConfirm: ""
                 });
             } catch(error){
-                console.log(error);
                 if(error.response?.status == 401){
                     await refreshAccessToken(handleChangePassword, e);
                 } else{
@@ -183,7 +181,6 @@ export default function ChangeProfileForm(){
                 setMailData({...mailData, password: ""});
                 await getUserData();
             } catch(error){
-                console.log(error);
                 if(error.response?.status == 401){
                     await refreshAccessToken(handleChangeEmail, e);
                 } else{
@@ -218,7 +215,6 @@ export default function ChangeProfileForm(){
             setImagen([]);
             setErrorsHandler({});
         } catch(error){
-            console.log(error);
             if(error.response?.status == 401){
                 await refreshAccessToken(handleImageSubmit);
             } else{

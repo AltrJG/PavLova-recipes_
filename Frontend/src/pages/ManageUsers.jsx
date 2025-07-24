@@ -67,7 +67,6 @@ export default function ManageUsers(){
             setPreviousPage(response.data.previous);
             setUsers(response.data.results);
         } catch(error){
-            console.log(error);
             if(error.response?.status == 401){
                 await refreshAccessToken(getUsers);
             }

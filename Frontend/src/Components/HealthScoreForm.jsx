@@ -56,7 +56,6 @@ export default function HealthScoreForm(){
                 if(error.response?.status == 401){
                     await refreshAccessToken(handleChangeInformation, e);
                 } else{
-                    console.log(error);
                     setErrorsHandler(error.response.data);
                 }
             } finally{

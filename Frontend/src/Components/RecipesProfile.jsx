@@ -19,7 +19,6 @@ export default function RecipesProfile({user_id}){
 
     const handleFilter = async selection => {
         if(selectedFilter != selection){
-            console.log(selection);
             setSelectedFilter(selection);
             setLoading(true);
             await getRecipes(null, null, selection);
@@ -28,14 +27,12 @@ export default function RecipesProfile({user_id}){
 
     const getRecipes = async (previous = null, next = null, selection) => {
         try{
-            console.log(selection);
             let url = previous 
             ? previous.split('app')[1] 
             : next 
             ? next.split('app')[1] 
             : `/${selection == 'my_recipes' ? "recetas" : "favoritos"}/por-usuario/${user_id}/?page_size=8`;
             const recipeData = await backendAPI(url);
-            console.log(url);
             previous != null && setCurrentPage(currentPage-1);
             next != null && setCurrentPage(currentPage+1);
             setCount(recipeData.data.count);

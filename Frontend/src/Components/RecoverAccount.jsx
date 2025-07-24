@@ -40,7 +40,6 @@ export default function RecoverAccount(){
                     }
                 });
             } catch (error) {
-                console.log(error);
                 setErrorsHandler(error.response.data);
             } finally{
                 setLoading(false);

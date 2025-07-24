@@ -80,7 +80,6 @@ const AuthProvider = ({ children }) => {
             const response = await backendAPI.get('/user/details/');
             dispatch({type: 'auth/addUserData', payload: response.data});
         } catch(error){
-            console.log(error);
             if(error.response?.status == 401){
                 await refreshAccessToken(getUserData);
             }
@@ -99,7 +98,6 @@ const AuthProvider = ({ children }) => {
                 pendingCallback.current = { callback, args: callbackArgs };
             }
         } catch (error) {
-            console.log("Refresh token failed", error);
             dispatch({ type: 'auth/Logout' }); // Logout if refresh fails
         }
     };
@@ -109,7 +107,7 @@ const AuthProvider = ({ children }) => {
             await backendAPI.post('/auth/logout/');
             dispatch({ type: 'auth/Logout' }); 
         } catch (error) {
-            console.log(error);
+            
         }
         dispatch({ type: 'auth/Logout' });
         Swal.fire({

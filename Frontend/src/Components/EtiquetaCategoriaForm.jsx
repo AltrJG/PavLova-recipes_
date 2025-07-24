@@ -95,7 +95,6 @@ export default function EtiquetaCategoriaForm(){
                     categoriaModify ? setUpdatedCategoria(response.data) : setCreatedCategoria(response.data);
                 }
             } catch(error){
-                console.log(error);
                 if(error.response?.status == 401){
                     await refreshAccessToken(handleChangeInformation, e);
                 } else{

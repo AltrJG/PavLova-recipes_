@@ -68,7 +68,6 @@ export default function UserRecipes(){
                 url += `?${params.toString()}`;
             }
             const response = await backendAPI(url);
-            console.log(response);
             previous != null && setCurrentPage(currentPage-1);
             next != null && setCurrentPage(currentPage+1);
             setCount(response.data.count);
@@ -76,7 +75,6 @@ export default function UserRecipes(){
             setPreviousPage(response.data.previous);
             setRecipes(response.data.results);
         } catch(error){
-            console.log(error);
             if(error.response?.status == 401){
                 await refreshAccessToken(getRecipes);
             }
@@ -124,7 +122,6 @@ export default function UserRecipes(){
             });
             await getRecipes();
         } catch(error){
-            console.log(error);
             if(error.response?.status == 401){
                 await refreshAccessToken(deleteReceta, receta);
             }

@@ -27,7 +27,6 @@ export default function VerifyEmail(){
                     }
                 });
             } catch(error){
-                console.log(error);
                 Swal.fire({
                     icon: "error",
                     title: "Algo salio mal",

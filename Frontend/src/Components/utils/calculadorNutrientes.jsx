@@ -11,7 +11,6 @@ export const calcularNutrientes = (ingredientes, porcionInicial, porcionFinal) =
         sodio: 0
     }
     ingredientes.map(ingredient => {
-      console.log(ingredient);
         let metrica = ingredient.unidad == 'cucharadita' ? (5*ingredient.ingrediente.escala_agua) : (ingredient.unidad == 'cucharada' ? (15*ingredient.ingrediente.escala_agua) : (ingredient.unidad == 'taza' ? (250*ingredient.ingrediente.escala_agua) : 1));
         let conversion = ((ingredient.cantidad*metrica)/porcionInicial) * (porcionFinal);
         informacionNutrimental.calorias += (ingredient.ingrediente.calorias * (conversion));

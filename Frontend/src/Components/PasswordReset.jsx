@@ -48,7 +48,6 @@ export default function PasswordReset(){
                 });
                 navigate('/auth/iniciar-sesion');
             } catch (error) {
-                console.log(error);
                 setErrorsHandler(error.response.data);
             } finally{
                 setLoading(false);

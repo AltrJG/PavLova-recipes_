@@ -70,7 +70,6 @@ export default function EtiquetaCategoria(){
             setPreviousPage(response.data.previous);
             setEtiquetasCategorias(response.data.results);
         } catch(error){
-            console.log(error);
             if(error.response?.status == 401){
                 await refreshAccessToken(getEtiquetasCategorias);
             }
@@ -131,7 +130,6 @@ export default function EtiquetaCategoria(){
             setCurrentPage(1);
             await getEtiquetasCategorias();
         } catch(error){
-            console.log(error);
             if(error.response?.status == 401){
                 await refreshAccessToken(deleteCategoriaEtiqueta);
             }

@@ -112,7 +112,6 @@ export default function SearchRecipes(){
                     url += `?${params.toString()}`;
                 }
             }
-            console.log(url);
             const response = await backendAPI(url);
             previous != null && setCurrentPage(currentPage-1);
             next != null && setCurrentPage(currentPage+1);
@@ -186,7 +185,6 @@ export default function SearchRecipes(){
             });
             await getRecipes();
         } catch(error){
-            console.log(error);
             if(error.response?.status == 401){
                 await refreshAccessToken(deleteReceta, receta);
             }

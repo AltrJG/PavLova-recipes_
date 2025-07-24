@@ -119,13 +119,11 @@ export default function CrearReceta() {
         const ingredientes = await backendAPI.get('/ingredientes/all');
         const categorias = await backendAPI.get("/categorias/all");
         const etiquetas = await backendAPI.get("/etiquetas/all");
-        console.log(ingredientes);
         setIngredientOptions(ingredientes.data);
         setCategorias(categorias.data);
         setEtiquetasOptions(etiquetas.data);
       }
       catch(error){
-        console.log(error);
         if(error.response?.status == 401){
             await refreshAccessToken(obtenerInformacion);
         }
@@ -236,7 +234,6 @@ export default function CrearReceta() {
             });
             navigate('/mis_recetas');
         } catch(error){
-            console.log(error);
             if(error.response?.status == 401){
                 await refreshAccessToken(createReceta, e);
             }

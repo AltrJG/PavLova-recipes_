@@ -31,6 +31,9 @@
     font-family: "Oswald", sans-serif;
     font-weight: 600;
     font-size: 3rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
 }
 
 .recipeHeaderType{

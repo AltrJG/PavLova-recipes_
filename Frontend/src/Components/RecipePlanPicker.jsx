@@ -60,7 +60,6 @@ export default function RecipePlanPicker({aiAction, updateRecipes, currentPropor
                 url += `?${params.toString()}`;
             }
             const response = await backendAPI(url);
-            console.log(response);
             previous != null && setCurrentPage(currentPage-1);
             next != null && setCurrentPage(currentPage+1);
             setCount(response.data.count);
@@ -81,7 +80,6 @@ export default function RecipePlanPicker({aiAction, updateRecipes, currentPropor
             aiAction(selectedRecipes);
         } else{
             let proportions = selectedRecipes.reduce((acc, selectedRecipe) => {
-                console.log(selectedRecipe);
                 if (selectedRecipe['id'] !== undefined && selectedRecipe['porciones'] !== undefined) {
                     acc[(selectedRecipe['id'])] = { value: currentProportions[selectedRecipe['id']]?.value ?? 1, wasUpdated: false };
                 }

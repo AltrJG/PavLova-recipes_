@@ -62,13 +62,11 @@ export default function ChangeUserPermissions(){
                     }
                 });
                 if(permissionData.activo == 'Desactivado'){
-                    console.log(userModify.id);
                     setDisabledUser(userModify.id);
                 } else{
                     setUpdatedUser({ ...userModify, role: permissionData.rol });
                 }
             } catch(error){
-                console.log(error);
                 if(error.response?.status == 401){
                     await refreshAccessToken(handleSubmit, e);
                 } else{

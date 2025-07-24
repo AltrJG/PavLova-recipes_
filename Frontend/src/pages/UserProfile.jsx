@@ -36,7 +36,6 @@ export default function UserProfile(){
                 redYoutube: userData.data.social_youtube,
                 redTwitter: userData.data.social_twitter
             });
-            console.log(userData);
         } catch(error){
             if(error.response?.status == 401){
                 await refreshAccessToken(getUserProfile);
@@ -52,7 +51,6 @@ export default function UserProfile(){
         try{
             const favoriteData = await backendAPI(`/favoritos/por-usuario/${user_id}/?page_size=1`);
             const recipeData = await backendAPI(`/recetas/por-usuario/${user_id}/?page_size=1`);
-            console.log(favoriteData);
             setTotalFavoritos(favoriteData.data.count);
             setTotalCreados(recipeData.data.count);
         } catch(error){

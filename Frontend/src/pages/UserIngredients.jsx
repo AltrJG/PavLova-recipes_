@@ -69,7 +69,6 @@ export default function UserIngredients(){
             setPreviousPage(response.data.previous);
             setIngredients(response.data.results);
         } catch(error){
-            console.log(error);
             if(error.response?.status == 401){
                 await refreshAccessToken(getIngredients);
             }
@@ -117,7 +116,9 @@ export default function UserIngredients(){
             });
             await getIngredients();
         } catch(error){
-            console.log(error);
+            if(error.response?.status == 401){
+                await refreshAccessToken(deleteIngrediente, ingredient);
+            }
         }
     }
 

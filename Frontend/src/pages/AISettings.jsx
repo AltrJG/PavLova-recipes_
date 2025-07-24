@@ -148,7 +148,9 @@ export default function AISettings(){
             let newData = presets.filter(preset => preset.id != id);
             setPresets(newData);
         } catch(error){
-            console.log(error);
+            if(error.response?.status == 401){
+                await refreshAccessToken(deletePreset, nombre, id);
+            }
         }
     }
 

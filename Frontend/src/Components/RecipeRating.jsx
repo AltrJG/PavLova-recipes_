@@ -57,7 +57,6 @@ export default function RecipeRating({recipe_id, setUpdateRecipe, userComentario
               }
           });
         } catch(error){
-          console.log(error);
           if(error.response?.status == 401){
             await refreshAccessToken(uploadComment);
           }

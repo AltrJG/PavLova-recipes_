@@ -83,10 +83,7 @@ export default async function generarPlanAlimenticio(recetas, opciones, objetivo
         diaId = dias.find(dia => dia.dia == formattedDate);
         recetasSeleccionadas = await generateDay(recetasNutricionales, opciones, objetivosPersonas, diaId.value, planId);
         // Penalizar recetas escogidas
-        console.log("Before generateDay:", JSON.stringify(recetasAnteriores));
         recetasPenalizadas = penalizarRecetas(recetasNutricionales, recetasSeleccionadas, recetasAnteriores);
-        console.log("After generateDay:", JSON.stringify(recetasAnteriores));
-        console.log(recetasPenalizadas);
         // Reordenar recetas con nuevas puntuaciones
         recetasNutricionales = recetasPenalizadas[0];
         recetasAnteriores = recetasPenalizadas[1];
@@ -101,7 +98,6 @@ export default async function generarPlanAlimenticio(recetas, opciones, objetivo
 function penalizarRecetas(recetas, recetasSeleccionadas, recetasAnteriores){
     // Agregar un dia desde a las recetas que fueron penalizadas
     let recetaIndex;
-    console.log(recetasAnteriores);
     Object.keys(recetasAnteriores).forEach(key => {
         recetasAnteriores[key].penalty = Math.max(0, recetasAnteriores[key].penalty - .1);
         recetaIndex = recetas.findIndex(receta => receta.id == key);
@@ -114,8 +110,6 @@ function penalizarRecetas(recetas, recetasSeleccionadas, recetasAnteriores){
             recetas[recetaIndex].puntuacion = recetasAnteriores[key].puntuacion-(recetasAnteriores[key].puntuacion * recetasAnteriores[key].penalty)
         }
     });
-    console.log(recetasAnteriores);
-
     recetasSeleccionadas.forEach(recetaSeleccionada => {
         // Por cada receta seleccionada, agregamos un penalty
         recetaIndex = recetas.findIndex(receta => receta.id == recetaSeleccionada.id);
@@ -130,8 +124,6 @@ function penalizarRecetas(recetas, recetasSeleccionadas, recetasAnteriores){
             recetas[recetaIndex].puntuacion *= .5;
         }
     });
-    console.log(recetasSeleccionadas, recetasAnteriores);
-
     return [ recetas, recetasAnteriores ];
 }
 
@@ -143,7 +135,6 @@ async function generateDay(recetas, opciones, objetivos, diaId, planId){
         recetasDia.push(recetas[i-1]);
         if(opciones.ajusteObjetivos == 'Si'){
             objetivosActuales = validarObjetivosActualesRecetas(recetasDia, objetivos);
-            console.log(objetivosActuales);
             for (let key of Object.keys(objetivosActuales)) {
                 if (objetivosActuales[key] >= 90 && i < opciones.cantRecetas && recetasDia.length < recetas.length) {
 
@@ -163,14 +154,12 @@ async function generateDay(recetas, opciones, objetivos, diaId, planId){
                     let recetaSeleccionada = recetasSinEscoger.find(r => r.id === recetasPorcentajes[0].id);
                     recetasDia.push(recetaSeleccionada);
                     stopExecution = true;
-                    console.log("Recetas del día 3:", recetasDia);
                     break;
                 }
             }
             if(stopExecution) break;
         }
     }
-    console.log("Recetas del día:", recetasDia.map(recetaDia => recetaDia.id));
     await backendAPI.put(`/plan_alimenticio_dia_receta/${planId}/actualizar-recetas/`, {
         dia_id: diaId,
         recetas: recetasDia.map(recetaDia => recetaDia.id)
