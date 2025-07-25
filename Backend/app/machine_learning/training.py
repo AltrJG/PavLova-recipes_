@@ -7,7 +7,8 @@ import joblib
 import random
 import numpy as np
 from .utils import calcular_nutrientes
-
+from app.storage_backends import ModelPrivateAzureStorage
+import io
 from app.models import Receta, PromedioCalorias
 
 def entrenar_modelo():
@@ -64,9 +65,13 @@ def entrenar_modelo():
 
     modelo.fit(X, y)
 
-    modelo_filename = f'modelo_randomforest.pkl'
+    buffer = io.BytesIO()
+    joblib.dump(modelo, buffer)
+    buffer.seek(0)
 
-    joblib.dump(modelo, modelo_filename)
+    storage = ModelPrivateAzureStorage()
+
+    storage.save('modelo_randomforest.pkl', buffer)
 
     rango_puntuacion = 500
     umbral_tolerancia = 0.10 * rango_puntuacion

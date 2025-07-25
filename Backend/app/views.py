@@ -67,7 +67,7 @@ class RegisterView(APIView):
 
             verification_code = EmailVerificationCode.objects.create(user=user)
 
-            verification_link = f"http://localhost:5173/verify_email/{verification_code.code}/"
+            verification_link = f"https://incomparable-pavlova-9c49ca.netlify.app/verify_email/{verification_code.code}/"
 
             send_mail(
                 subject="Verificación de correo",
@@ -389,7 +389,7 @@ class ResendVerificationEmailView(APIView):
 
             verification_code = EmailVerificationCode.objects.create(user=user)
             
-            verification_link = f"http://localhost:8000/app/verify_email/{verification_code.code}/"
+            verification_link = f"https://incomparable-pavlova-9c49ca.netlify.app/verify_email/{verification_code.code}/"
             
             send_mail(
                 subject="Verificación de correo",
