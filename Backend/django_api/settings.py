@@ -134,6 +134,15 @@ STORAGES = {
             "azure_container": "media",
         },
     },
+    "staticfiles": {
+        "BACKEND": "storages.backends.azure_storage.AzureStorage",
+        "OPTIONS": {
+            "azure_ssl": True,
+            "account_name": os.environ.get("AZURE_ACCOUNT_NAME"),
+            "account_key": os.environ.get("AZURE_ACCOUNT_KEY"),
+            "azure_container": "static",
+        },
+    },
 }
 
 # Password validation
@@ -188,13 +197,6 @@ USE_X_FORWARDED_HOST = True
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-AXES_META_PRECEDENCE_ORDER = [
-    'HTTP_X_FORWARDED_FOR',
-    'REMOTE_ADDR',
-]
-
-AXES_PROXY_ORDER = 'left-most'
-
 # Django REST Framework settings
 
 REST_FRAMEWORK = {
@@ -236,7 +238,7 @@ SIMPLE_JWT = {
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "https://incomparable-pavlova-9c49ca.netlify.app/",
+    "https://incomparable-pavlova-9c49ca.netlify.app",
 ]
 
 # Email settings
