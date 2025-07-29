@@ -9,8 +9,8 @@ import { ReactSVG } from "react-svg";
 import RecipeComments from "./RecipeComments";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import flameIcon from '../assets/Iconos/flame.svg';
-import timeIcon from '../assets/Iconos/timer.svg';
+import flameIcon from '/assets/Iconos/flame.svg';
+import timeIcon from '/assets/Iconos/timer.svg';
 import backendAPI from "../api/axiosConfig";
 import { FadeLoader } from "react-spinners";
 import { useAuth } from "../context/AuthProvider";
@@ -158,7 +158,7 @@ export default function RecipeHeader(){
                             {[...Array(5)].map((_, index) => (
                                 <div key={index}>
                                     <ReactSVG
-                                    src={`/src/assets/Iconos/${getStarIcon(index, receta?.rating_promedio)}.svg`}
+                                    src={`/assets/Iconos/${getStarIcon(index, receta?.rating_promedio)}.svg`}
                                     className="star-icon"
                                     />
                                 </div>
@@ -175,7 +175,7 @@ export default function RecipeHeader(){
                     <div className={styles.timesContainer}>
                         <div className={styles.timePreparation}><ReactSVG src={timeIcon}/> {`${receta.tiempo_preparacion} Minutos`}</div>
                         <div className={styles.timePreparation}><ReactSVG src={flameIcon}/> {`${receta.tiempo_coccion} Minutos`}</div>
-                        {(isSuperUser || isStaff) && <div className={`${styles.recipeHealthScore} ${receta?.verificado ? styles.verified : styles.notVerified}`}><ReactSVG src={`/src/assets/Iconos/fitness.svg`}/> {` ${receta?.puntuacion}`}</div>}
+                        {(isSuperUser || isStaff) && <div className={`${styles.recipeHealthScore} ${receta?.verificado ? styles.verified : styles.notVerified}`}><ReactSVG src={`/assets/Iconos/fitness.svg`}/> {` ${receta?.puntuacion}`}</div>}
                     </div>
                     <p className={styles.recipeHeaderQuote}>{receta.frase}</p>
                     <div className={styles.recipeHeaderActions}>

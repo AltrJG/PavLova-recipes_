@@ -64,11 +64,12 @@ export default async function generarPlanAlimenticio(recetas, opciones, objetivo
 
         // Actualizar los puntajes con los porcentajes obtenidos
         recetaNutricional.puntuacion = Math.round(recetaNutricional.puntuacion*(porcentajeFinal/100));
+        // Se penaliza la receta por su contenido de sodio (depende de los ajustes)
+        recetaNutricional.puntuacion = recetaNutricional.puntuacion*(1-Math.min(1, ((recetaNutricional.sodio)/objetivos.sodio)*(opciones.sodio/100)));
     });
 
     // Ordenar de mayor a menor las recetas por puntuacion
     recetasNutricionales.sort((itemA, itemB) => itemB.puntuacion - itemA.puntuacion);
-    
     // Por cada dia seleccionado, generar el plan
     let date = new Date(), formattedDate, diaId, recetasSeleccionadas, recetasPenalizadas;
     let recetasAnteriores = {};
@@ -83,7 +84,7 @@ export default async function generarPlanAlimenticio(recetas, opciones, objetivo
         diaId = dias.find(dia => dia.dia == formattedDate);
         recetasSeleccionadas = await generateDay(recetasNutricionales, opciones, objetivosPersonas, diaId.value, planId);
         // Penalizar recetas escogidas
-        recetasPenalizadas = penalizarRecetas(recetasNutricionales, recetasSeleccionadas, recetasAnteriores);
+        recetasPenalizadas = penalizarRecetas(recetasNutricionales, recetasSeleccionadas, recetasAnteriores, opciones.modoRepeticion);
         // Reordenar recetas con nuevas puntuaciones
         recetasNutricionales = recetasPenalizadas[0];
         recetasAnteriores = recetasPenalizadas[1];
@@ -95,36 +96,54 @@ export default async function generarPlanAlimenticio(recetas, opciones, objetivo
 }
 
 // Penalizar puntuacion a las recetas que ya fueron escogidas
-function penalizarRecetas(recetas, recetasSeleccionadas, recetasAnteriores){
-    // Agregar un dia desde a las recetas que fueron penalizadas
+function penalizarRecetas(recetas, recetasSeleccionadas, recetasAnteriores, modoPenalizacion){
+    // Utilizar el modo de operacion seleccionado por el usuario
     let recetaIndex;
-    Object.keys(recetasAnteriores).forEach(key => {
-        recetasAnteriores[key].penalty = Math.max(0, recetasAnteriores[key].penalty - .1);
-        recetaIndex = recetas.findIndex(receta => receta.id == key);
-        if(recetasAnteriores[key].penalty <= 0){
-            // Si la receta no fue seleccionada por 5 dias, se elimina su penalty
-            recetas[recetaIndex].puntuacion = recetasAnteriores[key].puntuacion;
-            delete recetasAnteriores[key];
-        } else{
-            // Se reduce el penalty de la receta
-            recetas[recetaIndex].puntuacion = recetasAnteriores[key].puntuacion-(recetasAnteriores[key].puntuacion * recetasAnteriores[key].penalty)
-        }
-    });
-    recetasSeleccionadas.forEach(recetaSeleccionada => {
-        // Por cada receta seleccionada, agregamos un penalty
-        recetaIndex = recetas.findIndex(receta => receta.id == recetaSeleccionada.id);
-        if(recetasAnteriores[recetaSeleccionada.id] != undefined){
-            recetas[recetaIndex].puntuacion = recetasAnteriores[recetaSeleccionada.id].puntuacion*.5;
-            recetasAnteriores[recetaSeleccionada.id].penalty = .5;
-        } else{
-            recetasAnteriores[recetaSeleccionada.id] = {
-                puntuacion: recetas[recetaIndex].puntuacion,
-                penalty: 0.5
-            };
-            recetas[recetaIndex].puntuacion *= .5;
-        }
-    });
-    return [ recetas, recetasAnteriores ];
+    const penalizacionPorModo = {
+        Repetidas: 0.96,   // Nula penalizacion
+        Flexible: 0.92,   // Penalización ligera
+        Rotar: 0.86,       // Penalización moderada
+        Variado: 0.8,     // Penalización alta
+        Diverso: 0.5      // Modo decay
+    };
+    if(modoPenalizacion == "Diverso"){
+        // Agregar un dia desde a las recetas que fueron penalizadas
+        Object.keys(recetasAnteriores).forEach(key => {
+            recetasAnteriores[key].penalty = Math.max(0, recetasAnteriores[key].penalty - .1);
+            recetaIndex = recetas.findIndex(receta => receta.id == key);
+            if(recetasAnteriores[key].penalty <= 0){
+                // Si la receta no fue seleccionada por 5 dias, se elimina su penalty
+                recetas[recetaIndex].puntuacion = recetasAnteriores[key].puntuacion;
+                delete recetasAnteriores[key];
+            } else{
+                // Se reduce el penalty de la receta
+                recetas[recetaIndex].puntuacion = recetasAnteriores[key].puntuacion-(recetasAnteriores[key].puntuacion * recetasAnteriores[key].penalty)
+            }
+        });
+        recetasSeleccionadas.forEach(recetaSeleccionada => {
+            // Por cada receta seleccionada, agregamos un penalty
+            recetaIndex = recetas.findIndex(receta => receta.id == recetaSeleccionada.id);
+            if(recetasAnteriores[recetaSeleccionada.id] != undefined){
+                recetas[recetaIndex].puntuacion = recetasAnteriores[recetaSeleccionada.id].puntuacion*.5;
+                recetasAnteriores[recetaSeleccionada.id].penalty = .5;
+            } else{
+                recetasAnteriores[recetaSeleccionada.id] = {
+                    puntuacion: recetas[recetaIndex].puntuacion,
+                    penalty: 0.5
+                };
+                recetas[recetaIndex].puntuacion *= .5;
+            }
+        });
+        return [ recetas, recetasAnteriores ];
+    } else{
+        let penalizacion = penalizacionPorModo[modoPenalizacion];
+        recetasSeleccionadas.forEach(recetaSeleccionada => {
+            // Por cada receta seleccionada, agregamos un penalty
+            recetaIndex = recetas.findIndex(receta => receta.id == recetaSeleccionada.id);
+            recetas[recetaIndex].puntuacion *= penalizacion;
+        });
+        return [ recetas, recetasAnteriores ];
+    }
 }
 
 // Obtener las recetas para un dia

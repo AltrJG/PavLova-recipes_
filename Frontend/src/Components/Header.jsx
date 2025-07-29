@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthProvider";
 import libreriaLogo from "../assets/logo.png"
 import { ReactSVG } from "react-svg";
-import logOutIcon from '../assets/Iconos/log-out-outline.svg'
+import logOutIcon from '/assets/Iconos/log-out-outline.svg'
 
 export default function Header({toggleMenu, isMenuOpen}){
     const { user, logout, isAuthenticated } = useAuth();

@@ -61,11 +61,11 @@ export default function PasswordReset(){
             <form onSubmit={handleSumbit} className={styles.form_user_information}>
                 <RightSidebarErrors errors={errorsHandler}/>
                 <div className={styles.form_input_group}>
-                    <label className={styles.form_input_group_icon}><ReactSVG src={`/src/assets/Iconos/lock-closed.svg`}/></label>
+                    <label className={styles.form_input_group_icon}><ReactSVG src={`/assets/Iconos/lock-closed.svg`}/></label>
                     <input name='newPassword' id='newPassword' onChange={e => setRegisterData({...registerData, [e.target.name]: e.target.value})}  type='password' required className={styles.form_input_group_input} placeholder='Contraseña' />
                 </div>
                 <div className={styles.form_input_group}>
-                    <label className={styles.form_input_group_icon}><ReactSVG src={`/src/assets/Iconos/lock-closed.svg`}/></label>
+                    <label className={styles.form_input_group_icon}><ReactSVG src={`/assets/Iconos/lock-closed.svg`}/></label>
                     <input name='newPasswordConfirm' id='newPasswordConfirm' onChange={e => setRegisterData({...registerData, [e.target.name]: e.target.value})}  type='password' required className={styles.form_input_group_input} placeholder='Repite la contraseña' />
                 </div>
                 <div className={`align_center ${styles.formButton}`}>

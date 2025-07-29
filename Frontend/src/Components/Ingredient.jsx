@@ -3,8 +3,8 @@ import tempImage from '../assets/manzana_test.png';
 import { useState } from 'react';
 import CardButton from './CardButton';
 import { ReactSVG } from 'react-svg';
-import eye from '../assets/Iconos/eye.svg'
-import nutrition from '../assets/Iconos/nutrition.svg'
+import eye from '/assets/Iconos/eye.svg'
+import nutrition from '/assets/Iconos/nutrition.svg'
 import NutritionalTable from './NutritionalTable';
 
 export default function Ingredient({askDelete, user_id, isStaff, isSuperUser, actionModify, ingredient}){

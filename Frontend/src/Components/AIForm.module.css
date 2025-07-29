@@ -57,6 +57,10 @@
     margin: 0 2rem;
 }
 
+.pickerManual{
+    margin: 0;
+}
+
 @media(max-width: 31.25em){
     .preconfiguracionesContainer{
         grid-template-columns: 1fr;

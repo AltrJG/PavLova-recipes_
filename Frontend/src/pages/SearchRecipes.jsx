@@ -10,7 +10,7 @@ import OptionButton from '../Components/OptionButton';
 import Pagination from '../Components/Pagination';
 import { useRightSidebar } from '../context/RightSidebarProvider';
 import backendAPI from '../api/axiosConfig';
-import closeSVG from '../assets/Iconos/close.svg'
+import closeSVG from '/assets/Iconos/close.svg'
 import { ReactSVG } from 'react-svg';
 import FondoPavlova from '../Components/FondoPavlova';
 import { useUpdateData } from '../context/UpdateDataProvider';
@@ -81,7 +81,7 @@ export default function SearchRecipes(){
         obtenerInformacion(); 
     }, []);
 
-    const getRecipes = async (previous = null, next = null, noFilters = false) => {
+    const getRecipes = async (previous = null, next = null, noFilters = false, name = null) => {
         setLoading(true);
         try{
             let url = previous 
@@ -99,7 +99,8 @@ export default function SearchRecipes(){
                     } else{
                         recipeFilters[filter] != '' && (params.append(`${filter}`, recipeFilters[filter]));
                     }
-                });        
+                });
+                if(name != null) params.append('nombre', name);
                 activeCategoria != "" && params.append('categoria', activeCategoria);
                 advanceFilters.tiempo_preparacion != 360 && params.append('tiempo_preparacion', advanceFilters.tiempo_preparacion);
                 advanceFilters.tiempo_coccion != 360 && params.append('tiempo_coccion', advanceFilters.tiempo_coccion);
@@ -137,7 +138,7 @@ export default function SearchRecipes(){
     const deleteFilters = async () => {
         setRecipeFilters({
             nombre: "",
-            correo: "",
+            nombre_usuario: "",
             tipoUsuario: "Todos"
         });
         setActiveCategoria('');
@@ -223,7 +224,24 @@ export default function SearchRecipes(){
         } else{
             setRemoveFilters(false);
         }
-    }, [recipeFilters, activeCategoria, advanceFilters])
+    }, [recipeFilters, activeCategoria, advanceFilters]);
+
+    const updateOnSite = async () => {
+        setRecipeFilters({
+            nombre: name,
+            nombre_usuario: "",
+            tipoUsuario: "Todos"
+        });
+        setActiveCategoria('');
+        resetRecipeFilters();
+        await getRecipes(null, null, false, name);
+    }
+
+    useEffect(() => {
+        if(name != null){
+            updateOnSite();
+        }
+    }, [name]);
     
     return(
         <>

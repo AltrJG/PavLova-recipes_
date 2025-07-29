@@ -1,7 +1,7 @@
 import Select, { components } from 'react-select';
 import styles from './SelectorIngredientes.module.css';
 import { useEffect, useState } from 'react';
-import icon from '../assets/Iconos/trash.svg'
+import icon from '/assets/Iconos/trash.svg'
 import { ReactSVG } from 'react-svg';
 import { useRightSidebar } from '../context/RightSidebarProvider';
 

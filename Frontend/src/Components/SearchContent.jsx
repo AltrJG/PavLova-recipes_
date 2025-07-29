@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import styles from './SearchContent.module.css';
 import OptionButton from "./OptionButton";
 import { useNavigate } from "react-router-dom";
-import arrowDown from '../assets/Iconos/caret-down-outline.svg';
+import arrowDown from '/assets/Iconos/caret-down-outline.svg';
 import { ReactSVG } from "react-svg";
 
 export default function SearchContent(){
@@ -37,7 +37,7 @@ export default function SearchContent(){
                 ))}
             </div>
             <div onClick={() => setFilterPickerActive(!filterPickerActive)} className={`${styles.mobileFilterPicker} ${filterPickerActive ? styles.pickerActiveButton : ""}`}><ReactSVG src={arrowDown}/></div>
-            <button aria-label="Iniciar búsqueda" type="submit" className={styles.main_content_search_bar_button}><ReactSVG src={`/src/assets/Iconos/search-outline.svg`}/></button>
+            <button aria-label="Iniciar búsqueda" type="submit" className={styles.main_content_search_bar_button}><ReactSVG src={`/assets/Iconos/search-outline.svg`}/></button>
         </form>
     )
 }

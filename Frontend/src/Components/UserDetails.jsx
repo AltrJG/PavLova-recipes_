@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthProvider";
 import CircleButton from "./CircleButton";
 import { ReactSVG } from "react-svg";
-import book from '../assets/Iconos/book.svg';
-import heart from '../assets/Iconos/heart.svg';
+import book from '/assets/Iconos/book.svg';
+import heart from '/assets/Iconos/heart.svg';
 
 export default function UserDetails({ usuario = null, totalCreados = 0, totalFavoritos = 0 }){
 

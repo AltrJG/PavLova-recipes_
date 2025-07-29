@@ -4,8 +4,8 @@ import Help from '../Components/Help';
 import ShowImage from '../components/ShowImage';
 import styles from './PlanAlimenticio.module.css';
 import Recipe from '../Components/Recipe';
-import PlusIcon from '../assets/Iconos/add-circle-outline.svg';
-import CalendarIcon from '../assets/Iconos/calendar-outline.svg';
+import PlusIcon from '/assets/Iconos/add-circle-outline.svg';
+import CalendarIcon from '/assets/Iconos/calendar-outline.svg';
 import { ReactSVG } from 'react-svg';
 import NutritionalTable from '../Components/NutritionalTable';
 import PieChartComponent from '../Components/PieChart';
@@ -15,8 +15,8 @@ import { useRightSidebar } from '../context/RightSidebarProvider';
 import { useUpdateData } from '../context/UpdateDataProvider';
 import RecipePlanPicker from '../Components/RecipePlanPicker';
 import CircleButton from '../Components/CircleButton';
-import flameIcon from '../assets/Iconos/flame.svg';
-import timeIcon from '../assets/Iconos/timer.svg';
+import flameIcon from '/assets/Iconos/flame.svg';
+import timeIcon from '/assets/Iconos/timer.svg';
 import { useBackground } from '../context/BackgroundProvider';
 import { generarPlanDiaPDF, generarPlanResumenPDF } from '../Components/utils/PDFDataGenerator';
 import { calcularNutrienteAporteCalorias, calcularNutrientes, calculateNutritionalValuesObjectives, combineIngredients } from '../Components/utils/calculadorNutrientes';
@@ -235,6 +235,9 @@ export default function PlanAlimenticio(){
         setUpdateProportionsData(true);
         setLoadingDay(true);
         try{
+            await new Promise((resolve) => {
+                timerRef.current = setTimeout(resolve, 100);
+            });
             const response = await backendAPI.get(`/plan_alimenticio_dia/${day_id}/`);
             setActiveDay(day_id);
             setDatePickerForm(false);
@@ -578,7 +581,7 @@ export default function PlanAlimenticio(){
                             className={`${activeRecipes.length > 0 ? "" : styles.hiddenChart} ${styles.objectiveChartSingle}`}
                         >
                             <h4>{key.toUpperCase().replace('_', ' ')}</h4>
-                            <p className={nutritionalAlerts[key]?.estado == 'Alerta' ? styles.alerta : (nutritionalAlerts[key]?.estado == 'Aceptable' ? styles.aceptable : styles.peligro)}><ReactSVG src={`/src/assets/Iconos/${nutritionalAlerts[key]?.estado == 'Alerta' ? 'alert-circle' : (nutritionalAlerts[key]?.estado == 'Aceptable' ? 'checkmark-circle' : 'close-circle') }.svg`}/><span className={styles.visualAlert}>{nutritionalAlerts[key]?.mensaje}</span>{nutritionalAlerts[key]?.estado}</p>
+                            <p className={nutritionalAlerts[key]?.estado == 'Alerta' ? styles.alerta : (nutritionalAlerts[key]?.estado == 'Aceptable' ? styles.aceptable : styles.peligro)}><ReactSVG src={`/assets/Iconos/${nutritionalAlerts[key]?.estado == 'Alerta' ? 'alert-circle' : (nutritionalAlerts[key]?.estado == 'Aceptable' ? 'checkmark-circle' : 'close-circle') }.svg`}/><span className={styles.visualAlert}>{nutritionalAlerts[key]?.mensaje}</span>{nutritionalAlerts[key]?.estado}</p>
                             <RadialChartComponent
                             data={[
                                 {

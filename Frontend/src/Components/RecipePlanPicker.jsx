@@ -135,6 +135,7 @@ export default function RecipePlanPicker({aiAction, updateRecipes, currentPropor
     }
 
     useEffect(() => {
+        setCurrentPage(1);
         getRecipes();
     }, [searchOption]);
 

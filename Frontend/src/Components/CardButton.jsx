@@ -61,7 +61,7 @@ const ToggleButton = styled.button`
 export default function CardButton({ text, hoverWidth, top, left, icon, showRight = false, onClick }) {
   return (
     <ToggleButton onClick={onClick} $showRight={showRight} $hoverWidth={hoverWidth} $top={top} $left={left}>
-      <ReactSVG src={`/src/assets/Iconos/${icon}.svg`}/>
+      <ReactSVG src={`/assets/Iconos/${icon}.svg`}/>
       <span>{text}</span>
     </ToggleButton>
   );

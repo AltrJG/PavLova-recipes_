@@ -48,7 +48,7 @@ export default function MainButton({ action, disabled, fontSize, color, icon, ic
             $iconSize={iconSize}
             $borderRadius={borderRadius}
         >
-            <ReactSVG src={`/src/assets/Iconos/${icon}.svg`}/>{text}
+            <ReactSVG src={`/assets/Iconos/${icon}.svg`}/>{text}
         </Button>
     );
 }

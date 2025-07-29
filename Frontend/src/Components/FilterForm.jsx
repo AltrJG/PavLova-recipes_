@@ -1,5 +1,5 @@
 import styles from './FilterForm.module.css';
-import search from '../assets/Iconos/search.svg';
+import search from '/assets/Iconos/search.svg';
 import { ReactSVG } from 'react-svg';
 
 export default function FilterForm({setCurrentPage, filterOptions, setData, data, action}){

@@ -48,15 +48,17 @@ export default function AIForm(){
         { type: "slider", step: "1", name: "grasas_insaturadas", label: "Grasas Insaturadas (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
         { type: "slider", step: "1", name: "grasas_trans", label: "Grasas Trans (%)", defaultValue: 100, max: 200, min: 0, showInput: false, additionalText: '%'},
         { type: "slider", step: "1", name: "sodio", label: "Sodio (%)", defaultValue: 15, max: 100, min: 0, showInput: false, additionalText: '%'},
-        { type: "slider", step: "1", name: "cantRecetas", label: "Cantidad de recetas por dia:", defaultValue: 1, max: 6, min: 1, showInput: false, additionalText: ''},
+        { type: "slider", step: "1", name: "cantRecetas", label: "Cantidad de recetas por dia:", defaultValue: 2, max: 8, min: 2, showInput: false, additionalText: ''},
         { type: "slider", step: ".5", name: "porcionesRecetas", label: "Porciones por receta:", defaultValue: 1, max: 20, min: .5, showInput: false, additionalText: ''},
-        { type: "select", name: "ajusteObjetivos", label: "Ajustar automaticamente a los objetivos nutricionales?:", defaultOption: "Si", options: ["Si", "No"]}
+        { type: "select", name: "ajusteObjetivos", label: "Ajustar automaticamente a los objetivos nutricionales?:", defaultOption: "Si", options: ["Si", "No"]},
+        { type: "select", name: "modoRepeticion", label: "¿Qué tanta variedad deseas en las recetas?", defaultOption: "Flexible",options: ["Repetidas", "Flexible", "Rotar", "Variado", "Diverso"]}
     ];
 
     const RecipesPerDayFormOptions = [
         { type: "slider", step: "1", name: "cantRecetas", label: "Cantidad de recetas por dia:", defaultValue: 2, max: 8, min: 2, showInput: false, additionalText: ''},
         { type: "slider", step: ".5", name: "porcionesRecetas", label: "Porciones por receta:", defaultValue: 1, max: 20, min: .5, showInput: false, additionalText: ''},
-        { type: "select", name: "ajusteObjetivos", label: "Ajustar automaticamente a los objetivos nutricionales?:", defaultOption: "Si", options: ["Si", "No"]}
+        { type: "select", name: "ajusteObjetivos", label: "Ajustar automaticamente a los objetivos nutricionales?:", defaultOption: "Si", options: ["Si", "No"]},
+        { type: "select", name: "modoRepeticion", label: "¿Qué tanta variedad deseas en las recetas?", defaultOption: "Flexible",options: ["Repetidas", "Flexible", "Rotar", "Variado", "Diverso"]}
     ]
 
     const options = [
@@ -71,14 +73,16 @@ export default function AIForm(){
         grasas_insaturadas: 100,
         grasas_trans: 100,
         sodio: 15,
-        cantRecetas: 1,
+        cantRecetas: 2,
         porcionesRecetas: 1,
-        ajusteObjetivos: "Si"
+        ajusteObjetivos: "Si",
+        modoRepeticion: 'Repetidas'
     });
     const [ recipesPerDayData, setRecipesPerDayData ] = useState({
-        cantRecetas: 1,
+        cantRecetas: 2,
         porcionesRecetas: 1,
-        ajusteObjetivos: "Si"
+        ajusteObjetivos: "Si",
+        modoRepeticion: 'Repetidas'
     });
 
     const handleChangeInformation = () => {
@@ -92,13 +96,15 @@ export default function AIForm(){
             cantRecetas: -1,
             porcionesRecetas: -1,
             ajusteObjetivos: "Si",
-            fechasSeleccionadas: []
+            fechasSeleccionadas: [],
+            modoRepeticion: "Repetidas"
         };
         if(activeOption == 'preconfiguracion'){
             preferenciasUsuarios.cantRecetas = recipesPerDayData.cantRecetas;
             preferenciasUsuarios.porcionesRecetas = recipesPerDayData.porcionesRecetas;
             preferenciasUsuarios.ajusteObjetivos = recipesPerDayData.ajusteObjetivos;
             preferenciasUsuarios.fechasSeleccionadas = selectedDates;
+            preferenciasUsuarios.modoRepeticion = recipesPerDayData.modoRepeticion;
             let presetEscogido = presets.find(preset => preset.id == activeSetting);
             preferenciasUsuarios.proteinas = presetEscogido.objetivo_proteina;
             preferenciasUsuarios.carbohidratos = presetEscogido.objetivo_carbohidrato;
@@ -110,6 +116,7 @@ export default function AIForm(){
             preferenciasUsuarios.cantRecetas = manualData.cantRecetas;
             preferenciasUsuarios.porcionesRecetas = manualData.porcionesRecetas;
             preferenciasUsuarios.ajusteObjetivos = manualData.ajusteObjetivos;
+            preferenciasUsuarios.modoRepeticion = manualData.modoRepeticion;
             preferenciasUsuarios.fechasSeleccionadas = selectedDates;
             preferenciasUsuarios.proteinas = manualData.proteinas;
             preferenciasUsuarios.carbohidratos = manualData.carbohidratos;
@@ -142,6 +149,14 @@ export default function AIForm(){
     useEffect(() => {
         getPresets();
     }, [])
+
+    const explicacionPorModo = {
+        Repetidas: "No me molesta comer las mismas recetas seguido.",
+        Flexible: "Prefiero algo de variedad, pero no me importa repetir ocasionalmente.",
+        Rotar: "Prefiero cambiar de recetas cada día si es posible.",
+        Variado: "Quiero la mayor variedad posible en mis comidas.",
+        Diverso: "Busco comer recetas preferentemente distintos por cada dia."
+    };
 
     return(
         <div className={styles.changeProfileForm}>
@@ -179,6 +194,7 @@ export default function AIForm(){
                     />
                 </div>
                 <RightSidebarForms twoOnOne={false} formOptions={ManageIngredientsFormOptions} setData={setManualData} data={manualData}>
+                    <p className={`${styles.pickerManual} ${styles.pickerExplanation}`}>{explicacionPorModo[manualData.modoRepeticion]}</p>
                     <MainButton action={handleChangeInformation} disabled={loading} type="button" icon="restaurant" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={"Seleccionar Recetas"}/>
                 </RightSidebarForms> 
                 </>
@@ -201,6 +217,7 @@ export default function AIForm(){
                         />
                     </div>
                     <RightSidebarForms twoOnOne={false} formOptions={RecipesPerDayFormOptions} setData={setRecipesPerDayData} data={recipesPerDayData}/>
+                    <p className={`${styles.pickerExplanation}`}>{explicacionPorModo[recipesPerDayData.modoRepeticion]}</p>
                     <MainButton action={handleChangeInformation} disabled={activeSetting == -1} type="submit" icon="restaurant" iconSize="3" fontSize="2.5" color="secondary" borderRadius="1.5" text={"Seleccionar Recetas"}/>
             </div>)}
         </div>

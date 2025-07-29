@@ -1,7 +1,7 @@
 import React from 'react';
 import { ReactSVG } from 'react-svg';
 import styles from './UserComment.module.css'; // Adjust the path based on your structure
-import icon from '../assets/Iconos/trash.svg'
+import icon from '/assets/Iconos/trash.svg'
 
 const UserComment = ({
   comentario,
@@ -48,7 +48,7 @@ const UserComment = ({
                 {[...Array(5)].map((_, index) => (
                     <div key={index} className={styles.recipeCommentStar}>
                     <ReactSVG
-                        src={`/src/assets/Iconos/${getStarIcon(index, comentario.puntuacion)}.svg`}
+                        src={`/assets/Iconos/${getStarIcon(index, comentario.puntuacion)}.svg`}
                         className="star-icon"
                     />
                     </div>

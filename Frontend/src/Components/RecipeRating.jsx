@@ -186,7 +186,7 @@ export default function RecipeRating({recipe_id, setUpdateRecipe, userComentario
                     }}
                   >
                     <ReactSVG
-                      src={`/src/assets/Iconos/${getStarIcon(index)}.svg`}
+                      src={`/assets/Iconos/${getStarIcon(index)}.svg`}
                       className="star-icon"
                     />
                   </div>

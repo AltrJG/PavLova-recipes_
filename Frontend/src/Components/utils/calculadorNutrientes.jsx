@@ -79,7 +79,7 @@ export const combineIngredients = (recetas, porciones) => {
   let porcionUtilizar;
   recetas.forEach(receta => {
     // Retorna la porcion a utilizar
-    porcionUtilizar = porciones[receta['id']].value;
+    porcionUtilizar = porciones[String(receta['id'])]?.value;
     receta.ingredientes.forEach(ingrediente => {
       if(!resultado[ingrediente['unidad']]){
         // Crear la separacion de la unidad como arreglo vacio y que este el ingrediente forme parte de el

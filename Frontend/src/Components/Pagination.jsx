@@ -1,7 +1,7 @@
 import { ReactSVG } from 'react-svg';
 import styles from './Pagination.module.css';
-import arrowBack from '../assets/Iconos/arrow-back.svg';
-import arrowForward from '../assets/Iconos/arrow-forward.svg';
+import arrowBack from '/assets/Iconos/arrow-back.svg';
+import arrowForward from '/assets/Iconos/arrow-forward.svg';
 
 export default function Pagination({ next = null, previous = null, count, currentPage, text, resultsPerPage = 12, action }){
 

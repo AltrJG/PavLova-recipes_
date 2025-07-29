@@ -21,11 +21,14 @@ export default function RecipesProfile({user_id}){
         if(selectedFilter != selection){
             setSelectedFilter(selection);
             setLoading(true);
+            setCount(0);
+            setCurrentPage(1);
             await getRecipes(null, null, selection);
         }
     }
 
     const getRecipes = async (previous = null, next = null, selection) => {
+        setLoading(true);
         try{
             let url = previous 
             ? previous.split('app')[1] 

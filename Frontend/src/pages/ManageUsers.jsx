@@ -95,6 +95,17 @@ export default function ManageUsers(){
         }
     }, [updatedUser, disabledUser]);
 
+    const updateOnSite = async () => {
+        setUserFilters({...userFilters, nombre: name});
+        await getUsers(null, null, name);
+    }
+
+    useEffect(() => {
+        if(name != null){
+            updateOnSite();
+        }
+    }, [name]);
+
     return(
         <>
             <Help title={"Buscar Personas"} description={"Busca perfiles de otras personas"}/>

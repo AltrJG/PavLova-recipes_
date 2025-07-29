@@ -53,7 +53,7 @@ export default function RecoverAccount(){
             <form onSubmit={handleSumbit} className={styles.form_user_information}>
                 <RightSidebarErrors errors={errorsHandler}/>
                 <div className={styles.form_input_group}>
-                    <label className={styles.form_input_group_icon}><ReactSVG src={`/src/assets/Iconos/mail.svg`}/></label>
+                    <label className={styles.form_input_group_icon}><ReactSVG src={`/assets/Iconos/mail.svg`}/></label>
                     <input name='correo' id='correo' onChange={e => setRegisterData({...registerData, [e.target.name]: e.target.value})} type='email' required className={styles.form_input_group_input} placeholder='Correo Electronico' />
                 </div>
                 <div className={`align_center ${styles.formButton}`}>

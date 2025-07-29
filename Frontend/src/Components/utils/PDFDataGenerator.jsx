@@ -14,22 +14,35 @@ export async function generarRecetaPDF(recetaData, porciones, insertarPlan = fal
   const { height } = page.getSize();
   const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-  async function convertWebPToPngBytes(webpUrl) {
-    const res = await fetch(webpUrl);
-    const blob = await res.blob();
-    const bitmap = await createImageBitmap(blob);
+async function convertWebPToPngBytes(webpUrl) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous"; // This enables pixel access with CORS
 
-    const canvas = document.createElement("canvas");
-    canvas.width = bitmap.width;
-    canvas.height = bitmap.height;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(bitmap, 0, 0);
+    img.onload = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
 
-    const dataUrl = canvas.toDataURL("image/png");
-    const base64 = dataUrl.split(",")[1];
-    const pngBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-    return pngBytes;
-  }
+        const dataUrl = canvas.toDataURL("image/png");
+        const base64 = dataUrl.split(",")[1];
+        const pngBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+        resolve(pngBytes);
+      } catch (err) {
+        reject(new Error("Canvas conversion failed: " + err.message));
+      }
+    };
+
+    img.onerror = (e) => {
+      reject(new Error("Failed to load image (possible CORS issue)."));
+    };
+
+    img.src = webpUrl;
+  });
+}
 
   const pngBytes = await convertWebPToPngBytes(recetaData.foto_receta);
   const embeddedImage = await pdfDoc.embedPng(pngBytes);

@@ -56,11 +56,11 @@ export default function Login(){
             <form className={styles.form_user_information} onSubmit={handleSubmit}>
                 <RightSidebarErrors centered={true} errors={errorsHandler}/>
                 <div className={styles.form_input_group}>
-                    <label className={styles.form_input_group_icon}><ReactSVG src={`/src/assets/Iconos/mail.svg`}/></label>
+                    <label className={styles.form_input_group_icon}><ReactSVG src={`/assets/Iconos/mail.svg`}/></label>
                     <input name='correo' id='correo' onChange={e => setLoginData({...loginData, [e.target.name]: e.target.value})} type='email' required className={styles.form_input_group_input} placeholder='Correo Electronico' />
                 </div>
                 <div className={styles.form_input_group}>
-                    <label className={styles.form_input_group_icon}><ReactSVG src={`/src/assets/Iconos/lock-closed.svg`}/></label>
+                    <label className={styles.form_input_group_icon}><ReactSVG src={`/assets/Iconos/lock-closed.svg`}/></label>
                     <input name='password' id='password' onChange={e => setLoginData({...loginData, [e.target.name]: e.target.value})} type='password' required className={styles.form_input_group_input} placeholder='Contraseña' />
                 </div>
                 <div className={`align_center ${styles.formButton}`}>
