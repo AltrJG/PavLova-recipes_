@@ -20,6 +20,7 @@ djangorestframework_simplejwt==5.4.0
 idna==3.10
 isodate==0.7.2
 joblib==1.5.1
+mysqlclient==2.2.7
 numpy==2.3.1
 packaging==23.2
 pandas==2.3.1

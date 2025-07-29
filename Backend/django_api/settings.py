@@ -35,8 +35,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    'localhost',
-    # Aca se agrega el dominio del servidor de produccion y se quita el localhost
+    'pavlova-backend-api.azurewebsites.net',
 ]
 
 
@@ -115,11 +114,6 @@ DATABASES = {
         'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
         'HOST': os.environ.get('MYSQL_HOST'),
         'PORT': os.environ.get('MYSQL_PORT', '3306'),
-        'OPTIONS': {
-            'ssl': {
-                'ca': os.path.join(BASE_DIR, 'certs', 'DigiCertGlobalRootG2.crt.pem'),
-            }
-        },
     }
 }
 
@@ -130,14 +124,21 @@ STORAGES = {
         "BACKEND": "storages.backends.azure_storage.AzureStorage",
         "OPTIONS": {
             "azure_ssl": True,
+            "account_name": os.environ.get("AZURE_ACCOUNT_NAME"),
+            "account_key": os.environ.get("AZURE_ACCOUNT_KEY"),
+            "azure_container": "media",
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.azure_storage.AzureStorage",
+        "OPTIONS": {
+            "azure_ssl": True,
+            "account_name": os.environ.get("AZURE_ACCOUNT_NAME"),
+            "account_key": os.environ.get("AZURE_ACCOUNT_KEY"),
+            "azure_container": "static",
         },
     },
 }
-
-# Azure Storage settings
-AZURE_ACCOUNT_NAME = os.environ.get("AZURE_ACCOUNT_NAME")
-AZURE_ACCOUNT_KEY = os.environ.get("AZURE_ACCOUNT_KEY")
-AZURE_CONTAINER = os.environ.get("AZURE_CONTAINER")
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -191,13 +192,6 @@ USE_X_FORWARDED_HOST = True
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-AXES_META_PRECEDENCE_ORDER = [
-    'HTTP_X_FORWARDED_FOR',
-    'REMOTE_ADDR',
-]
-
-AXES_PROXY_ORDER = 'left-most'
-
 # Django REST Framework settings
 
 REST_FRAMEWORK = {
@@ -239,8 +233,7 @@ SIMPLE_JWT = {
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    # Aca se agrega el dominio del servidor de produccion del frontend
+    "https://incomparable-pavlova-9c49ca.netlify.app",
 ]
 
 # Email settings
@@ -250,7 +243,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'pavlova.recipes.noreply@gmail.com'
-EMAIL_HOST_PASSWORD = 'jtev paic rfwq dsdk'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 # Axes settings
 
