@@ -14,6 +14,7 @@ import { FadeLoader } from 'react-spinners';
 import FondoPavlova from '../Components/FondoPavlova';
 import { useBackground } from '../context/BackgroundProvider';
 import { useRightSidebar } from '../context/RightSidebarProvider';
+import { useFilters } from '../context/FiltersProvider';
 
 export default function UserRecipes(){
 
@@ -24,18 +25,11 @@ export default function UserRecipes(){
     const [ previousPage, setPreviousPage ] = useState(null);
     const [ count, setCount ] = useState(0);
     const [ currentPage, setCurrentPage ] = useState(1);
-    const { refreshAccessToken, isSuperUser, isStaff, user } = useAuth();
     const [ recipes, setRecipes ] = useState([]);
-
-    const [ searchOption, setSearchOption ] = useState('mis-recetas');
+    const { refreshAccessToken, isSuperUser, isStaff, user } = useAuth();
+    const { userRecipeFilters: recipeFilters, setUserRecipeFilters: setRecipeFilters, searchOption, setSearchOption } = useFilters();
 
     const navigate = useNavigate();
-
-    const [ recipeFilters, setRecipeFilters ] = useState({
-        nombre: "",
-        nombre_usuario: "",
-        rating: ''
-    });
       
     const filterOptions = [
         { type: "text", name: "nombre", placeholder: "Filtrar por nombres..."},

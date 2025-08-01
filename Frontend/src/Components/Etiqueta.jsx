@@ -11,7 +11,7 @@ export default function Etiqueta({ preguntarEliminado, actualizarEtiqueta, etiqu
                 hoverWidth="8.5rem"
                 top={1}
                 left={2}
-                icon="Create"
+                icon="create"
                 onClick={() => actualizarEtiqueta(etiqueta)}
             />  
             <CardButton
@@ -19,7 +19,7 @@ export default function Etiqueta({ preguntarEliminado, actualizarEtiqueta, etiqu
                 hoverWidth="9rem"
                 top={6}
                 left={2}
-                icon="Trash"
+                icon="trash"
                 onClick={() => preguntarEliminado(etiqueta, 'Etiqueta')}
             />  
         </div>

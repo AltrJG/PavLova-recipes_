@@ -25,6 +25,7 @@ import { NutritionalDataRecipeProvider } from './context/NutritionalDataRecipePr
 import PlanAlimenticio from './pages/PlanAlimenticio'
 import AISettings from './pages/AISettings'
 import { BackgroundProvider } from './context/BackgroundProvider'
+import { FiltersProvider } from './context/FiltersProvider'
 
 function App() {
 
@@ -34,35 +35,37 @@ function App() {
         <UpdateDataProvider>
           <NutritionalDataRecipeProvider>
             <BackgroundProvider>
-              <BrowserRouter>
-                <Routes>
-                  <Route path='/' element={<RootLayout/>}>
-                    <Route path='auth' element={<UserAuthForms/>}>
-                      <Route path='iniciar-sesion' element={<Login/>}/>
-                      <Route path='registrarse' element={<Register/>}/>
-                      <Route path='password_reset/:token' element={<PasswordReset/>}/>
-                      <Route path='recuperar-cuenta' element={<RecoverAccount/>}/>
+              <FiltersProvider>
+                <BrowserRouter>
+                  <Routes>
+                    <Route path='/' element={<RootLayout/>}>
+                      <Route path='auth' element={<UserAuthForms/>}>
+                        <Route path='iniciar-sesion' element={<Login/>}/>
+                        <Route path='registrarse' element={<Register/>}/>
+                        <Route path='password_reset/:token' element={<PasswordReset/>}/>
+                        <Route path='recuperar-cuenta' element={<RecoverAccount/>}/>
+                      </Route>
+                      <Route element={<ProtectedRoute/>}>
+                        <Route path='mi-perfil' element={<MyProfile/>}/>
+                        <Route path='ingredientes' element={<UserIngredients/>}/>
+                        <Route path='/mis_recetas' element={<UserRecipes/>}/>
+                        <Route path='crear-receta' element={<CrearReceta/>}/>
+                        <Route path='plan-alimenticio' element={<PlanAlimenticio/>}/>
+                      </Route>
+                      <Route element={<RestrictedRoute isStaffAllowed={true} isSuperUserAllowed={true}/>}>
+                        <Route path='etiquetas' element={<EtiquetaCategoria/>}/>
+                        <Route path='configuracion-ia' element={<AISettings/>}/>
+                      </Route>
+                      <Route path='users' element={<ManageUsers/>}/>
+                      <Route path='receta/:recipe_id' element={<RecipeDetails/>}/>
+                      <Route path='user/:user_id' element={<UserProfile/>}/>
+                      <Route path='verify_email/:token' element={<VerifyEmail/>}/>
+                      <Route path="/" element={<SearchRecipes/>}/>
+                      <Route path='*' element={<NotFound404/>}/>
                     </Route>
-                    <Route element={<ProtectedRoute/>}>
-                      <Route path='mi-perfil' element={<MyProfile/>}/>
-                      <Route path='ingredientes' element={<UserIngredients/>}/>
-                      <Route path='/mis_recetas' element={<UserRecipes/>}/>
-                      <Route path='crear-receta' element={<CrearReceta/>}/>
-                      <Route path='plan-alimenticio' element={<PlanAlimenticio/>}/>
-                    </Route>
-                    <Route element={<RestrictedRoute isStaffAllowed={true} isSuperUserAllowed={true}/>}>
-                      <Route path='etiquetas' element={<EtiquetaCategoria/>}/>
-                      <Route path='configuracion-ia' element={<AISettings/>}/>
-                    </Route>
-                    <Route path='users' element={<ManageUsers/>}/>
-                    <Route path='receta/:recipe_id' element={<RecipeDetails/>}/>
-                    <Route path='user/:user_id' element={<UserProfile/>}/>
-                    <Route path='verify_email/:token' element={<VerifyEmail/>}/>
-                    <Route path="/" element={<SearchRecipes/>}/>
-                    <Route path='*' element={<NotFound404/>}/>
-                  </Route>
-                </Routes>
-              </BrowserRouter>
+                  </Routes>
+                </BrowserRouter>
+              </FiltersProvider>
             </BackgroundProvider>
           </NutritionalDataRecipeProvider>
         </UpdateDataProvider>

@@ -1,16 +1,21 @@
 import React, { useState } from "react"
 import styles from './SearchContent.module.css';
 import OptionButton from "./OptionButton";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import arrowDown from '/assets/Iconos/caret-down-outline.svg';
 import { ReactSVG } from "react-svg";
+import { useFilters } from "../context/FiltersProvider";
+import { useUpdateData } from "../context/UpdateDataProvider";
 
 export default function SearchContent(){
 
     const navigate = useNavigate();
+    const location = useLocation();
     const [ searchOption, setSearchOption ] = useState("Recetas");
     const [ searchTextQuery, setSearchTextQuery ] = useState("");
     const [ filterPickerActive, setFilterPickerActive ] = useState(false);
+    const { setGlobalUserName, setGlobalRecipeName, setUserUpdate, setRecipeUpdate } = useFilters();
+    const { resetRecipeFilters } = useUpdateData();
 
     const searchOptions = [
         { type: 'Usuarios', icon: 'people', label: 'Usuarios' },
@@ -20,9 +25,17 @@ export default function SearchContent(){
     const handleSubmitSearch = e => {
         e.preventDefault();
         if(searchOption == 'Usuarios'){
+            setGlobalUserName(searchTextQuery);
+            (location.pathname == "/users") && setUserUpdate(true);
             setSearchTextQuery("");
-            navigate(`users?nombre=${searchTextQuery}`);
+            navigate(`users`);
         } else{
+            resetRecipeFilters();
+            setGlobalRecipeName(searchTextQuery);
+            if(location.pathname == "/"){
+                console.log('updated!');
+                setRecipeUpdate(true)
+            };
             setSearchTextQuery("");
             navigate(`/?nombre=${searchTextQuery}`);
         }

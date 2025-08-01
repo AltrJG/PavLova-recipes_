@@ -11,6 +11,7 @@ import { FadeLoader } from 'react-spinners';
 import { useSearchParams } from 'react-router-dom';
 import FondoPavlova from '../Components/FondoPavlova';
 import { useBackground } from '../context/BackgroundProvider';
+import { useFilters } from '../context/FiltersProvider';
 
 export default function ManageUsers(){
 
@@ -24,8 +25,7 @@ export default function ManageUsers(){
     const [ count, setCount ] = useState(0);
     const [ currentPage, setCurrentPage ] = useState(1);
     const { updatedUser, disabledUser, resetUserState } = useUpdateData();
-
-    const name = searchParams.get("nombre");
+    const { userFilters, setUserFilters, userUpdate, setUserUpdate } = useFilters();
 
     const filterOptions = [
         { type: "text", name: "nombre", placeholder: "Filtrar por nombre..."},
@@ -33,13 +33,7 @@ export default function ManageUsers(){
         { type: "select", name: "tipoUsuario", defaultOption: "Todos", options: ["Todos", "Usuarios", "Moderadores", "Administradores"]}
     ]
 
-    const [ userFilters, setUserFilters ] = useState({
-        nombre: name != null ? name : "",
-        correo: "",
-        tipoUsuario: "Todos"
-    });
-
-    const getUsers = async (previous = null, next = null, name = null) => {
+    const getUsers = async (previous = null, next = null) => {
         setLoading(true);
         try{
             let url = previous 
@@ -51,7 +45,6 @@ export default function ManageUsers(){
             const params = new URLSearchParams();
 
             if (userFilters.nombre.trim() && previous == null && next == null) params.append("name", userFilters.nombre);
-            if (name != null && params.append("name", name));
             if (userFilters.correo.trim() && previous == null && next == null) params.append("email", userFilters.correo);
             if (userFilters.tipoUsuario !== "Todos" && previous == null && next == null) params.append("role", userFilters.tipoUsuario);
 
@@ -77,8 +70,15 @@ export default function ManageUsers(){
 
     useEffect(() => {
         addPavlorficAero();
-        getUsers(null, null, name);
+        getUsers();
     }, []);
+
+    useEffect(() => {
+        if(userUpdate){
+            getUsers();
+            setUserUpdate(false);
+        }
+    }, [userUpdate]);
 
     useEffect(() => {
         if(Object.keys(updatedUser).length > 0){
@@ -94,17 +94,6 @@ export default function ManageUsers(){
             resetUserState();
         }
     }, [updatedUser, disabledUser]);
-
-    const updateOnSite = async () => {
-        setUserFilters({...userFilters, nombre: name});
-        await getUsers(null, null, name);
-    }
-
-    useEffect(() => {
-        if(name != null){
-            updateOnSite();
-        }
-    }, [name]);
 
     return(
         <>

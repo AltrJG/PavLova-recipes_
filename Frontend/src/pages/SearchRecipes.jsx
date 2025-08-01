@@ -19,13 +19,13 @@ import { useAuth } from '../context/AuthProvider';
 import Swal from 'sweetalert2';
 import { useSearchParams } from 'react-router-dom';
 import { useBackground } from '../context/BackgroundProvider';
+import { useFilters } from '../context/FiltersProvider';
 
 export default function SearchRecipes(){
 
     const { openRecipesAdvanceFilters, openChangeVisibilty } = useRightSidebar();
     const { addPavlorficAero } = useBackground();
     const [ searchParams ] = useSearchParams();
-    const [ activeCategoria, setActiveCategoria ] = useState('');
     const [ etiquetasOptions, setEtiquetasOptions ] = useState([]);
     const [ categoriasOptions, setCategoriasOptions ] = useState([]);
     const [ removeFilters, setRemoveFilters ] = useState(false);
@@ -37,14 +37,7 @@ export default function SearchRecipes(){
     const [ currentPage, setCurrentPage ] = useState(1);
     const { recipeFilters: advanceFilters, resetRecipeFilters } = useUpdateData();
     const { refreshAccessToken, isSuperUser, isStaff } = useAuth();
-
-    const name = searchParams.get("nombre");
-
-    const [ recipeFilters, setRecipeFilters ] = useState({
-        nombre: name != null ? name : "",
-        nombre_usuario: "",
-        tipoUsuario: "Todos"
-    });
+    const { recipeFilters, setRecipeFilters, recipeUpdate, setRecipeUpdate, activeCategoria, setActiveCategoria } = useFilters();
 
     const [ searchOption, setSearchOption ] = useState('Categorias');
       
@@ -68,8 +61,6 @@ export default function SearchRecipes(){
                 const categorias = await backendAPI.get("/categorias/all");
                 setEtiquetasOptions(etiquetas.data);
                 setCategoriasOptions(categorias.data);
-                const response = await getRecipes();
-                setRecipes(response.data.results);
             } catch(error){
                 if(error.response?.status == 401){
                     await refreshAccessToken(obtenerInformacion);
@@ -226,22 +217,12 @@ export default function SearchRecipes(){
         }
     }, [recipeFilters, activeCategoria, advanceFilters]);
 
-    const updateOnSite = async () => {
-        setRecipeFilters({
-            nombre: name,
-            nombre_usuario: "",
-            tipoUsuario: "Todos"
-        });
-        setActiveCategoria('');
-        resetRecipeFilters();
-        await getRecipes(null, null, false, name);
-    }
-
     useEffect(() => {
-        if(name != null){
-            updateOnSite();
+        if(recipeUpdate){
+            setRecipeUpdate(false);
+            getRecipes();
         }
-    }, [name]);
+    }, [recipeUpdate]);
     
     return(
         <>

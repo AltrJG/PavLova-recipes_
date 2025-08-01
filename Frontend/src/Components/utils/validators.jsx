@@ -290,6 +290,13 @@ export const validateRecetaData = (recetaData) => {
 function tieneTexto(textoString){
     try {
         const parsed = JSON.parse(textoString);
+        if(parsed[0].type == 'numbered-list' || parsed[0].type == 'bulleted-list'){
+            return parsed[0].children?.some(block =>
+                block.children?.some(child =>
+                    typeof child.text === 'string' && child.text.trim() !== ''
+                )
+            )
+        }
         return parsed.some(block =>
           block.children?.some(child =>
             typeof child.text === 'string' && child.text.trim() !== ''

@@ -14,7 +14,7 @@ export default function Categoria({ isSuperUser, actualizarCategoria, categoria,
                 hoverWidth="8.5rem"
                 top={1}
                 left={2}
-                icon="Create"
+                icon="create"
                 onClick={() => actualizarCategoria(categoria)}
             />}  
             {isSuperUser && <CardButton
@@ -22,7 +22,7 @@ export default function Categoria({ isSuperUser, actualizarCategoria, categoria,
                 hoverWidth="9rem"
                 top={6}
                 left={2}
-                icon="Trash"
+                icon="trash"
                 onClick={() => preguntarEliminado(categoria, 'Categoria')}
             />}  
         </div>
