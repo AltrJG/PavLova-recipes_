@@ -27,6 +27,7 @@
 .activeEtiqueta{
     color: white;
     background-color: orange;
+    box-shadow: 0px 7px 13px -5px rgba(255, 115, 0, 0.952);
 }
 
 .etiquetaDesc{

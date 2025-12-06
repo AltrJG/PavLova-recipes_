@@ -277,8 +277,8 @@
     background: -moz-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
     background: -webkit-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
     background: linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
-    backface-visibility: hidden;
     transform-origin: top left;
+    visibility: hidden;
     border-radius: 2rem;
     transition: .4s;
 }
@@ -290,6 +290,7 @@
 }
 
 .editorOpen{
+    visibility: visible;
     transform: scale(1);
     top: 0;
     left: 0;
@@ -341,6 +342,20 @@
     .recipeContainer input{
         opacity: 1;
     }
+    .sliderProportionsSlider{
+        display: none;
+    }
+
+    .sliderProportionsButton{
+        font-size: 3rem;
+        width: 90%;
+        font-weight: 900;
+        height: 4rem !important;
+    }
+
+    .sliderProportionsButton:nth-child(1){
+        border-bottom: .25rem solid #23130d;
+    }
 }
 
 @media(max-width: 34.375em){
@@ -369,12 +384,19 @@
     }
 
     .sliderProportionsRef{
-        right: 3.5rem;
+        right: .5rem;
         top: .5rem;
     }
 
     .sliderProportionsForm{
         width: 3.5rem;
+    }
+
+    .sliderProportionsButton{
+        font-size: 2.5rem;
+        width: 80%;
+        font-weight: 900;
+        height: 4rem !important;
     }
 
     .separationPicker .recipeName,

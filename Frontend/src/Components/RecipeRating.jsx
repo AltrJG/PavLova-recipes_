@@ -24,8 +24,9 @@ export default function RecipeRating({recipe_id, setUpdateRecipe, userComentario
     const uploadComment = async e => {
       e.preventDefault();
       let editing = false;
-      setErrorsHandler(validateCommentData({contenido, puntuacion: selected}));
-      if(Object.keys(errorsHandler).length == 0){
+      const validation = validateCommentData({ contenido, puntuacion: selected });
+      setErrorsHandler(validation);
+      if(Object.keys(validation).length == 0){
         setCreating(true);
         try{
           if(isUserEditing){

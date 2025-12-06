@@ -29,7 +29,6 @@ export default function ManageUsers(){
 
     const filterOptions = [
         { type: "text", name: "nombre", placeholder: "Filtrar por nombre..."},
-        { type: "text", name: "correo", placeholder: "Filtrar por correo..."},
         { type: "select", name: "tipoUsuario", defaultOption: "Todos", options: ["Todos", "Usuarios", "Moderadores", "Administradores"]}
     ]
 
@@ -45,7 +44,6 @@ export default function ManageUsers(){
             const params = new URLSearchParams();
 
             if (userFilters.nombre.trim() && previous == null && next == null) params.append("name", userFilters.nombre);
-            if (userFilters.correo.trim() && previous == null && next == null) params.append("email", userFilters.correo);
             if (userFilters.tipoUsuario !== "Todos" && previous == null && next == null) params.append("role", userFilters.tipoUsuario);
 
             // Append query parameters if they exist

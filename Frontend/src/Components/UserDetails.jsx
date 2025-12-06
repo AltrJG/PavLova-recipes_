@@ -41,12 +41,6 @@ export default function UserDetails({ usuario = null, totalCreados = 0, totalFav
                         <p className={styles.userBioText}>{userData?.sobreMi == "" ? '- Aun no se ha agregado una descripcion - ' : userData?.sobreMi}</p>
                     </div>
                 </div>
-                <div className={styles.userBio}>
-                    <div className={styles.userSingleBio}>
-                        <h6 className={styles.userBioSubtitle}>Mi Correo</h6>
-                        <p className={styles.userBioText}>{userData?.email}</p>
-                    </div>
-                </div>
                 <div className={styles.userSocialMedia}>
                     {userData?.redFacebook != "" && <Link target="_blank" to={userData?.redFacebook}><CircleButton top={true} iconSize="3rem" text="Perfil de Facebook" iconName="logo-facebook"/></Link> }
                     {userData?.redTwitter != "" && <Link  target="_blank" to={userData?.redTwitter}><CircleButton top={true} iconSize="3rem" text="Perfil de X" iconName="logo-x"/></Link> }
