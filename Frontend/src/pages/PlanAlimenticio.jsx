@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import BurbujaCanvas from '../Components/BurbujaCanvas';
 import Help from '../Components/Help';
-import ShowImage from '../components/ShowImage';
+import ShowImage from '../Components/ShowImage';
 import styles from './PlanAlimenticio.module.css';
 import Recipe from '../Components/Recipe';
 import PlusIcon from '/assets/Iconos/add-circle-outline.svg';

@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-import os
+#import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,13 +29,13 @@ PASSWORD_HASHERS = [
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+#SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+SECRET_KEY = 'django-insecure-f&6ro75=sk5m9tcwey090qwr*_rr!v!-vz-9mh3pl%ijj83str'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
-    'pavlova-backend-api.azurewebsites.net',
 ]
 
 
@@ -47,13 +47,12 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'django_filters',
-    'axes',
+    #'axes',
     'app',
 ]
 
@@ -68,7 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'axes.middleware.AxesMiddleware',
+    #'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = 'django_api.urls'
@@ -91,22 +90,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'django_api.wsgi.application'
 
-AUTHENTICATION_BACKENDS = [
-    'axes.backends.AxesStandaloneBackend',
-    'django.contrib.auth.backends.ModelBackend',
-]
+#AUTHENTICATION_BACKENDS = [
+#    'axes.backends.AxesStandaloneBackend',
+#    'django.contrib.auth.backends.ModelBackend',
+#]
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-"""DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
-}"""
+}
 
-DATABASES = {
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.environ.get('MYSQL_DATABASE'),
@@ -115,11 +114,11 @@ DATABASES = {
         'HOST': os.environ.get('MYSQL_HOST'),
         'PORT': os.environ.get('MYSQL_PORT', '3306'),
     }
-}
+}"""
 
 # Storage settings for Azure Blob Storage
 
-STORAGES = {
+"""STORAGES = {
     "default": {
         "BACKEND": "storages.backends.azure_storage.AzureStorage",
         "OPTIONS": {
@@ -138,7 +137,7 @@ STORAGES = {
             "azure_container": "static",
         },
     },
-}
+}"""
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -188,9 +187,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Configuración de Axes para producción
 # Uncomment the following lines to get IP address from request headers
 
-USE_X_FORWARDED_HOST = True
+#USE_X_FORWARDED_HOST = True
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+#SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Django REST Framework settings
 
@@ -224,8 +223,8 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_COOKIE_NAME': 'refresh_token',
     'AUTH_COOKIE_HTTP_ONLY': True,
-    'AUTH_COOKIE_SECURE': True,
-    'AUTH_COOKIE_SAMESITE': 'Lax',
+    #'AUTH_COOKIE_SECURE': True,
+    #'AUTH_COOKIE_SAMESITE': 'Lax',
 }
 
 # CORS settings
@@ -233,7 +232,8 @@ SIMPLE_JWT = {
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "https://incomparable-pavlova-9c49ca.netlify.app",
+    "http://localhost:5173"
+    #"https://incomparable-pavlova-9c49ca.netlify.app",
 ]
 
 # Email settings
@@ -243,13 +243,13 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'pavlova.recipes.noreply@gmail.com'
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_PASSWORD = 'jtev paic rfwq dsdk'
 
 # Axes settings
 
-AXES_ENABLED = True
-AXES_FAILURE_LIMIT = 10
-AXES_COOLOFF_TIME = timedelta(minutes=30)
-AXES_LOCK_OUT_AT_FAILURE = True
-AXES_ENABLE_ACCESS_FAILURE_LOG = True
-AXES_LOCKOUT_CALLABLE = 'axes.handlers.database.AxesDatabaseHandler'
+#AXES_ENABLED = True
+#AXES_FAILURE_LIMIT = 10
+#AXES_COOLOFF_TIME = timedelta(minutes=30)
+#AXES_LOCK_OUT_AT_FAILURE = True
+#AXES_ENABLE_ACCESS_FAILURE_LOG = True
+#AXES_LOCKOUT_CALLABLE = 'axes.handlers.database.AxesDatabaseHandler'

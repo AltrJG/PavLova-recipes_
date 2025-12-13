@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import MainButton from "../Components/MainButton";
-import styles from './NotFound404.Module.css';
+import styles from './NotFound404.module.css';
 import badPavlova from '../assets/mala_pavlova.png';
 
 export default function NotFound404({text = "No se encontro la pagina que buscabas."}){
