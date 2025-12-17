@@ -1,9 +1,11 @@
-# React + Vite
+# PavLova Recipes
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Proyecto para ayudarte a planificar tus comidas, con ayuda de inteligencia artificial
 
-Currently, two official plugins are available:
+## Como instalar (WIP)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-- Testing
+Primero instala docker:
+- [Docker](https://github.com/vitejs/vite-plugin-react-swc)
+Ahora, corre los siguientes comandos, en el orden como se muestran:
+docker build -t {nombre_contenedor} .
+docker run -p 20050:20050 {nombre_contenedor}:latest
