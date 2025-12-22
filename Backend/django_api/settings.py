@@ -36,6 +36,8 @@ SECRET_KEY = 'django-insecure-f&6ro75=sk5m9tcwey090qwr*_rr!v!-vz-9mh3pl%ijj83str
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    "localhost",
+    "192.168.1.102"
 ]
 
 
@@ -223,8 +225,8 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_COOKIE_NAME': 'refresh_token',
     'AUTH_COOKIE_HTTP_ONLY': True,
-    #'AUTH_COOKIE_SECURE': True,
-    #'AUTH_COOKIE_SAMESITE': 'Lax',
+    'AUTH_COOKIE_SECURE': False,
+    'AUTH_COOKIE_SAMESITE': 'Lax',
 }
 
 # CORS settings
@@ -232,8 +234,8 @@ SIMPLE_JWT = {
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173"
-    #"https://incomparable-pavlova-9c49ca.netlify.app",
+    "http://localhost:5173",
+    "http://192.168.1.102:14165",
 ]
 
 # Email settings

@@ -123,8 +123,8 @@ class LoginView(APIView):
             key='refresh_token',
             value=str(refresh),
             httponly=True,
-            secure=True,
-            samesite='None'
+            secure=False,
+            samesite='Lax'
         )
         return response
     
@@ -179,8 +179,8 @@ class CustomTokenRefreshView(TokenRefreshView):
                 key='refresh_token',
                 value=str(new_refresh),
                 httponly=True,
-                secure=True,
-                samesite='None'
+                secure=False,
+                samesite='Lax'
             )
             return response
 
