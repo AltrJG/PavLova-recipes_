@@ -4,6 +4,8 @@ COPY package.json .
 RUN npm install
 RUN npm i -g serve
 COPY . .
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 RUN npm run build
 EXPOSE 14165
 CMD [ "serve", "-s", "dist" ]

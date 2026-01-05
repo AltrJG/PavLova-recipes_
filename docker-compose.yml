@@ -1,6 +1,9 @@
 services:
   pavlovarecipes:
-    build: ./Frontend/
+    build: 
+      context: ./Frontend/
+      args:
+        VITE_API_BASE_URL: "http://192.168.1.102:8000/app/"
     networks: 
       - app-network
     environment:
@@ -13,7 +16,26 @@ services:
     build: ./Backend/
     ports:
       - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - media_data:/app/media 
+  db:
+    networks: 
+    - app-network
+    image: mysql:8.0
+    ports:
+      - '3306:3306'
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: 'pavlovadb'
+      MYSQL_ROOT_PASSWORD: password
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  db_data:
+  media_data:
