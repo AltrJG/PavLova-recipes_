@@ -38,7 +38,7 @@ export default function IngredientsForm(){
     ];
 
     const IngredientVisibilityOptions = [
-        { type: "select", name: "visibilidad", defaultOption: "Personal", label: "Visibilidad:", options: ["Personal", "Global"]},
+        { type: "toggle", trueOption: "Global", falseOption: "Personal", name: "visibilidad", label: "Visibilidad:", defaultOption: "Personal"}
     ];
 
     const options = [

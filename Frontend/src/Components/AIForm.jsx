@@ -5,7 +5,6 @@ import { useAuth } from "../context/AuthProvider";
 import OptionButton from "./OptionButton";
 import RightSidebarForms from "./RightSidebarForms";
 import MainButton from "./MainButton";
-import Swal from "sweetalert2";
 import backendAPI from "../api/axiosConfig";
 import { useRightSidebar } from "../context/RightSidebarProvider";
 import { useUpdateData } from "../context/UpdateDataProvider";
@@ -50,14 +49,14 @@ export default function AIForm(){
         { type: "slider", step: "1", name: "sodio", label: "Sodio (%)", defaultValue: 15, max: 100, min: 0, showInput: false, additionalText: '%'},
         { type: "slider", step: "1", name: "cantRecetas", label: "Cantidad de recetas por dia:", defaultValue: 2, max: 8, min: 2, showInput: false, additionalText: ''},
         { type: "slider", step: ".5", name: "porcionesRecetas", label: "Porciones por receta:", defaultValue: 1, max: 20, min: .5, showInput: false, additionalText: ''},
-        { type: "select", name: "ajusteObjetivos", label: "Ajustar automaticamente a los objetivos nutricionales?:", defaultOption: "Si", options: ["Si", "No"]},
+        { type: "toggle", trueOption: "Si", falseOption: "No", name: "ajusteObjetivos", label: "Ajustar automaticamente a los objetivos nutricionales?:", defaultOption: "Si"},
         { type: "select", name: "modoRepeticion", label: "¿Qué tanta variedad deseas en las recetas?", defaultOption: "Flexible",options: ["Repetidas", "Flexible", "Rotar", "Variado", "Diverso"]}
     ];
 
     const RecipesPerDayFormOptions = [
         { type: "slider", step: "1", name: "cantRecetas", label: "Cantidad de recetas por dia:", defaultValue: 2, max: 8, min: 2, showInput: false, additionalText: ''},
         { type: "slider", step: ".5", name: "porcionesRecetas", label: "Porciones por receta:", defaultValue: 1, max: 20, min: .5, showInput: false, additionalText: ''},
-        { type: "select", name: "ajusteObjetivos", label: "Ajustar automaticamente a los objetivos nutricionales?:", defaultOption: "Si", options: ["Si", "No"]},
+        { type: "toggle", trueOption: "Si", falseOption: "No", name: "ajusteObjetivos", label: "Ajustar automaticamente a los objetivos nutricionales?:", defaultOption: "Si"},
         { type: "select", name: "modoRepeticion", label: "¿Qué tanta variedad deseas en las recetas?", defaultOption: "Flexible",options: ["Repetidas", "Flexible", "Rotar", "Variado", "Diverso"]}
     ]
 

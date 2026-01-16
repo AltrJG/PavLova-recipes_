@@ -71,7 +71,8 @@ class RecetaFilter(django_filters.FilterSet):
     tiempo_coccion = django_filters.NumberFilter(field_name='tiempo_coccion', lookup_expr='lte')
     rating = django_filters.NumberFilter(method='filter_rating')
     etiquetas = django_filters.BaseInFilter(field_name='etiquetas__id')
-    #Recipe score por implementar
+    recipes_score_visibility = django_filters.CharFilter(method='filtrar_puntuacion_salud')
+    show_validated_recipes = django_filters.CharFilter(method='filtrar_verificacion_salud')
 
     tipoUsuario = django_filters.CharFilter(method='filtrar_tipo_usuario')
 
@@ -85,9 +86,25 @@ class RecetaFilter(django_filters.FilterSet):
             return queryset.filter(creador__is_superuser=True)
         return queryset
 
+    def filtrar_puntuacion_salud(self, queryset, name, value):
+        value = value.lower()
+        if value == 'recetas_con_puntuacion_de_salud':
+            return queryset.filter(puntuacion__gt=0)
+        elif value == 'recetas_sin_puntuacion_de_salud':
+            return queryset.filter(puntuacion=0)
+        return queryset
+
+    def filtrar_verificacion_salud(self, queryset, name, value):
+        value = value.lower()
+        if value == 'recetas_sin_verificar':
+            return queryset.filter(verificado=False)
+        elif value == 'recetas_verificadas':
+            return queryset.filter(verificado=True)
+        return queryset
+
     class Meta:
         model = Receta
-        fields = ['nombre', 'nombre_usuario', 'categoria', 'tiempo_preparacion', 'tiempo_coccion', 'rating', 'etiquetas', 'tipoUsuario']
+        fields = ['nombre', 'nombre_usuario', 'categoria', 'tiempo_preparacion', 'tiempo_coccion', 'rating', 'etiquetas', 'tipoUsuario', 'recipes_score_visibility', 'show_validated_recipes']
 
     def filter_rating(self, queryset, name, value):
         queryset = queryset.annotate(rating_anotado=Avg('comentarios__puntuacion'))

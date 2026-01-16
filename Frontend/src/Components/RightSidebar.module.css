@@ -9,6 +9,8 @@
     transition: .3s;
     overflow-y: scroll;
     padding-bottom: 2rem;
+    border-top-left-radius: 2rem;
+    border-bottom-left-radius: 2rem;
 }
 
 .rightSidebarFilter{

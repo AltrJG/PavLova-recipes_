@@ -18,7 +18,7 @@ export default function ChangeUserPermissions(){
 
     const mainFormOptions = [
         { type: "select", name: "rol", label: "Rol de usuario", defaultOption: "Usuario", options: ["Usuario", "Moderador", "Administrador"]},
-        { type: "select", name: "activo", label: "Estado de la cuenta:", defaultOption: "Activado", options: ["Desactivado", "Activado"]}
+        { type: "toggle", trueOption: "Activado", falseOption: "Desactivado", name: "activo", label: "Estado de la cuenta:", defaultOption: "Activado"}
     ];
 
     const [ permissionData, setPermissionData ] = useState({

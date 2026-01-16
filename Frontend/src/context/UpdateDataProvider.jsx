@@ -17,6 +17,7 @@ const initialState = {
         tiempo_coccion: 360,
         rating: 0,
         show_recipes_score: 'Todas',
+        show_validated_recipes: 'Todas',
         selected_etiquetas: []
     },
     createdPreset: {},
@@ -58,7 +59,7 @@ function reducer(state, action){
         case 'updateData/setRecipeFilters':
             return { ...state, recipeFilters: action.payload }
         case 'updateData/resetRecipeFilters':
-            return { ...state, recipeFilters: { tiempo_preparacion: 360, tiempo_coccion: 360, rating: 0, show_recipes_score: 'Todas', selected_etiquetas: []} }
+            return { ...state, recipeFilters: { tiempo_preparacion: 360, tiempo_coccion: 360, rating: 0, show_recipes_score: 'Todas', show_validated_recipes: 'Todas', selected_etiquetas: []} }
         case 'updateData/setCreatedPreset':
             return { ...state, createdPreset: action.payload }
         case 'updateData/setUpdatedPreset':

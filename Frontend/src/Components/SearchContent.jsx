@@ -33,7 +33,6 @@ export default function SearchContent(){
             resetRecipeFilters();
             setGlobalRecipeName(searchTextQuery);
             if(location.pathname == "/"){
-                console.log('updated!');
                 setRecipeUpdate(true)
             };
             setSearchTextQuery("");

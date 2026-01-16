@@ -26,6 +26,8 @@
     background-color: #23130d;
     transition: .5s;
     overflow: hidden;
+    border-bottom-right-radius: 2rem;
+    border-top-right-radius: 2rem;
   }
   .sidebar ul{
     position: relative;
@@ -47,6 +49,7 @@
     background: -moz-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
     background: -webkit-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
     background: linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    border-top-right-radius: 2rem;
   }
 
   .logo_text{
@@ -202,8 +205,7 @@
   .sidebar{
     width: 100%;
     overflow: visible;
-    border-top-left-radius: 1rem;
-    border-top-right-radius: 1rem;
+    border-radius: 1rem;
   }
   .sidebar,
   .sidebarCloseActive{

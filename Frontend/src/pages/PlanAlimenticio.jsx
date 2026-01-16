@@ -581,7 +581,7 @@ export default function PlanAlimenticio(){
                             className={`${activeRecipes.length > 0 ? "" : styles.hiddenChart} ${styles.objectiveChartSingle}`}
                         >
                             <h4>{key.toUpperCase().replace('_', ' ')}</h4>
-                            <p className={nutritionalAlerts[key]?.estado == 'Alerta' ? styles.alerta : (nutritionalAlerts[key]?.estado == 'Aceptable' ? styles.aceptable : styles.peligro)}><ReactSVG src={`/assets/Iconos/${nutritionalAlerts[key]?.estado == 'Alerta' ? 'alert-circle' : (nutritionalAlerts[key]?.estado == 'Aceptable' ? 'checkmark-circle' : 'close-circle') }.svg`}/><span className={styles.visualAlert}>{nutritionalAlerts[key]?.mensaje}</span>{nutritionalAlerts[key]?.estado}</p>
+                            <h5 className={`${styles.quickTip} ${nutritionalAlerts[key]?.estado == 'Alerta' ? styles.alerta : (nutritionalAlerts[key]?.estado == 'Aceptable' ? styles.aceptable : styles.peligro)}`}><ReactSVG src={`/assets/Iconos/${nutritionalAlerts[key]?.estado == 'Alerta' ? 'alert-circle' : (nutritionalAlerts[key]?.estado == 'Aceptable' ? 'checkmark-circle' : 'close-circle') }.svg`}/><span className={styles.visualAlert}>{nutritionalAlerts[key]?.mensaje}</span>{nutritionalAlerts[key]?.estado}</h5>
                             <RadialChartComponent
                             data={[
                                 {

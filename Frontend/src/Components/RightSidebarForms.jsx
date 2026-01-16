@@ -1,5 +1,6 @@
 import styles from './RightSidebarForms.module.css';
 import SubidaImagenes from './SubidaImagenes';
+import ToggleCheckbox from './ToggleCheckbox';
 
 const thumb = {
     display: 'inline-flex',
@@ -99,6 +100,8 @@ export default function RightSidebarForms({twoOnOne = false, action, formOptions
                                         />
                                     ) : <p className={styles.sliderValue}>{data[formInput.name]}{formInput.additionalText}</p>}
                                 </div> 
+                                : (formInput.type == 'toggle' 
+                                ? <ToggleCheckbox trueOption={formInput.trueOption} value={data[formInput.name]} falseOption={formInput.falseOption} name={formInput.name} setData={setData}/> 
                                 : <input
                                 id={formInput.name}
                                 type={formInput.type}
@@ -106,7 +109,7 @@ export default function RightSidebarForms({twoOnOne = false, action, formOptions
                                 value={data[formInput.name]}
                                 onChange={e => setData(formInputs => ({...formInputs, [e.target.name]: e.target.value}))}
                             />
-                        )))}
+                        ))))}
                     </div>
                 ))}
             </div>

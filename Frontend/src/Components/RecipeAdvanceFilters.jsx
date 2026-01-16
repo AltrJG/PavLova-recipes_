@@ -25,6 +25,7 @@ export default function RecipeAdvanceFilters(){
         { type: "slider", step: "1", name: "tiempo_coccion", label: "Tiempo de Coccion maximo (Minutos)", defaultValue: 360, max: 360, min: 0, showInput: true},
         { type: "slider", step: "0.1", name: "rating", label: "Rating Minimo", defaultValue: '0.0', max: '5.0', min: 0, showInput: true },
         { type: "select", name: "show_recipes_score", label: "Visibilidad de recetas",  defaultOption: "Todas", options: ["Recetas con puntuacion de salud", "Recetas sin puntuacion de salud", "Todas"]},
+        { type: "select", name: "show_validated_recipes", label: "Recetas verificadas", default: "Todas", options: ["Todas", "Recetas verificadas", "Recetas sin verificar"] }
     ];
 
     const [ advanceFiltersData, setAdvanceFiltersData ] = useState({
@@ -32,6 +33,7 @@ export default function RecipeAdvanceFilters(){
         tiempo_coccion: 360,
         rating: 0,
         show_recipes_score: 'Todas',
+        show_validated_recipes: 'Todas',
     });
 
     const toggleEtiquetas = etiqueta => {
@@ -52,6 +54,7 @@ export default function RecipeAdvanceFilters(){
             tiempo_coccion: advanceFiltersData.tiempo_coccion,
             rating: advanceFiltersData.rating,
             show_recipes_score: advanceFiltersData.show_recipes_score,
+            show_validated_recipes: advanceFiltersData.show_validated_recipes,
             selected_etiquetas: selectedEtiquetas
         });
         closeRightSidebar();
@@ -64,6 +67,7 @@ export default function RecipeAdvanceFilters(){
             tiempo_coccion: recipeFilters.tiempo_coccion,
             rating: recipeFilters.rating,
             show_recipes_score: recipeFilters.show_recipes_score,
+            show_validated_recipes: recipeFilters.show_validated_recipes,
         })
     }, [recipeFilters]);
 

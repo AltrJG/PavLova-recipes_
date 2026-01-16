@@ -98,7 +98,7 @@ export default function SearchRecipes(){
                 advanceFilters.rating != 0 && params.append('rating', advanceFilters.rating);
                 advanceFilters.show_recipes_score != 'Todas' && params.append('recipes_score_visibility', advanceFilters.show_recipes_score.replaceAll(' ', '_'));
                 advanceFilters.selected_etiquetas.length != 0 && advanceFilters.selected_etiquetas.map(etiqueta => params.append('etiquetas', etiqueta));
-
+                advanceFilters.show_validated_recipes != 'Todas' && params.append('show_validated_recipes', advanceFilters.show_validated_recipes.replaceAll(' ', '_'));
                 // Append query parameters if they exist
                 if (params.toString()) {
                     url += `?${params.toString()}`;
@@ -209,6 +209,7 @@ export default function SearchRecipes(){
         advanceFilters.rating != 0 && (isFilterActive = true);
         advanceFilters.show_recipes_score != 'Todas' && (isFilterActive = true);
         advanceFilters.selected_etiquetas.length != 0 && (isFilterActive = true);
+        advanceFilters.show_validated_recipes != 'Todas' && (isFilterActive = true);
         setCurrentPage(1);
         if(isFilterActive){
             setRemoveFilters(true);

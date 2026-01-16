@@ -17,7 +17,7 @@ export default function ChangeVisibilityForm(){
     const { changeVisibilityData } = useRightSidebar();
 
     const VisibilityOptions = [
-        { type: "select", name: "visibilidad", defaultOption: "Publica", label: "Visibilidad:", options: ["Publica", "Privada"]},
+        { type: "toggle", trueOption: "Publica", falseOption: "Privada", name: "visibilidad", label: "Visibilidad:", defaultOption: "Publica"}
     ];
 
     const [ visibilityData, setVisibilityData ] = useState({
