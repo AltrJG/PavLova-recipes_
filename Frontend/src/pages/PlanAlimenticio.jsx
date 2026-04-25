@@ -548,7 +548,7 @@ export default function PlanAlimenticio(){
                         onChange={handleDates}
                     />
                     <div className={styles.buttonDatePicker}>
-                        <MainButton action={handleCreatePlan} disabled={creacionLoading} type="button" icon="calendar" iconSize="3" fontSize="2.5" color="primary" borderRadius="1.5" text={creacionLoading ? "Creando..." : "Crear Plan Alimenticio"}/>
+                        <MainButton action={handleCreatePlan} disabled={creacionLoading} animationDefault='dash' type="button" icon="calendar" iconSize="3" fontSize="2.5" color="primary" borderRadius="1.5" text={creacionLoading ? "Creando..." : "Crear Plan Alimenticio"}/>
                     </div>
                 </div>
             </div>

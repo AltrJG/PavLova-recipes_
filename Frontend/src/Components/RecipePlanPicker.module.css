@@ -38,6 +38,7 @@
 }
 
 .activeDarkenedBack{
+    z-index: 3;
     opacity: 1;
     visibility: visible;
 }

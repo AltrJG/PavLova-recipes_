@@ -32,12 +32,12 @@
     "react-spinners": "^0.15.0",
     "react-svg": "^16.3.0",
     "recharts": "^2.15.3",
-    "slate": "^0.112.0",
+    "slate": "^0.123.0",
     "slate-history": "^0.113.1",
-    "slate-react": "^0.112.1",
+    "slate-react": "^0.123.0",
     "styled-components": "^6.1.15",
     "sweetalert2": "^11.6.13",
-    "swiper": "^11.2.6",
+    "swiper": "^12.1.3",
     "validator": "^13.12.0"
   },
   "devDependencies": {

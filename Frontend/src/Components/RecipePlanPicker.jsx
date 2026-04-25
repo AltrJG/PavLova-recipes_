@@ -162,7 +162,7 @@ export default function RecipePlanPicker({aiAction, updateRecipes, currentPropor
                     <div className={styles.filterOptions}>
                         { searchOptions.map(option => <OptionButton key={option.label} option={option} active={searchOption} setData={setSearchOption} icon={option.icon} makeRowOnMobile={false}/>)}
                     </div>
-                    <MainButton action={handleActiveRecipes} disabled={false} type={'button'} icon={ aiPicker ? "hardware-chip" : "save"} iconSize={"2.1"} fontSize={"1.8"} color={"primary"} borderRadius={'1'} text={aiPicker ? "Generar plan" : "Guardar Cambios."}/>
+                    <MainButton action={handleActiveRecipes} animationDefault='dash' disabled={false} type={'button'} icon={ aiPicker ? "hardware-chip" : "save"} iconSize={"2.1"} fontSize={"1.8"} color={"primary"} borderRadius={'1'} text={aiPicker ? "Generar plan" : "Guardar Cambios."}/>
                 </div>
             </Help>
             <div className={styles.recipePicker}>

@@ -290,7 +290,7 @@ const subirImagenReceta = async (recetaId) => {
       </div>
       <div className={styles.createButtonCenter}>
         <RightSidebarErrors errors={errorsHandler} />
-        <MainButton action={createReceta} disabled={loadingRequest} type={'button'} icon={"restaurant"} iconSize={"4.5"} fontSize={"3"} color={"primary"} borderRadius={'1'} text={loadingRequest ? (recetaEditar != null ? "Actualizando..." : "Creando...") : (recetaEditar ? "Actualizar Receta" : "Crear Receta")}/>
+        <MainButton action={createReceta} animationDefault='dash' disabled={loadingRequest} type={'button'} icon={"restaurant"} iconSize={"4.5"} fontSize={"3"} color={"primary"} borderRadius={'1'} text={loadingRequest ? (recetaEditar != null ? "Actualizando..." : "Creando...") : (recetaEditar ? "Actualizar Receta" : "Crear Receta")}/>
       </div>
       <div className='mobileSpace'></div></>}
     </div>

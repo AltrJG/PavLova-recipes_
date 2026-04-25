@@ -20,6 +20,7 @@ services:
       - db
     volumes:
       - media_data:/app/media 
+      - db_backup:/app/backups
   db:
     networks: 
     - app-network
@@ -38,4 +39,5 @@ networks:
 
 volumes:
   db_data:
+  db_backup:
   media_data:
