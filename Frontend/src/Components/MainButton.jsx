@@ -87,6 +87,8 @@ const SpanAnimation = styled.span`
     top: ${({$arrayKey}) => $arrayKey * 4}px;
 `
 
+const delays = Array.from({ length: 15 }, () => Math.random() * 0.5);
+
 const ripple = e => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.pageX - rect.left;
@@ -100,7 +102,6 @@ export default function MainButton({ action, disabled, fontSize, color, icon, ic
         <Button
             onMouseEnter={e => ripple(e)}
             onMouseLeave={e => ripple(e)}
-            id="primary-buttons"
             onClick={action}
             type={type}
             disabled={disabled}
@@ -112,7 +113,7 @@ export default function MainButton({ action, disabled, fontSize, color, icon, ic
         >
             <ReactSVG src={`/assets/Iconos/${icon}.svg`}/><p>{text}</p>
             { animationDefault == 'dash' && Array.from({ length: 15 }, (_, i) => (
-                <SpanAnimation $arrayKey={i} $delay={Math.random() * 0.5} $color={color}></SpanAnimation>
+                <SpanAnimation $arrayKey={i} key={i} $delay={delays[i]} $color={color}></SpanAnimation>
             )) }
         </Button>
     );

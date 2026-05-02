@@ -52,7 +52,7 @@
 }
 
 .active{
-  background-color: var(--clr);
+  background-color: transparent;
   border-top-left-radius: 50px;
   border-bottom-left-radius: 50px;
 }
@@ -82,6 +82,20 @@
   height: 20px;
   border-top-right-radius: 20px;
   box-shadow: 5px -5px 0 5px var(--clr);
+  background: transparent;
+}
+
+.active .inner_scopes::after{
+  content: "";
+  position: absolute;
+  top: 0px;
+  left: 0;
+  width: 5rem;
+  height: 100%;
+  transform: rotate(180deg);
+  border-top-right-radius: 40px;
+  border-bottom-right-radius: 40px;
+  box-shadow: 20px 0px 0 20px #23130d;
   background: transparent;
 }
 
@@ -132,6 +146,9 @@
   .nav_el.active::before,
   .nav_el.active::after{
       display: none;
+  }
+  .inner_scopes{
+    display: none;
   }
   .active,
   .nav_el{

@@ -26,8 +26,8 @@
   justify-content: center;
   align-self: stretch;
   transition: .3s;
-  backdrop-filter: blur( 3px );
-  -webkit-backdrop-filter: blur( 3px );
+  backdrop-filter: blur( 6px );
+  -webkit-backdrop-filter: blur( 6px );
 }
 
 .textStart{
@@ -129,7 +129,7 @@
   border-radius: 1rem;
   margin: 1rem 0 0 0;
   padding: .5rem 1rem;
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(6px);
 }
 
 .portionSliderText{

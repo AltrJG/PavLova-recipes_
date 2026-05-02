@@ -9,9 +9,13 @@ export default function BurbujaCanvas() {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
 
+    const targetFPS = 60;
+    const interval = 1000;
+    let lastTime = performance.now() / targetFPS;
+
     function resizeCanvas() {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     }
 
     resizeCanvas();
@@ -27,24 +31,27 @@ export default function BurbujaCanvas() {
       };
     };
 
-    const animate = () => {
+    const animate = (currentTime) => {
+      const deltaTime = currentTime - lastTime;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      bubbles.current.forEach((bubble, index) => {
-        bubble.y -= bubble.speed;
+      if(deltaTime >= interval){
+        bubbles.current.forEach((bubble, index) => {
+          bubble.y -= bubble.speed;
 
-        ctx.beginPath();
-        ctx.arc(bubble.x, bubble.y, bubble.radius, 0, 2 * Math.PI);
-        ctx.fillStyle = `rgb(173, 216, 230)`;
-        ctx.fill();
+          ctx.beginPath();
+          ctx.arc(bubble.x, bubble.y, bubble.radius, 0, 2 * Math.PI);
+          ctx.fillStyle = `rgb(173, 216, 230)`;
+          ctx.fill();
 
-        if (bubble.y + bubble.radius < 0) {
-          bubbles.current.splice(index, 1);
+          if (bubble.y + bubble.radius < 0) {
+            bubbles.current.splice(index, 1);
+          }
+        });
+
+        if (bubbles.current.length < 30) {
+          bubbles.current.push(createBubble());
         }
-      });
-
-      if (bubbles.current.length < 30) {
-        bubbles.current.push(createBubble());
       }
 
       requestAnimationFrame(animate);

@@ -16,8 +16,8 @@
         justify-content: center;
         flex-direction: column;
         background: rgba(255, 252, 248, 0.8);
-        backdrop-filter: blur( 3px );
-        -webkit-backdrop-filter: blur( 3px );
+        backdrop-filter: blur( 6px );
+        -webkit-backdrop-filter: blur( 6px );
         border-radius: 10px;
         border: 1px solid rgba( 255, 255, 255, 0.18 );
         width: 55rem;

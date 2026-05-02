@@ -32,8 +32,8 @@
     border: .2rem solid white;
     border-radius: 2rem;
     max-width: max-content;
-    backdrop-filter: blur( 3px );
-    -webkit-backdrop-filter: blur( 3px );
+    backdrop-filter: blur( 6px );
+    -webkit-backdrop-filter: blur( 6px );
 }
 
 .pdfDaysContainer{
@@ -103,8 +103,8 @@
     font-size: 2rem;
     transition: .3s;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur( 3px );
-    -webkit-backdrop-filter: blur( 3px );
+    backdrop-filter: blur( 6px );
+    -webkit-backdrop-filter: blur( 6px );
 }
 
 .addRecipes:hover{
@@ -146,8 +146,8 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 2rem;
     padding: 1rem;
-    backdrop-filter: blur( 3px );
-    -webkit-backdrop-filter: blur( 3px );
+    backdrop-filter: blur( 6px );
+    -webkit-backdrop-filter: blur( 6px );
 }
 
 .recipeContentsText,
@@ -174,8 +174,8 @@
     border: .1rem solid white;
     background-color: rgba(255, 255, 255, 0.331);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur( 3px );
-    -webkit-backdrop-filter: blur( 3px );
+    backdrop-filter: blur( 6px );
+    -webkit-backdrop-filter: blur( 6px );
     border-radius: 2rem;
     padding: 1rem;
     width: 100%;
@@ -201,8 +201,8 @@
     width: 100%;
     background-color: rgba(255, 255, 255, 0.293);
     border: .1rem solid white;
-    backdrop-filter: blur( 3px );
-    -webkit-backdrop-filter: blur( 3px );
+    backdrop-filter: blur( 6px );
+    -webkit-backdrop-filter: blur( 6px );
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.118);
     border-radius: 2rem;
     transition: .5s;
@@ -351,8 +351,8 @@
     background-color: rgba(255, 255, 255, 0.505);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 2rem;
-    backdrop-filter: blur( 3px );
-    -webkit-backdrop-filter: blur( 3px );
+    backdrop-filter: blur( 6px );
+    -webkit-backdrop-filter: blur( 6px );
 }
 
 .datePicker h2{
