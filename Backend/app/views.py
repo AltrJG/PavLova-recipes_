@@ -6,13 +6,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from django.shortcuts import get_object_or_404
-from .models import User, EmailVerificationCode, Ingrediente, Categoria, Etiqueta, Receta, Comentario, RecetaFavorito, PlanAlimenticio, PlanAlimenticioDia, PlanAlimenticioDiaReceta, ObjetivosAI
+from .models import User, EmailVerificationCode, Ingrediente, Categoria, Etiqueta, Receta, Comentario, RecetaFavorito, PlanAlimenticio, PlanAlimenticioDia, PlanAlimenticioDiaReceta, ObjetivosAI, OpcionPersonalizadaIngrediente
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth import authenticate, update_session_auth_hash
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
-from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer, ComentarioSerializer, RecetaFavoritoSerializer, PlanAlimenticioSerializer, PlanAlimenticioDiaSerializer, PlanAlimenticioDiaRecetaSerializer, ObjetivosAISerializer
+from .serializers import UserSerializer, UserUpdateSerializer, ProfilePictureUpdateSerializer, UserDetailsSerializer, PasswordResetRequestSerializer, PasswordResetSerializer, IngredienteSerializer, CategoriaSerializer, EtiquetaSerializer, RecetaSerializer, ComentarioSerializer, RecetaFavoritoSerializer, PlanAlimenticioSerializer, PlanAlimenticioDiaSerializer, PlanAlimenticioDiaRecetaSerializer, ObjetivosAISerializer, OpcionPersonalizadaIngredienteSerializer
 from .permissions import IsModeratorOrAdmin, IsSuperUserOrReadOnly, IsStaffOrSuperUserOrReadOnly, IsOwnerOrStaffOrSuperUser
 from .filters import UserFilter, IngredienteFilter, EtiquetaFilter, CategoriaFilter, RecetaFilter, MisRecetasFilter, MisFavoritosFilter
 from django.core.mail import send_mail
@@ -413,10 +413,14 @@ class IngredienteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
 
+        queryset = Ingrediente.objects.prefetch_related(
+            'opcionPersonalizadaIngrediente'
+        )
+
         if not user.is_staff and not user.is_superuser:
             return Ingrediente.objects.filter(creador=user) | Ingrediente.objects.filter(tipo='global')
 
-        return Ingrediente.objects.all()
+        return queryset
     
     @action(detail=False, methods=['get'], url_path='all', pagination_class=None)
     def listar_sin_paginacion(self, request):
@@ -1088,3 +1092,103 @@ class ModeloRecargarViewSet(viewsets.ViewSet):
             return Response({'mensaje': 'Modelo recargado correctamente.'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class OpcionPersonalizadaIngredienteViewSet(viewsets.ModelViewSet):
+    serializer_class = OpcionPersonalizadaIngredienteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if not user.is_staff and not user.is_superuser:
+            return (
+                OpcionPersonalizadaIngrediente.objects
+                .select_related('ingrediente')
+                .filter(
+                    ingrediente__creador=user
+                )
+            )
+
+        return (
+            OpcionPersonalizadaIngrediente.objects
+            .select_related('ingrediente')
+            .all()
+        )
+
+    @action(
+        detail=False,
+        methods=['get'],
+        pagination_class=None
+    )
+    def listar_por_ingrediente(self, request):
+
+        ingrediente_id = request.query_params.get('ingrediente')
+
+        queryset = self.filter_queryset(
+            self.get_queryset()
+        )
+
+        if ingrediente_id:
+            queryset = queryset.filter(
+                ingrediente_id=ingrediente_id
+            )
+
+        serializer = self.get_serializer(
+            queryset,
+            many=True
+        )
+
+        return Response(serializer.data)
+
+    def perform_create(self, serializer):
+        user = self.request.user
+
+        ingrediente = serializer.validated_data.get('ingrediente')
+
+        if (
+            ingrediente.tipo == 'personal'
+            and ingrediente.creador != user
+            and not (user.is_staff or user.is_superuser)
+        ):
+            raise PermissionDenied(
+                "No tienes permisos para agregar opciones a este ingrediente."
+            )
+
+        serializer.save()
+
+    def perform_update(self, serializer):
+        user = self.request.user
+        instance = serializer.instance
+
+        ingrediente = instance.ingrediente
+
+        if (
+            ingrediente.tipo == 'personal'
+            and ingrediente.creador != user
+            and not (user.is_staff or user.is_superuser)
+        ):
+            raise PermissionDenied(
+                "No tienes permisos para actualizar esta opción."
+            )
+
+        # Prevent changing related ingredient
+        serializer.validated_data.pop('ingrediente', None)
+
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        user = self.request.user
+
+        ingrediente = instance.ingrediente
+
+        if (
+            ingrediente.tipo == 'personal'
+            and ingrediente.creador != user
+            and not (user.is_staff or user.is_superuser)
+        ):
+            raise PermissionDenied(
+                "No tienes permisos para eliminar esta opción."
+            )
+
+        instance.delete()

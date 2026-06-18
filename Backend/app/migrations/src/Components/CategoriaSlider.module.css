@@ -1,0 +1,128 @@
+.categoriaImagen{
+    aspect-ratio : 1 / 1;
+    width: 100%;
+    object-fit: cover;
+    border: .2rem solid orange;
+    border-radius: 50%;
+}
+
+.categoriaNombre{
+    font-size: 2rem;
+    font-family: 'Oswald', sans-serif;
+}
+
+.cardContainer{
+    background-color: rgba(255, 255, 255, 0.719);
+    backdrop-filter: blur( 6px );
+    -webkit-backdrop-filter: blur( 6px );
+    border-radius: 1rem;
+    height: 100%;
+    width: 100%;
+    padding: 1rem 2rem;
+    text-align: center;
+    transition: .3s;
+    cursor: pointer;
+}
+
+.nextButton,
+.prevButton{
+    position: absolute;
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    background-color: #23130db8;
+    padding: 1rem !important;
+    transition: .3s;
+    border-radius: 50%;
+    top: 100% !important;
+}
+
+.nextButton:hover,
+.prevButton:hover{
+    background-color: #23130d;
+}
+
+.nextButton::after,
+.prevButton::after{
+    color: white;
+    font-size: 1.5rem !important;
+}
+
+.activeCard{
+    box-shadow: 0px 6px 14px rgba(252, 115, 2, 0.5);
+    transform: scale(1.03);
+    color: white;
+    background: rgb(241,180,52);
+    background: -moz-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: -webkit-linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    background: linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#f1b434",endColorstr="#fc7302",GradientType=1);  
+}
+
+.activeCard .categoriaImagen{
+    border: .2rem solid white;
+}
+
+.cardContainer:hover{
+    background-color: rgb(255, 220, 171);
+}
+
+.sliderContainer{
+    display: flex;
+    align-items: stretch;
+    margin: 1.5rem 0;
+    width: 100%;
+    padding: 1rem 0rem 3rem 0rem;
+    position: relative;
+}
+
+.swiperContainer{
+    width: 15rem !important;
+}
+
+.filterContainer{
+    background-color: transparent;
+}
+
+.filterContainer:hover{
+    transform: scale(1.03);
+}
+
+.filterSlider .swiperContainer{
+    width: 10rem !important;
+}
+
+.filterContainer .categoriaNombre{
+    font-size: 1.4rem;
+}
+
+.filterContainer .categoriaImagen{
+    width: 80%;
+}
+
+.filterSlider{
+    margin: 0;
+    padding: 1rem 0;
+}
+
+.filterContainer{
+    padding: 1rem;
+}
+
+.filterSlider .nextButton,
+.filterSlider .prevButton{
+    top: 110% !important;
+}
+
+@media(max-width: 50em){
+    .swiperContainer{
+        width: 10rem !important;
+    }
+    .categoriaNombre{
+        font-size: 1.4rem;
+    }
+    
+    .filterContainer .categoriaImagen{
+        width: 85%;
+    }
+
+}

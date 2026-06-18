@@ -1,0 +1,12 @@
+.profileCurrentUser{
+    display: grid;
+    grid-template-columns: 35rem 1fr;
+    grid-gap: 2rem;
+    margin-top: 3rem;
+}
+
+@media(max-width: 71.875em){
+    .profileCurrentUser{
+        grid-template-columns: 1fr;
+    }
+}

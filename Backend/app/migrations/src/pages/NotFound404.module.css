@@ -1,0 +1,40 @@
+.notFoundContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 5rem auto;
+    padding: 3rem;
+    border-radius: 2rem;
+    background: linear-gradient(45deg, rgba(241,180,52,1) 27%, rgba(252,115,2,1) 100%);
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+.notFoundContainer img {
+    width: 70%;
+    max-width: 300px;
+    height: auto;
+    margin-bottom: 2rem;
+    animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+}
+
+.notFoundDetails {
+    font-size: 2.2rem;
+    margin-bottom: 2rem;
+    color: white;
+    font-family: 'Oswald', sans-serif;
+}
+
+.notFoundBack {
+    text-decoration: none;
+    margin-top: 1rem;
+}

@@ -2,12 +2,13 @@ from django.urls import path, include
 from rest_framework.documentation import include_docs_urls
 from rest_framework import routers
 from app import views
-from .views import RegisterView, ObjetivosAIViewSet, LoginView, LogoutView, UserInfoView, CustomTokenRefreshView, UpdateUserProfileView, UpdateUserPasswordView, UpdateUserEmailView, ProfilePictureUpdateView, UserViewSet, UserUpdateViewSet, GetUsuarioById, PasswordResetRequestView, PasswordResetView, VerifyEmailView, IngredienteViewSet, CategoriaViewSet, EtiquetaViewSet, RecetaViewSet, ComentarioViewSet, RecetaFavoritoViewSet, PlanAlimenticioViewSet, PlanAlimenticioDiaViewSet, PlanAlimenticioDiaRecetaViewSet, ModeloEntrenamientoViewSet, ModeloPrediccionViewSet, ModeloRecargarViewSet
+from .views import RegisterView, ObjetivosAIViewSet, LoginView, LogoutView, UserInfoView, CustomTokenRefreshView, UpdateUserProfileView, UpdateUserPasswordView, UpdateUserEmailView, ProfilePictureUpdateView, UserViewSet, UserUpdateViewSet, GetUsuarioById, PasswordResetRequestView, PasswordResetView, VerifyEmailView, IngredienteViewSet, CategoriaViewSet, EtiquetaViewSet, RecetaViewSet, ComentarioViewSet, RecetaFavoritoViewSet, PlanAlimenticioViewSet, PlanAlimenticioDiaViewSet, PlanAlimenticioDiaRecetaViewSet, ModeloEntrenamientoViewSet, ModeloPrediccionViewSet, ModeloRecargarViewSet, OpcionPersonalizadaIngredienteViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user') # /users/
 router.register(r'users/update', UserUpdateViewSet, basename='user_update') # /users/update/<id>/
 router.register(r'ingredientes', IngredienteViewSet, basename='ingrediente') # /ingredientes/
+router.register(r'ingredientes_opciones', OpcionPersonalizadaIngredienteViewSet, basename='ingrediente_opciones') # /ingredientes/opciones/
 router.register(r'categorias', CategoriaViewSet, basename='categoria') # /categorias/
 router.register(r'etiquetas', EtiquetaViewSet, basename='etiqueta') # /etiquetas/
 router.register(r'recetas', RecetaViewSet, basename='receta') # /recetas/ 

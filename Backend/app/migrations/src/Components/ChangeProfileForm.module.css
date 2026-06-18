@@ -1,0 +1,33 @@
+.formDescription{
+    font-size: 2.3rem;
+    margin: 0;
+    color: white;
+    font-family: "Oswald", sans-serif;
+    margin: 2rem 2rem 1rem 2rem;
+}
+
+.formOptions{
+    display: flex;
+    justify-content: space-evenly;
+    margin: 2rem 1rem 0 1rem;
+    
+}
+
+.imageUploadContainer{
+    margin: 0rem 2rem;
+}
+
+@media(max-width: 37.5em){
+    .formOptions{
+        justify-content: flex-start;
+    }
+}
+
+@media(max-width: 25em){
+    .formOptions{
+        flex-wrap: wrap;
+        & button{
+            flex-basis: 33%;
+        }
+    }
+}

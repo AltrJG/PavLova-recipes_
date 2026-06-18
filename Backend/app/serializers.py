@@ -1,4 +1,4 @@
-from .models import User, PasswordResetToken, ObjetivosAI, Ingrediente, Categoria, Etiqueta, Receta, RecetaIngrediente, Comentario, RecetaFavorito, PlanAlimenticio, PlanAlimenticioDia, PlanAlimenticioDiaReceta
+from .models import User, PasswordResetToken, ObjetivosAI, Ingrediente, Categoria, Etiqueta, Receta, RecetaIngrediente, Comentario, RecetaFavorito, PlanAlimenticio, PlanAlimenticioDia, PlanAlimenticioDiaReceta, OpcionPersonalizadaIngrediente, OpcionPersonalizadaIngrediente
 from rest_framework import serializers
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -176,10 +176,70 @@ class PasswordResetSerializer(serializers.Serializer):
         reset_token.save()
 
         return user
+
+#---------------------------NOMBRE ALTERNATIVO DE INGREDIENTE-------------------------------#
+
+class OpcionPersonalizadaIngredienteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OpcionPersonalizadaIngrediente
+        fields = '__all__'
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        user = request.user
+
+        ingrediente = validated_data['ingrediente']
+
+        if (
+            ingrediente.creador != user
+            and not (user.is_staff or user.is_superuser)
+        ):
+            raise serializers.ValidationError(
+                "No puedes agregar opciones a este ingrediente."
+            )
+
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        request = self.context.get('request')
+        user = request.user
+
+        ingrediente = instance.ingrediente
+
+        if (
+            ingrediente.tipo == 'personal'
+            and ingrediente.creador != user
+            and not (user.is_staff or user.is_superuser)
+        ):
+            raise serializers.ValidationError(
+                "No tienes permisos para actualizar este ingrediente."
+            )
+
+        return super().update(instance, validated_data)
+    
+    def delete(self, instance):
+        request = self.context.get('request')
+        user = request.user
+
+        ingrediente = instance.ingrediente
+
+        if ingrediente.tipo == 'personal' and ingrediente.creador != user and not (user.is_staff or user.is_superuser):
+            raise serializers.ValidationError(
+                "No tienes permisos para eliminar este ingrediente."
+            )
+        
+        return super().delete(ingrediente)
     
 #---------------------------INGREDIENTE-------------------------------#
 
 class IngredienteSerializer(serializers.ModelSerializer):
+
+    opciones = OpcionPersonalizadaIngredienteSerializer(
+        many=True,
+        read_only=True,
+        source='opcionPersonalizadaIngrediente'
+    )
+
     class Meta:
         model = Ingrediente
         fields = '__all__'

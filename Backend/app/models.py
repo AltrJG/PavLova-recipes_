@@ -474,3 +474,20 @@ class PromedioCalorias(models.Model):
 
     def __str__(self):
         return f"Calorías promedio: {self.calorias_promedio}"    
+
+
+#---------------------------NOMBRE ALTERNATIVO DE INGREDIENTE-------------------------------#
+
+class OpcionPersonalizadaIngrediente(models.Model):
+    nombre = models.CharField(max_length=100, unique=False)
+    cantidad = models.FloatField()
+    ingrediente = models.ForeignKey(
+        Ingrediente,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='opcionPersonalizadaIngrediente'
+    )
+
+    def __str__(self):
+        return self.nombre

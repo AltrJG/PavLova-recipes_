@@ -31,8 +31,10 @@ def calcular_nutrientes(receta, porcion_final=1):
             metrica = Decimal(15) * escala_agua
         elif unidad == 'taza':
             metrica = Decimal(250) * escala_agua
-        else:
+        elif unidad == 'numerica':
             metrica = Decimal(1)
+        else:
+            metrica = Decimal(unidad.split(' ')[0])
 
         conversion = (Decimal(ri.cantidad) * metrica / porcion_inicial) * porcion_final
 

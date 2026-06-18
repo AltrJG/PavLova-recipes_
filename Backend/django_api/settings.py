@@ -37,7 +37,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "localhost",
-    "192.168.1.102"
+    "192.168.68.116"
 ]
 
 
@@ -235,7 +235,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "http://192.168.1.102:14165",
+    "http://192.168.68.116:14165",
 ]
 
 # Email settings

@@ -1,0 +1,22 @@
+.menuToggle{
+    display: none;
+}
+
+@media(max-width: 37.5em){
+    .moreOptions{
+        position: fixed;
+        background-color: #23130d;
+        bottom: -100%;
+        right: 2%;
+        padding: 1rem;
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+        transition: .4s;
+    }
+    .moreOptionsActive{
+        bottom: 5.9rem;
+    }
+    .menuToggle{
+        display: block;
+    }
+}
