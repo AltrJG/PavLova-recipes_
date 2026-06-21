@@ -1,12 +1,14 @@
-FROM node:25-alpine
+FROM node:25-alpine AS builder
 WORKDIR /app
-COPY package.json .
+COPY package.json package-lock.json* ./
 RUN npm install
-RUN npm i -g serve
 COPY . .
 ARG VITE_API_BASE_URL
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 RUN npm run build
-EXPOSE 14165
-CMD [ "serve", "-s", "dist" ]
-LABEL version='1.0' description='PavLova Recipes, an overpowered project by the Pavlova Team'
+
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+LABEL version='2.0' description='PavLova Recipes, an overpowered project by the Pavlova Team'

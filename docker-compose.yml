@@ -1,43 +1,78 @@
 services:
-  pavlovarecipes:
-    build: 
-      context: ./Frontend/
-      args:
-        VITE_API_BASE_URL: "http://192.168.68.116:8000/app/"
-    networks: 
-      - app-network
+  
+  db:
+    image: postgres:15-alpine
+    container_name: pavlova_db
+    restart: always
     environment:
-      - VITE_API_BASE_URL=http://192.168.68.116:8000/app/
-    ports: 
-      - "14165:3000"
-  pavlovackend:
-    networks: 
-      - app-network
-    build: ./Backend/
+      POSTGRES_DB: ${POSTGRESQL_DATABASE}
+      POSTGRES_USER: ${POSTGRESQL_USER}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: pavlova_redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  api:
+    build: ./Backend
+    container_name: pavlova_api
+    command: python manage.py runserver 0.0.0.0:8000
+    env_file:
+      - ./Backend/.env
     ports:
       - "8000:8000"
+    volumes:
+      - ./Backend:/app
+      - media_data:/app/media
     depends_on:
       - db
-    volumes:
-      - media_data:/app/media 
-      - db_backup:/app/backups
-  db:
-    networks: 
-    - app-network
-    image: mysql:8.0
-    ports:
-      - '3306:3306'
-    volumes:
-      - db_data:/var/lib/mysql
-    environment:
-      MYSQL_DATABASE: 'pavlovadb'
-      MYSQL_ROOT_PASSWORD: password
+      - redis
 
-networks:
-  app-network:
-    driver: bridge
+  celery_worker:
+    build: ./Backend
+    container_name: pavlova_celery_worker
+    command: celery -A config worker -l INFO -Q celery,images,maintenance
+    env_file:
+      - ./Backend/.env
+    volumes:
+      - ./Backend:/app
+      - media_data:/app/media
+    depends_on:
+      - api
+      - redis
+      - db
+
+  celery_beat:
+    build: ./Backend
+    container_name: pavlova_celery_beat
+    command: celery -A config beat -l INFO -s /tmp/celerybeat-schedule
+    env_file:
+      - ./Backend/.env
+    volumes:
+      - ./Backend:/app
+    depends_on:
+      - api
+      - redis
+      - db
+  
+  frontend:
+    build: 
+      context: ./Frontend
+      args:
+        VITE_API_BASE_URL: "http://localhost:8000/" 
+    container_name: pavlova_frontend
+    ports: 
+      - "14165:80"
+    depends_on:
+      - api
 
 volumes:
-  db_data:
-  db_backup:
+  postgres_data:
   media_data:
