@@ -65,11 +65,15 @@ services:
   frontend:
     build: 
       context: ./Frontend
-      args:
-        VITE_API_BASE_URL: "http://localhost:8000/" 
+      dockerfile: Dockerfile.dev 
     container_name: pavlova_frontend
     ports: 
-      - "14165:80"
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000/api/v1/
+    volumes:
+      - ./Frontend:/app 
+      - /app/node_modules
     depends_on:
       - api
 

@@ -60,7 +60,7 @@ const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         try{
-            const response = await backendAPI.post('/auth/login/', { email: email, password });
+            const response = await backendAPI.post('/auth/', { email: email, password });
             dispatch({type: 'auth/addAccessToken', payload: response.data.access});
         } catch(error){
             throw new Error(error.response.data.error);
@@ -69,7 +69,7 @@ const AuthProvider = ({ children }) => {
 
     const register = async (nombre, email, password) => {
         try{
-            await backendAPI.post('/auth/register/', { nombre, correo: email, password });
+            await backendAPI.post('/users/', { username: nombre, email, password });
         } catch(error){
             throw new Error(error.response.data.error);
         }
@@ -78,7 +78,8 @@ const AuthProvider = ({ children }) => {
     const getUserData = async () => {
         dispatch({type: 'auth/isLoading'});
         try{
-            const response = await backendAPI.get('/user/details/');
+            const response = await backendAPI.get('/users/me/');
+            console.log(response.data);
             dispatch({type: 'auth/addUserData', payload: response.data});
         } catch(error){
             if(error.response?.status == 401){
@@ -96,7 +97,7 @@ const AuthProvider = ({ children }) => {
     const refreshAccessToken = async (callback = null, ...callbackArgs) => {
         dispatch({type: 'auth/isLoading'});
         try {
-            const response = await backendAPI.post('/token/refresh/');
+            const response = await backendAPI.post('/auth/refresh/');
             dispatch({ type: 'auth/addAccessToken', payload: response.data.access });
             if (callback && typeof callback === "function") {
                 pendingCallback.current = { callback, args: callbackArgs };

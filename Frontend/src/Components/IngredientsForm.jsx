@@ -242,7 +242,6 @@ export default function IngredientsForm(){
                     setIngredientPortionModify({});
                 }
             } catch(error){
-                console.log(error);
                 if(error.response?.status == 401){
                     await refreshAccessToken(handleChangeInformation, e);
                 } else{

@@ -10,7 +10,7 @@ import logOutIcon from '/assets/Iconos/log-out-outline.svg'
 
 export default function Header({toggleMenu, isMenuOpen}){
     const { user, logout, isAuthenticated } = useAuth();
-
+    console.log(user);
     const navigate = useNavigate();
 
     return(
@@ -31,7 +31,7 @@ export default function Header({toggleMenu, isMenuOpen}){
                 <Link to={"/mi-perfil"} className={styles.main_content_user} style={{textDecoration: "none"}}>
                     <h3 className={styles.username}>{user?.nombre?.split(' ')[0]}</h3>
                     <div className={styles.user_img}>
-                        <img src={user?.fotoPerfil}/>
+                        <img src={user?.fotoPerfil?.image}/>
                     </div>
                 </Link></>
                 : <Link to={"/auth/iniciar-sesion"} className={styles.main_content_user} style={{textDecoration: "none"}}>

@@ -95,7 +95,7 @@ export default function ChangeProfileForm(){
         setErrorsHandler(errors);
         if(Object.keys(errors).length === 0){
             try{
-                const response = await backendAPI.post('user/update_profile/', userData);
+                const response = await backendAPI.post('users/update_profile/', userData);
                 changeUserData(userData);
                 Swal.fire({
                     icon: "success",
@@ -127,7 +127,7 @@ export default function ChangeProfileForm(){
         setErrorsHandler(errors);
         if(Object.keys(errors).length === 0){
             try{
-                const response = await backendAPI.post('user/update_password/', passwordData);
+                const response = await backendAPI.post('users/me/password/', passwordData);
                 Swal.fire({
                     icon: "success",
                     title: "Informacion Modificada",
@@ -165,7 +165,7 @@ export default function ChangeProfileForm(){
         setErrorsHandler(errors);
         if(Object.keys(errors).length === 0){
             try{
-                const response = await backendAPI.post('user/update_email/', mailData);
+                const response = await backendAPI.post('users/me/email/', mailData);
                 Swal.fire({
                     icon: "success",
                     title: "Informacion Modificada",
@@ -196,9 +196,9 @@ export default function ChangeProfileForm(){
     const handleImageSubmit = async () => {
         setLoading(true);
         let formData = new FormData();
-        formData.append("profile_picture", imagen[0]);
+        formData.append("image", imagen[0]);
         try{
-            const response = await backendAPI.put('profile/picture/', formData);
+            const response = await backendAPI.post('users/me/picture/', formData);
             Swal.fire({
                 icon: "success",
                 title: "Foto de perfil Actualizada",

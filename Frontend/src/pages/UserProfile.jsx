@@ -25,9 +25,9 @@ export default function UserProfile(){
 
     const getUserProfile = async () => {
         try{
-            const userData = await backendAPI(`/user/${user_id}/`);
+            const userData = await backendAPI(`/users/${user_id}/`);
             setUser({
-                nombre: userData.data.name, 
+                nombre: userData.data.username, 
                 email: userData.data.email, 
                 pais: userData.data.country, 
                 sobreMi: userData.data.about, 

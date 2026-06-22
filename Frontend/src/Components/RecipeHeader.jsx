@@ -168,7 +168,7 @@ export default function RecipeHeader(){
                         : <p className={styles.recipeRatingText}>Esta receta no tiene reseñas</p>
                         }
                     </div>
-                    <Link to={`/user/${receta?.creador_info?.id}`} className={styles.recipeHeaderCreator}>
+                    <Link to={`/users/${receta?.creador_info?.id}`} className={styles.recipeHeaderCreator}>
                         <img src={receta.creador_info?.profile_picture}/>
                         <p className={styles.recipeHeaderCreatorName}>{receta.creador_info?.name}</p>
                     </Link>
