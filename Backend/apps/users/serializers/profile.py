@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.users.models import User, ProfilePicture
+from apps.users.models import User, ProfilePicture, UserSocialLink
 from .public import SocialLinkSerializer
 
 class MeUserDetailsSerializer(serializers.ModelSerializer):
@@ -55,3 +55,22 @@ class ActiveProfilePictureSerializer(serializers.ModelSerializer):
         model = ProfilePicture
         fields = ['id', 'image', 'status', 'processed_at']
         read_only_fields = fields
+
+class SocialLinkWriteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserSocialLink
+        fields = ("platform", "url")
+
+class UserSocialLinksUpdateSerializer(serializers.Serializer):
+    social_links = SocialLinkWriteSerializer(many=True)
+
+    def validate_social_links(self, value):
+        platforms = [item["platform"] for item in value]
+
+        if len(platforms) != len(set(platforms)):
+            raise serializers.ValidationError(
+                "No puede haber plataformas repetidas."
+            )
+
+        return value

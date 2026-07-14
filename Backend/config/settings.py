@@ -233,9 +233,20 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
 ]
 
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SECURE   = not DEBUG
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:14165",
+    "http://localhost:5173",
+    "http://127.0.0.1:14165",
+    "http://127.0.0.1:5173",
+]
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'apps.users.services.authentication.CookieJWTAuthentication',
     ],
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',
@@ -256,8 +267,9 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_COOKIE_HTTP_ONLY': True,
-    'AUTH_COOKIE_SECURE': True,
-    'AUTH_COOKIE_SAMESITE': 'Lax',
     'UPDATE_LAST_LOGIN': True,
     'SIGNING_KEY': os.environ.get("JWT_SIGNING_KEY")
 }
+
+AUTH_COOKIE_SECURE   = not DEBUG
+AUTH_COOKIE_SAMESITE = 'Lax'

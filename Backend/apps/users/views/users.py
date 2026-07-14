@@ -18,6 +18,8 @@ from apps.users.serializers import (
     EmailChangeConfirmSerializer,
     UserGroupAssignSerializer,
     ProfilePictureUploadSerializer,
+    SocialLinkSerializer,
+    UserSocialLinksUpdateSerializer,
 )
 from apps.users.permissions import (
     CanManageGroups,
@@ -27,12 +29,20 @@ from apps.users.permissions import (
 
 from apps.core.filters import GenericTrigramSearchFilter
 from apps.users.tasks import process_profile_picture_task
+from apps.users.services.social_links import sync_social_links
 from apps.core.pagination import DefaultCursorPagination, SearchPageNumberPagination
+from apps.core.mixins import SelectiveCsrfExemptMixin
 import logging
 
 logger = logging.getLogger(__name__)
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
+
+    csrf_exempt_actions = frozenset({
+        'create',
+        'confirm_email_change',
+    })
+
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     filter_backends = [DjangoFilterBackend, GenericTrigramSearchFilter]
@@ -76,7 +86,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 return [IsAuthenticated()]
 
             case 'retrieve':
-                return [IsAuthenticated()]
+                return [AllowAny()]
 
             case 'update' | 'partial_update':
                 return [IsSelfOrHasUserPermission()]
@@ -112,6 +122,9 @@ class UserViewSet(viewsets.ModelViewSet):
 
             case 'assign_groups':
                 return UserGroupAssignSerializer
+            
+            case 'social_links':
+                return UserSocialLinksUpdateSerializer
 
             case 'list':
                 return AdminUserSerializer if is_privileged else PublicUserSerializer
@@ -206,3 +219,24 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(
             status=status.HTTP_202_ACCEPTED,
         )
+    
+    @action(detail=False, methods=["put"], url_path="me/social-links", permission_classes=[IsAuthenticated])
+    def social_links(self, request):
+
+        serializer = UserSocialLinksUpdateSerializer(
+            data=request.data
+        )
+
+        serializer.is_valid(raise_exception=True)
+
+        sync_social_links(
+            request.user,
+            serializer.validated_data["social_links"]
+        )
+
+        output = SocialLinkSerializer(
+            request.user.social_links.all(),
+            many=True
+        )
+
+        return Response(output.data)
