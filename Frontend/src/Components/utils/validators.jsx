@@ -5,14 +5,14 @@ import DOMPurify from 'dompurify';
 export const validateUserData = (userData) => {
     let errors = {};
 
-    if (validator.isEmpty(userData.nombre)) {
-        errors.nombre = "El nombre no puede estar vacío";
+    if (validator.isEmpty(userData.username)) {
+        errors.username = "El nombre no puede estar vacío";
     }
 
-    const sanitizedName = DOMPurify.sanitize(userData.nombre);
+    const sanitizedName = DOMPurify.sanitize(userData.username);
         
-    if (sanitizedName !== userData.nombre) {
-        errors.nombre = "El contenido del nombre contiene código no permitido.";
+    if (sanitizedName !== userData.username) {
+        errors.username = "El contenido del nombre contiene código no permitido.";
     }
 
     if (userData.facebook_link && (!validator.isURL(userData.facebook_link, { require_protocol: true }) || !/^(https?:\/\/)?(www\.)?facebook\.com\//.test(userData.facebook_link))) {
@@ -27,19 +27,19 @@ export const validateUserData = (userData) => {
         errors.youtube_link = "El Enlace a youtube no es válido";
     }
 
-    if (userData.about_me) {
+    if (userData.about) {
         // Check if input contains potential malicious code
-        const sanitizedAboutMe = DOMPurify.sanitize(userData.about_me);
+        const sanitizedAboutMe = DOMPurify.sanitize(userData.about);
         
-        if (sanitizedAboutMe !== userData.about_me) {
-            errors.about_me = "El contenido de 'Sobre mí' contiene código no permitido.";
+        if (sanitizedAboutMe !== userData.about) {
+            errors.about = "El contenido de 'Sobre mí' contiene código no permitido.";
         }
     }
 
-    const sanitizedCountry = DOMPurify.sanitize(userData.pais);
+    const sanitizedCountry = DOMPurify.sanitize(userData.country);
         
-    if (sanitizedCountry !== userData.pais) {
-        errors.pais = "El contenido del pais contiene código no permitido.";
+    if (sanitizedCountry !== userData.country) {
+        errors.country = "El contenido del pais contiene código no permitido.";
     }
 
     return errors;
@@ -49,12 +49,12 @@ export const validateUserData = (userData) => {
 export const validatePasswordData = (passwordData) => {
     let errors = {};
 
-    if (!validator.isStrongPassword(passwordData.newPassword, { minLength: 8 })) {
-        errors.newPassword = "La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, un simbolo y un número.";
+    if (!validator.isStrongPassword(passwordData.new_password, { minLength: 8 })) {
+        errors.new_password = "La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, un simbolo y un número.";
     }
 
-    if (passwordData.newPassword != passwordData.newPasswordConfirm) {
-        errors.newPasswordConfirm = "Las contraseñas no coinciden";
+    if (passwordData.new_password != passwordData.new_password_confirm) {
+        errors.new_password_confirm = "Las contraseñas no coinciden";
     }
 
     return errors;
@@ -64,12 +64,13 @@ export const validatePasswordData = (passwordData) => {
 export const validateMailData = (mailData) => {
     let errors = {};
 
-    const safeEmail = DOMPurify.sanitize(mailData.correo);
-    if(safeEmail != mailData.correo){
-        errors.correo = 'El correo tiene codigo no permitido';
+    const safeEmail = DOMPurify.sanitize(mailData.new_email);
+    console.log(safeEmail, mailData)
+    if(safeEmail != mailData.new_email){
+        errors.new_email = 'El correo tiene codigo no permitido';
     }
-    if (!validator.isEmail(mailData.correo)) {
-        errors.correo = "Correo no válido";
+    if (!validator.isEmail(mailData.new_email)) {
+        errors.new_email = "Correo no válido";
     }
 
     if (validator.isEmpty(mailData.password)) {

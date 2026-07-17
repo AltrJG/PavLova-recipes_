@@ -117,7 +117,7 @@ export default function ManageUsers(){
                     count={count} 
                     currentPage={currentPage} 
                     loading={loading}
-                    text="Mostrando usuarios {start}-{end} de {count}" />
+                    text="Ya se estan mostrando todos los usuarios." />
                 </div>
                 </>}
             </div>

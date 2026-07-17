@@ -40,22 +40,22 @@ export default function ChangeProfileForm(){
     const { user, changeUserData, refreshAccessToken, getUserData } = useAuth();
 
     const mainFormOptions = [
-        { type: "text", name: "nombre", label: "Nombre:"},
-        { type: "text", name: "pais", label: "Pais:"},
+        { type: "text", name: "username", label: "Nombre:"},
+        { type: "text", name: "country", label: "Pais:"},
         { type: "text", name: "facebook_link", label: "Enlace a Facebook:"},
         { type: "text", name: "twitter_link", label: "Enlace a Twitter/X:"},
         { type: "text", name: "youtube_link", label: "Enlace a Youtube:"},
-        { type: "textarea", name: "about_me", label: "Sobre Mi:"}
+        { type: "textarea", name: "about", label: "Sobre Mi:"}
     ];
 
     const passwordFormOptions = [
-        { type: "password", name: "oldPassword", label: "Contraseña Actual:"},
-        { type: "password", name: "newPassword", label: "Nueva Contraseña:"},
-        { type: "password", name: "newPasswordConfirm", label: "Repite la Nueva Contraseña:"},
+        { type: "password", name: "current_password", label: "Contraseña Actual:"},
+        { type: "password", name: "new_password", label: "Nueva Contraseña:"},
+        { type: "password", name: "new_password_confirm", label: "Repite la Nueva Contraseña:"},
     ];
 
     const emailDataOptions = [
-        { type: "email", name: "correo", label: "Nuevo Correo: "},
+        { type: "email", name: "new_email", label: "Nuevo Correo: "},
         { type: "password", name: "password", label: "Contraseña: " }
     ];
 
@@ -67,22 +67,22 @@ export default function ChangeProfileForm(){
     ];
 
     const [ userData, setUserData ] = useState({
-        nombre: user?.nombre,
-        pais: user?.pais,
+        username: user?.nombre,
+        country: user?.pais,
         facebook_link: user?.redFacebook,
         twitter_link: user?.redTwitter,
         youtube_link: user?.redYoutube,
-        about_me: user?.sobreMi
+        about: user?.sobreMi
     });
 
     const [ passwordData, setPasswordData ] = useState({
-        oldPassword: "",
-        newPassword: "",
-        newPasswordConfirm: ""
+        current_password: "",
+        new_password: "",
+        new_password_confirm: ""
     })
 
     const [ mailData, setMailData ] = useState({
-        correo: user?.email,
+        new_email: user?.email,
         password: ""
     });
 
@@ -95,7 +95,7 @@ export default function ChangeProfileForm(){
         setErrorsHandler(errors);
         if(Object.keys(errors).length === 0){
             try{
-                const response = await backendAPI.post('users/update_profile/', userData);
+                const response = await backendAPI.patch('users/me/', userData);
                 changeUserData(userData);
                 Swal.fire({
                     icon: "success",
@@ -141,9 +141,9 @@ export default function ChangeProfileForm(){
                     }
                 });
                 setPasswordData({
-                    oldPassword: "",
-                    newPassword: "",
-                    newPasswordConfirm: ""
+                    current_password: "",
+                    new_password: "",
+                    new_password_confirm: ""
                 });
             } catch(error){
                 if(error.response?.status == 401){

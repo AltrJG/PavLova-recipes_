@@ -39,10 +39,10 @@ function reducer(state, action){
             return{ ...state, user: 
                 {
                     id: state.user.id,
-                    nombre: action.payload.nombre, 
+                    nombre: action.payload.username, 
                     email: state.user.email, 
-                    pais: action.payload.pais, 
-                    sobreMi: action.payload.about_me, 
+                    pais: action.payload.country, 
+                    sobreMi: action.payload.about, 
                     redFacebook: action.payload.facebook_link,
                     fotoPerfil: state.user.fotoPerfil,
                     redYoutube: action.payload.youtube_link,
@@ -79,7 +79,6 @@ const AuthProvider = ({ children }) => {
         dispatch({type: 'auth/isLoading'});
         try{
             const response = await backendAPI.get('/users/me/');
-            console.log(response.data);
             dispatch({type: 'auth/addUserData', payload: response.data});
         } catch(error){
             if(error.response?.status == 401){
@@ -134,7 +133,8 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
         dispatch({type: 'auth/isLoading'});
         const runRefreshToken = async () => {
-            await refreshAccessToken(getUserData);
+            await refreshAccessToken();
+            await getUserData();
             dispatch({type: 'auth/loadFinished'});
         }
         runRefreshToken();
@@ -142,7 +142,6 @@ const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         if (accessToken) {
-            backendAPI.defaults.headers.Authorization = `Bearer ${accessToken}`;
             if (pendingCallback.current) {
                 const { callback, args } = pendingCallback.current;
                 callback(...args);
