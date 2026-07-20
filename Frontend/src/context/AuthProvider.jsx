@@ -63,7 +63,7 @@ const AuthProvider = ({ children }) => {
             const response = await backendAPI.post('/auth/', { email: email, password });
             dispatch({type: 'auth/addAccessToken', payload: response.data.access});
         } catch(error){
-            throw new Error(error.response.data.error);
+            throw new Error(error.response.data.detail);
         }
     }
 
@@ -71,7 +71,11 @@ const AuthProvider = ({ children }) => {
         try{
             await backendAPI.post('/users/', { username: nombre, email, password });
         } catch(error){
-            throw new Error(error.response.data.error);
+            const errors = error.response?.data;
+
+            const firstError = Object.values(errors)[0]?.[0] || "Ocurrio un error inesperado.";
+
+            throw new Error(firstError);
         }
     }
 
@@ -80,6 +84,7 @@ const AuthProvider = ({ children }) => {
         try{
             const response = await backendAPI.get('/users/me/');
             dispatch({type: 'auth/addUserData', payload: response.data});
+            console.log(response.data);
         } catch(error){
             if(error.response?.status == 401){
                 await refreshAccessToken(getUserData);

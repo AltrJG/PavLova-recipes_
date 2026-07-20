@@ -17,7 +17,7 @@ export default function UserDetails({ usuario = null, totalCreados = 0, totalFav
         <div className={styles.userDetailsContainer}>
             <div className={styles.allUserData}>
                 <div className={styles.userData}>
-                    <img className={styles.userProfilePicture} src={userData?.fotoPerfil?.image}/>
+                    <img className={styles.userProfilePicture} src={userData?.fotoPerfil?.image ?? tempUserPic}/>
                     <div className={styles.userDataText}>
                         <h5>{userData?.nombre}</h5>
                         <p>{userData?.pais}</p>
