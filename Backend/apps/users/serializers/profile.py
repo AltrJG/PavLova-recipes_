@@ -24,6 +24,29 @@ class MeUserDetailsSerializer(serializers.ModelSerializer):
             ).data
         
         return None
+    
+class AdminMeUserDetailsSerializer(serializers.ModelSerializer):
+
+    social_links = SocialLinkSerializer(many=True, read_only=True)
+    profile_picture = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'is_active', 'is_staff', 'is_superuser', 'last_login', 'date_joined', 'country', 'email', 'groups', 'about', 'social_links', 'profile_picture']
+        read_only_fields = ['id', 'is_active', 'is_staff', 'is_superuser', 'last_login', 'date_joined', 'email', 'groups']
+
+    def get_profile_picture(self, obj) -> dict | None:
+        active = next(
+            (p for p in obj.profile_pictures.all()
+             if p.status == 'processed'),
+            None,
+        )
+        if active:
+            return ActiveProfilePictureSerializer(
+                active, context=self.context
+            ).data
+        
+        return None
 
 class ProfilePictureUploadSerializer(serializers.ModelSerializer):
 
