@@ -10,6 +10,7 @@ import { useBackground } from "../context/BackgroundProvider";
 import RotatingBall from "../Components/RotatingBall";
 import BurbujaCanvas from "../Components/BurbujaCanvas";
 import fondo_estatico from '../assets/fondo_utensilios_op.png'
+import ModalCentral from "../Components/ModalCentral";
 
 export default function RootLayout(){
 
@@ -69,6 +70,7 @@ export default function RootLayout(){
                     </div>
                 </div>
                 <RightSidebar/>
+                <ModalCentral/>
             </main>
         </>       
     )
