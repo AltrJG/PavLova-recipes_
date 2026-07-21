@@ -10,6 +10,7 @@ from apps.users.serializers import (
     PublicUserSerializer,
     PublicUserDetailsSerializer,
     MeUserDetailsSerializer,
+    AdminMeUserDetailsSerializer,
     AdminUserSerializer,
     AdminUserDetailSerializer,
     UserRegistrationSerializer,
@@ -102,14 +103,19 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         user = self.request.user
-        is_privileged = user.is_staff or user.is_superuser
+        can_view_admin_fields = (
+            user.is_authenticated and (
+                user.has_perm('users.view_admin_fields') or
+                user.is_superuser
+            )
+        )
 
         match self.action:
             case 'create':
                 return UserRegistrationSerializer
 
             case 'me':
-                return MeUserDetailsSerializer
+                return AdminMeUserDetailsSerializer if can_view_admin_fields else MeUserDetailsSerializer
 
             case 'set_password':
                 return ChangePasswordSerializer
@@ -127,13 +133,13 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
                 return UserSocialLinksUpdateSerializer
 
             case 'list':
-                return AdminUserSerializer if is_privileged else PublicUserSerializer
+                return AdminUserSerializer if can_view_admin_fields else PublicUserSerializer
 
             case 'retrieve':
-                return AdminUserDetailSerializer if is_privileged else PublicUserDetailsSerializer
+                return AdminUserDetailSerializer if can_view_admin_fields else PublicUserDetailsSerializer
 
             case 'update' | 'partial_update':
-                return AdminUserDetailSerializer if is_privileged else MeUserDetailsSerializer
+                return AdminUserDetailSerializer if can_view_admin_fields else MeUserDetailsSerializer
 
             case 'destroy':
                 return AdminUserSerializer

@@ -82,6 +82,10 @@ class User(AbstractBaseUser, PermissionsMixin):
             )
         ]
 
+        permissions = [
+            ("view_admin_fields", "Can view admin-only user fields"),
+        ]
+
     def __str__(self):
         return self.email
 
