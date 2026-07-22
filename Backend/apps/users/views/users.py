@@ -29,7 +29,6 @@ from apps.users.permissions import (
 )
 
 from apps.core.filters import GenericTrigramSearchFilter
-from apps.users.tasks import process_profile_picture_task
 from apps.users.services.social_links import sync_social_links
 from apps.core.pagination import DefaultCursorPagination, SearchPageNumberPagination
 from apps.core.mixins import SelectiveCsrfExemptMixin
@@ -64,7 +63,7 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         
-        qs = User.objects.prefetch_related('social_links', 'profile_pictures', 'groups')
+        qs = User.objects.prefetch_related('social_links', 'profile_picture', 'groups')
 
         if not (user.is_staff or user.is_superuser):
             qs = qs.filter(is_active=True)
@@ -73,7 +72,7 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
             return (
                 User.objects
                 .filter(pk=self.request.user.pk)
-                .prefetch_related('profile_pictures', 'social_links', 'groups')
+                .prefetch_related('profile_picture', 'social_links', 'groups')
             )
 
         return qs
@@ -214,13 +213,10 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
             context={'request': request},
         )
         serializer.is_valid(raise_exception=True)
-        picture = serializer.save(user=request.user)
+
+        serializer.save(user=request.user)
 
         logger.info("Imagen subida por usuario %s. Tarea Celery encolada.", request.user.pk)
-
-        process_profile_picture_task.delay(
-            picture_id=str(picture.pk),
-        )
 
         return Response(
             status=status.HTTP_202_ACCEPTED,

@@ -167,13 +167,13 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
 
 CELERY_TASK_ROUTES = {
-    'apps.users.tasks.process_profile_picture_task': {'queue': 'images'},
-    'apps.users.tasks.cleanup_old_profile_pictures': {'queue': 'maintenance'},
+    'apps.users.tasks.process_profile_picture_job': {'queue': 'images'},
+    'apps.users.tasks.cleanup_old_profile_picture_jobs': {'queue': 'maintenance'},
 }
 
 CELERY_BEAT_SCHEDULE = {
     'limpiar_imagenes_huerfanas': {
-        'task': 'users.tasks.cleanup_old_profile_pictures',
+        'task': 'users.tasks.cleanup_old_profile_picture_jobs',
         'schedule': crontab(hour=3, minute=0, day_of_week=0), 
     },
 }

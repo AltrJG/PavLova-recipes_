@@ -6,6 +6,8 @@ import uuid
 import secrets
 from django.contrib.postgres.indexes import GinIndex, OpClass
 from apps.core.filters import Unaccent
+from apps.core.models.jobs import AbstractProcessingJob
+from apps.core.models.images import AbstractImageResource
 
 # Create your models here.
 
@@ -162,55 +164,55 @@ class EmailChangeRequest(models.Model):
         return secrets.token_urlsafe(32)
     
 
-class ProfilePicture(models.Model):
+class ProfilePicture(AbstractImageResource):
 
-    class Status(models.TextChoices):
-        PENDING    = 'pending',    'Pendiente'
-        PROCESSING = 'processing', 'Procesando'
-        PROCESSED  = 'processed',  'Procesado'
-        FAILED     = 'failed',     'Fallido'
-
-    id = models.UUIDField(primary_key=True, default=uuid.uuid7, editable=False)
-
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
-        related_name='profile_pictures',
+        related_name="profile_picture",
     )
 
-    image = models.ImageField(upload_to='profile_pictures/originals/')
-
-    status = models.CharField(
-        max_length=20,
-        choices=Status.choices,
-        default=Status.PENDING,
-        db_index=True,
-    )
-
-    processed_at = models.DateTimeField(null=True, blank=True)
-    created_at   = models.DateTimeField(auto_now_add=True)
-
-    trace_id = models.CharField(max_length=64, blank=True, default='')
+    image = models.ImageField(upload_to='profile_pictures/')
 
     class Meta:
-        ordering = ['-created_at']
+        verbose_name = 'Profile Picture'
+        verbose_name_plural = 'Profile Pictures'
+
+    def __str__(self):
+        return f"ProfilePicture({self.user_id})"
+    
+    
+class ProfilePictureJob(AbstractProcessingJob):
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='profile_picture_jobs',
+    )
+
+    original = models.ImageField(upload_to='profile_pictures/originals/')
+
+    class Meta:
+        verbose_name = 'Profile Picture Job'
+        verbose_name_plural = 'Profile Picture Jobs'
         indexes = [
             models.Index(
                 fields=['user', 'status'],
-                name='profile_picture_status_idx',
+                name='profile_pictur_user_status_idx',
+            ),
+            models.Index(
+                fields=['user'],
+                condition=models.Q(status__in=['pending', 'processing']),
+                name='profile_picture_job_active_idx',
             ),
         ]
         constraints = [
             models.UniqueConstraint(
                 fields=['user'],
-                condition=models.Q(status='processed'),
-                name='unique_active_profile_picture',
+                condition=models.Q(status__in=['pending', 'processing']),
+                name='unique_active_profile_picture_job',
             )
         ]
 
     def __str__(self):
-        return f"ProfilePicture({self.user_id}, {self.status})"
-
-    @property
-    def is_active(self) -> bool:
-        return self.status == self.Status.PROCESSED
+        return f"ProfilePictureJob({self.user_id}, {self.status})"
