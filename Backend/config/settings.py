@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'django_filters',
     'apps.core.apps.CoreConfig',
     'apps.users',
+    'apps.ingredients',
 ]
 
 AUTH_USER_MODEL = 'users.User'

@@ -77,6 +77,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = 'User'
         verbose_name_plural = 'Users'
 
+        ordering = ['-id']
+
         indexes = [
             GinIndex(
                 OpClass(Unaccent('username'), name='gin_trgm_ops'),
@@ -143,7 +145,7 @@ class EmailChangeRequest(models.Model):
     requested_ip = models.GenericIPAddressField(null=True, blank=True)
 
     class Meta:
-        ordering = ["-created_at"]
+        ordering = ["-id"]
         constraints = [
             models.UniqueConstraint(
                 fields=["user"],

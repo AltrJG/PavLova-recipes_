@@ -25,6 +25,20 @@ class AdminMeUserDetailsSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'is_active', 'is_staff', 'is_superuser', 'last_login', 'date_joined', 'email', 'groups']
 
 
+class MeUserContextSerializer(serializers.ModelSerializer):
+
+    permissions = serializers.SerializerMethodField()
+    profile_picture = ProfilePictureSerializer(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'profile_picture', 'is_staff', 'is_superuser', 'permissions']
+        read_only_fields = fields
+
+    def get_permissions(self, obj):
+        return list(obj.get_all_permissions())
+
+
 class ProfilePictureUploadSerializer(serializers.ModelSerializer):
 
     class Meta:

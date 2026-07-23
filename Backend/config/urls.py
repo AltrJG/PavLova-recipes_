@@ -23,7 +23,7 @@ from debug_toolbar.toolbar import debug_toolbar_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/v1/", include("apps.users.urls")),
-    #path("api/v1/", include("apps.recipes.urls")),
+    #path("api/v1/", include("apps.ingredients.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + debug_toolbar_urls()
 
 if settings.ENABLE_SWAGGER:

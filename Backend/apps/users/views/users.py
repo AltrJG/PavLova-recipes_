@@ -11,6 +11,7 @@ from apps.users.serializers import (
     PublicUserDetailsSerializer,
     MeUserDetailsSerializer,
     AdminMeUserDetailsSerializer,
+    MeUserContextSerializer,
     AdminUserSerializer,
     AdminUserDetailSerializer,
     UserRegistrationSerializer,
@@ -24,9 +25,10 @@ from apps.users.serializers import (
 )
 from apps.users.permissions import (
     CanManageGroups,
-    StrictDjangoModelPermissions,
     IsSelfOrHasUserPermission,
 )
+
+from apps.core.permissions import StrictDjangoModelPermissions
 
 from apps.core.filters import GenericTrigramSearchFilter
 from apps.users.services.social_links import sync_social_links
@@ -63,7 +65,7 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         
-        qs = User.objects.prefetch_related('social_links', 'profile_picture', 'groups')
+        qs = User.objects.prefetch_related('profile_picture', 'groups')
 
         if not (user.is_staff or user.is_superuser):
             qs = qs.filter(is_active=True)
@@ -72,7 +74,7 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
             return (
                 User.objects
                 .filter(pk=self.request.user.pk)
-                .prefetch_related('profile_picture', 'social_links', 'groups')
+                .prefetch_related('profile_picture', 'groups')
             )
 
         return qs
@@ -115,6 +117,9 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
 
             case 'me':
                 return AdminMeUserDetailsSerializer if can_view_admin_fields else MeUserDetailsSerializer
+
+            case 'me_context':
+                return MeUserContextSerializer
 
             case 'set_password':
                 return ChangePasswordSerializer
@@ -242,3 +247,9 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
         )
 
         return Response(output.data)
+
+    @action(detail=False, methods=["get"], url_path="me/context", permission_classes=[IsAuthenticated])
+    def me_context(self, request):
+
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
