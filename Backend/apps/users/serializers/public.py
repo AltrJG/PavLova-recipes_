@@ -1,5 +1,12 @@
 from rest_framework import serializers
-from apps.users.models import User, UserSocialLink
+from apps.users.models import User, UserSocialLink, ProfilePicture
+
+class ProfilePictureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProfilePicture
+        fields = ['id', 'image']
+        read_only_fields = fields
+
 
 class SocialLinkSerializer(serializers.ModelSerializer):
 
@@ -11,24 +18,12 @@ class SocialLinkSerializer(serializers.ModelSerializer):
 
 class PublicUserSerializer(serializers.ModelSerializer):
 
-    profile_picture = serializers.SerializerMethodField()
+    profile_picture = ProfilePictureSerializer(read_only=True)
 
     class Meta:
         model = User
         fields = ['id', 'username', 'country', 'profile_picture']
         read_only_fields = fields
-
-    def get_profile_picture(self, obj) -> dict | None:
-
-        active = next(
-            (p for p in obj.profile_pictures.all() if p.status == 'processed'),
-            None,
-        )
-        if active:
-            from .profile import ActiveProfilePictureSerializer
-            return ActiveProfilePictureSerializer(active, context=self.context).data
-        
-        return None
 
 
 class PublicUserDetailsSerializer(PublicUserSerializer):

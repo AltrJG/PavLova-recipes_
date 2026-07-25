@@ -2,6 +2,9 @@ import uuid
 from io import BytesIO
 from django.core.files.base import ContentFile
 from PIL import Image, ImageOps
+import logging
+
+logger = logging.getLogger(__name__)
 
 MAX_SAFE_WIDTH  = 4000
 MAX_SAFE_HEIGHT = 4000
@@ -12,7 +15,7 @@ def process_image(
     max_width: int = 800,
     max_height: int = 800,
     quality: int = 85,
-    force_white_bg: bool = True
+    force_white_bg: bool = True,
 ) -> ContentFile:
     try:
         img_verify = Image.open(image_file)
@@ -20,7 +23,8 @@ def process_image(
 
         if img_verify.width > MAX_SAFE_WIDTH or img_verify.height > MAX_SAFE_HEIGHT:
             raise ValueError(
-                f"Las dimensiones exceden el límite seguro de {MAX_SAFE_WIDTH}x{MAX_SAFE_HEIGHT}px."
+                f"Las dimensiones exceden el límite seguro de "
+                f"{MAX_SAFE_WIDTH}x{MAX_SAFE_HEIGHT}px."
             )
     except ValueError:
         raise
@@ -55,3 +59,83 @@ def process_image(
         raise
     except Exception:
         raise ValueError("El archivo no es una imagen válida o está corrupto.")
+
+
+def run_image_job(
+    job,
+    finish_job_fn,
+    retry_count: int = 0,
+    max_width: int = 800,
+    max_height: int = 800,
+    quality: int = 85,
+    force_white_bg: bool = True,
+) -> None:
+
+    if job.is_cancelled:
+        logger.info(
+            "Job %s cancelado (trace_id=%s) — descartando.",
+            job.pk, job.trace_id,
+        )
+        return
+
+    if job.is_done:
+        logger.warning(
+            "Job %s ya está en estado terminal '%s' — descartando.",
+            job.pk, job.status,
+        )
+        return
+
+    logger.info(
+        "Job %s procesando (trace_id=%s, intento=%s)",
+        job.pk, job.trace_id, retry_count,
+    )
+
+
+    original_name = job.original.name
+
+    try:
+        with job.original.open('rb') as f:
+            processed = process_image(
+                f,
+                max_width=max_width,
+                max_height=max_height,
+                quality=quality,
+                force_white_bg=force_white_bg,
+            )
+    except Exception as exc:
+        logger.exception(
+            "Error procesando imagen del job %s (trace_id=%s)",
+            job.pk, job.trace_id,
+        )
+        job.mark_failed(error=str(exc))
+        job.save_state()
+        job.increment_retry()
+        raise
+
+    try:
+        finish_job_fn(job, processed)
+    except Exception as exc:
+        logger.exception(
+            "Error en finish_job del dominio para job %s (trace_id=%s)",
+            job.pk, job.trace_id,
+        )
+        job.mark_failed(error=f"finish_job falló: {exc}")
+        job.save_state()
+        raise
+
+    if original_name:
+        try:
+            job.original.storage.delete(original_name)
+            logger.debug(
+                "Original eliminado: %s (job=%s)", original_name, job.pk
+            )
+        except Exception:
+            logger.exception(
+                "No se pudo eliminar original %s (job=%s) — requiere limpieza manual.",
+                original_name, job.pk,
+            )
+
+    logger.info(
+        "Job %s completado en %sms (trace_id=%s)",
+        job.pk, job.processing_time_ms, job.trace_id,
+    )

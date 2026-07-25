@@ -1,11 +1,12 @@
 from celery import shared_task
 from django.db import transaction
 from django.utils import timezone
-from apps.users.models import ProfilePicture
-from apps.core.services.image_processing import process_image
-from apps.users.models import ProfilePicture
+from apps.users.models import ProfilePictureJob
+from apps.core.services.image_processing import run_image_job
 from django.utils import timezone
 from datetime import timedelta
+from apps.users.services.profile_picture import ProfilePictureService
+from celery.exceptions import SoftTimeLimitExceeded
 import logging
 
 logger = logging.getLogger(__name__)
@@ -18,61 +19,42 @@ logger = logging.getLogger(__name__)
     retry_jitter=True,
     retry_kwargs={'max_retries': 3},
     queue='images',
+    soft_time_limit=300,
+    time_limit=360,
 )
-def process_profile_picture_task(self, picture_id: str | None = None):
+def process_profile_picture_job(self, job_id: str, trace_id: str | None = None):
 
-    logger.info("Iniciando procesamiento de imagen para ProfilePicture ID: %s", picture_id)
+    logger.info(
+        "Procesando ProfilePictureJob id=%s trace_id=%s intento=%s",
+        job_id, trace_id, self.request.retries,
+    )
 
     with transaction.atomic():
-        picture = (
-            ProfilePicture.objects
+        job = (
+            ProfilePictureJob.objects
             .select_for_update(skip_locked=True)
-            .filter(id=picture_id, status=ProfilePicture.Status.PENDING)
+            .filter(id=job_id, status=ProfilePictureJob.Status.PENDING)
             .first()
         )
-
-        if picture is None:
-            logger.warning("No se encontró ProfilePicture PENDIENTE con ID: %s. Posible tarea duplicada.", picture_id)
+        if job is None:
+            logger.warning(
+                "ProfilePictureJob id=%s no disponible (ya procesado, "
+                "cancelado o bloqueado) — descartando.",
+                job_id,
+            )
             return
 
-        picture.status = ProfilePicture.Status.PROCESSING
-        picture.save(update_fields=['status'])
+        job.mark_processing(task_id=self.request.id or '', worker=self.request.hostname or '')
+        job.save_state()
 
-    original_name = picture.image.name
+    run_image_job(
+    job=job,
+    finish_job_fn=ProfilePictureService.finish_job,
+    retry_count=self.request.retries,
+    max_width=400,
+    max_height=400,
+    )
 
-    try:
-        with picture.image.open('rb') as f:
-            processed = process_image(f)
-
-        with transaction.atomic():
-            (
-                ProfilePicture.objects
-                .filter(
-                    user_id=picture.user_id,
-                    status=ProfilePicture.Status.PROCESSED,
-                )
-                .exclude(pk=picture.pk)
-                .update(status=ProfilePicture.Status.FAILED)
-            )
-
-            picture.image      = processed
-            picture.status     = ProfilePicture.Status.PROCESSED
-            picture.processed_at = timezone.now()
-            picture.save(update_fields=['image', 'status', 'processed_at'])
-
-        if original_name and original_name != picture.image.name:
-            try:
-                picture.image.storage.delete(original_name)
-            except Exception as e:
-                logger.warning("No se pudo borrar el archivo antiguo %s: %s", original_name, e)
-
-        logger.info("Imagen procesada exitosamente para ProfilePicture ID: %s", picture_id)
-
-    except Exception:
-        logger.error("Error crítico procesando imagen %s: %s", picture_id, str(e), exc_info=True)
-        picture.status = ProfilePicture.Status.FAILED
-        picture.save(update_fields=['status'])
-        raise
 
 @shared_task(
     bind=True,
@@ -84,37 +66,65 @@ def process_profile_picture_task(self, picture_id: str | None = None):
     soft_time_limit=300,
     time_limit=360,
 )
-def cleanup_old_profile_pictures(self, batch_size=500):
+def cleanup_old_profile_picture_jobs(self, batch_size: int = 500):
 
-    logger.info("Iniciando tarea de mantenimiento: Limpieza de imágenes fallidas.")
-    
-    cutoff = timezone.now() - timedelta(days=30)
-    
-    queryset = ProfilePicture.objects.filter(
-        status=ProfilePicture.Status.FAILED,
-        created_at__lt=cutoff
-    ).only('id', 'image')
-
+    cutoff        = timezone.now() - timedelta(days=30)
     total_deleted = 0
+    last_pk       = None
 
-    while True:
-        batch = list(queryset[:batch_size])
-        if not batch:
-            break
-            
-        for pic in batch:
-            try:
-                if pic.image:
-                    pic.image.delete(save=False)
-                pic.delete()
-                total_deleted += 1
-            except Exception as e:
-                logger.error("Error al borrar registro ID %s: %s", pic.id, e)
-                continue 
-        
-        logger.info("Batch de limpieza procesado. Total borrados hasta ahora: %d", total_deleted)
+    logger.info("Iniciando limpieza de ProfilePictureJobs fallidos/cancelados.")
 
-    logger.info("Tarea de limpieza finalizada. Total registros borrados: %d", total_deleted)
+    try:
+        while True:
+            qs = (
+                ProfilePictureJob.objects
+                .filter(
+                    status__in=[
+                        ProfilePictureJob.Status.FAILED,
+                        ProfilePictureJob.Status.CANCELLED,
+                    ],
+                    created_at__lt=cutoff,
+                )
+                .order_by('pk')
+                .only('id', 'original')
+            )
+
+            if last_pk:
+                qs = qs.filter(pk__gt=last_pk)
+
+            batch = list(qs[:batch_size])
+            if not batch:
+                break
+
+            for job in batch:
+                last_pk = job.pk
+                try:
+                    if job.original:
+                        job.original.delete(save=False)
+                    job.delete()
+                    total_deleted += 1
+                except Exception:
+                    logger.exception(
+                        "Error eliminando ProfilePictureJob id=%s", job.pk
+                    )
+
+            logger.info(
+                "Batch procesado. Total eliminados hasta ahora: %d", total_deleted
+            )
+
+    except SoftTimeLimitExceeded:
+        logger.warning(
+            "cleanup_old_profile_picture_jobs alcanzó soft_time_limit. "
+            "Eliminados: %d. Continuará en la próxima ejecución.",
+            total_deleted,
+        )
+        return total_deleted
+
+    except Exception as exc:
+        logger.exception("Error inesperado en limpieza de jobs. Eliminados: %d", total_deleted)
+        raise self.retry(exc=exc)
+
+    logger.info("Limpieza finalizada. Total eliminados: %d", total_deleted)
     return total_deleted
 
 def send_email_change_confirmation(user_id: str, new_email: str, token: str) -> bool:

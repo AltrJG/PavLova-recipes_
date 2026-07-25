@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from django.conf import settings
 from apps.users.models import User
-from .public import SocialLinkSerializer
+from .public import SocialLinkSerializer, ProfilePictureSerializer
 from apps.users.services.user_account import set_user_password
 from django.contrib.auth.models import Group, Permission
 
@@ -22,23 +22,13 @@ class AdminUserDetailSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False,
     )
-    profile_picture = serializers.SerializerMethodField()
+    profile_picture = ProfilePictureSerializer(read_only=True)
 
 
     class Meta:
         model = User
         fields = ['id', 'username', 'is_active', 'is_staff', 'is_superuser', 'last_login', 'date_joined', 'password', 'country', 'email', 'about', 'social_links', 'groups', 'group_ids', 'profile_picture']
         read_only_fields = ['date_joined', 'last_login']
-
-    def get_profile_picture(self, obj) -> dict | None:
-        active = next(
-            (p for p in obj.profile_pictures.all() if p.status == 'processed'),
-            None,
-        )
-        if active:
-            from .profile import ActiveProfilePictureSerializer
-            return ActiveProfilePictureSerializer(active, context=self.context).data
-        return None
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -61,22 +51,12 @@ class AdminUserSerializer(serializers.ModelSerializer):
         read_only=True,
         slug_field='name',
     )
-    profile_picture = serializers.SerializerMethodField()
+    profile_picture = ProfilePictureSerializer(read_only=True)
 
     class Meta:
         model = User
         fields = ['id', 'username', 'country', 'is_active', 'is_staff', 'is_superuser', 'email', 'groups', 'profile_picture']
         read_only_fields = fields
-
-    def get_profile_picture(self, obj) -> dict | None:
-        active = next(
-            (p for p in obj.profile_pictures.all() if p.status == 'processed'),
-            None,
-        )
-        if active:
-            from .profile import ActiveProfilePictureSerializer
-            return ActiveProfilePictureSerializer(active, context=self.context).data
-        return None
 
 class PermissionSerializer(serializers.ModelSerializer):
     content_type = serializers.StringRelatedField()

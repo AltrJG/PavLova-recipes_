@@ -11,6 +11,7 @@ from apps.users.serializers import (
     PublicUserDetailsSerializer,
     MeUserDetailsSerializer,
     AdminMeUserDetailsSerializer,
+    MeUserContextSerializer,
     AdminUserSerializer,
     AdminUserDetailSerializer,
     UserRegistrationSerializer,
@@ -24,12 +25,12 @@ from apps.users.serializers import (
 )
 from apps.users.permissions import (
     CanManageGroups,
-    StrictDjangoModelPermissions,
     IsSelfOrHasUserPermission,
 )
 
+from apps.core.permissions import StrictDjangoModelPermissions
+
 from apps.core.filters import GenericTrigramSearchFilter
-from apps.users.tasks import process_profile_picture_task
 from apps.users.services.social_links import sync_social_links
 from apps.core.pagination import DefaultCursorPagination, SearchPageNumberPagination
 from apps.core.mixins import SelectiveCsrfExemptMixin
@@ -64,7 +65,7 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         
-        qs = User.objects.prefetch_related('social_links', 'profile_pictures', 'groups')
+        qs = User.objects.prefetch_related('profile_picture', 'groups')
 
         if not (user.is_staff or user.is_superuser):
             qs = qs.filter(is_active=True)
@@ -73,7 +74,7 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
             return (
                 User.objects
                 .filter(pk=self.request.user.pk)
-                .prefetch_related('profile_pictures', 'social_links', 'groups')
+                .prefetch_related('profile_picture', 'groups')
             )
 
         return qs
@@ -116,6 +117,9 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
 
             case 'me':
                 return AdminMeUserDetailsSerializer if can_view_admin_fields else MeUserDetailsSerializer
+
+            case 'me_context':
+                return MeUserContextSerializer
 
             case 'set_password':
                 return ChangePasswordSerializer
@@ -214,13 +218,10 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
             context={'request': request},
         )
         serializer.is_valid(raise_exception=True)
-        picture = serializer.save(user=request.user)
+
+        serializer.save(user=request.user)
 
         logger.info("Imagen subida por usuario %s. Tarea Celery encolada.", request.user.pk)
-
-        process_profile_picture_task.delay(
-            picture_id=str(picture.pk),
-        )
 
         return Response(
             status=status.HTTP_202_ACCEPTED,
@@ -246,3 +247,9 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
         )
 
         return Response(output.data)
+
+    @action(detail=False, methods=["get"], url_path="me/context", permission_classes=[IsAuthenticated])
+    def me_context(self, request):
+
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)

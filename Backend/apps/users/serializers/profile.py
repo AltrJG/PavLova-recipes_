@@ -1,59 +1,50 @@
 from rest_framework import serializers
-from apps.users.models import User, ProfilePicture, UserSocialLink
-from .public import SocialLinkSerializer
+from apps.users.models import User, ProfilePictureJob, UserSocialLink
+from .public import SocialLinkSerializer, ProfilePictureSerializer
+
 
 class MeUserDetailsSerializer(serializers.ModelSerializer):
 
     social_links = SocialLinkSerializer(many=True, read_only=True)
-    profile_picture = serializers.SerializerMethodField()
+    profile_picture = ProfilePictureSerializer(read_only=True)
 
     class Meta:
         model = User
         fields = ['id', 'username', 'country', 'email', 'about', 'social_links', 'profile_picture']
         read_only_fields = ['id', 'email']
-
-    def get_profile_picture(self, obj) -> dict | None:
-        active = next(
-            (p for p in obj.profile_pictures.all()
-             if p.status == 'processed'),
-            None,
-        )
-        if active:
-            return ActiveProfilePictureSerializer(
-                active, context=self.context
-            ).data
-        
-        return None
+    
     
 class AdminMeUserDetailsSerializer(serializers.ModelSerializer):
 
     social_links = SocialLinkSerializer(many=True, read_only=True)
-    profile_picture = serializers.SerializerMethodField()
+    profile_picture = ProfilePictureSerializer(read_only=True)
 
     class Meta:
         model = User
         fields = ['id', 'username', 'is_active', 'is_staff', 'is_superuser', 'last_login', 'date_joined', 'country', 'email', 'groups', 'about', 'social_links', 'profile_picture']
         read_only_fields = ['id', 'is_active', 'is_staff', 'is_superuser', 'last_login', 'date_joined', 'email', 'groups']
 
-    def get_profile_picture(self, obj) -> dict | None:
-        active = next(
-            (p for p in obj.profile_pictures.all()
-             if p.status == 'processed'),
-            None,
-        )
-        if active:
-            return ActiveProfilePictureSerializer(
-                active, context=self.context
-            ).data
-        
-        return None
+
+class MeUserContextSerializer(serializers.ModelSerializer):
+
+    permissions = serializers.SerializerMethodField()
+    profile_picture = ProfilePictureSerializer(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'profile_picture', 'is_staff', 'is_superuser', 'permissions']
+        read_only_fields = fields
+
+    def get_permissions(self, obj):
+        return list(obj.get_all_permissions())
+
 
 class ProfilePictureUploadSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = ProfilePicture
-        fields = ['id', 'status', 'image']
-        read_only_fields = ['id', 'status']
+        model = ProfilePictureJob
+        fields = ["id", "original"]
+        read_only_fields = ["id"]
 
     def validate_image(self, value):
         allowed_types = {'image/jpeg', 'image/png', 'image/webp'}
@@ -67,17 +58,14 @@ class ProfilePictureUploadSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 f"El archivo no puede superar {max_mb}MB."
             )
+        
         return value
 
     def create(self, validated_data):
-        return ProfilePicture.objects.create(**validated_data)
 
+        from apps.users.services.profile_picture import ProfilePictureService
 
-class ActiveProfilePictureSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProfilePicture
-        fields = ['id', 'image', 'status', 'processed_at']
-        read_only_fields = fields
+        return ProfilePictureService.create_job(**validated_data)
 
 class SocialLinkWriteSerializer(serializers.ModelSerializer):
 
