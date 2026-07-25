@@ -1,0 +1,62 @@
+.permissionManagerContainer{
+    display: flex;
+    width: 100%;
+    gap: 4rem;
+    padding: 4rem;
+}
+
+.permissionPicker{
+    flex: 1;
+}
+
+.permissionDescription{
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    margin-right: 10vw;
+    gap: 2rem; 
+
+    & h3{
+        font-family: 'Oswald', sans-serif;
+        font-size: 3rem;
+    }
+
+    & p{
+        font-family: 'Lato', sans-serif;
+        font-size: 2rem;
+    }
+}
+
+@media(max-width: 90em){
+    .permissionDescription{
+        margin-right: 2rem;
+    }
+
+    .permissionManagerContainer{
+        padding: 2rem;
+    }
+}
+
+@media(max-width: 62.5em){
+    .permissionManagerContainer{
+        flex-direction: column;
+    }
+
+    .permissionDescription{
+        & h3{
+            font-size: 2.5rem;
+        }
+
+        & p{
+            font-size: 1.8rem;
+        }
+    }
+}
+
+@media(max-width: 37.5em){
+    .permissionManagerContainer{
+        padding: .5rem;
+    }
+}
