@@ -37,7 +37,7 @@ export default function ChangeProfileForm(){
     const [ activeOption, setActiveOption ] = useState("Informacion");
     const [ loading, setLoading ] = useState(false);
     const [ errorsHandler, setErrorsHandler ] = useState({});
-    const { user, changeUserData, refreshAccessToken, getUserData } = useAuth();
+    const { user, changeUserData, refreshAccessToken, getUserData, getUserPermissions, permissions } = useAuth();
 
     const mainFormOptions = [
         { type: "text", name: "username", label: "Nombre:"},
@@ -60,10 +60,10 @@ export default function ChangeProfileForm(){
     ];
 
     const options = [
-        { type: 'Informacion', icon: 'information-circle', label: 'Informacion' },
-        { type: 'Contrasena', icon: 'lock-open', label: 'Contraseña' },
-        { type: 'Correo', icon: 'mail', label: 'Correo' },
-        { type: 'ImagenPerfil', icon: 'aperture', label: 'Avatar' }
+        { type: 'Informacion', icon: 'information-circle', label: 'Informacion', can: true},
+        { type: 'Contrasena', icon: 'lock-open', label: 'Contraseña', can: true },
+        { type: 'Correo', icon: 'mail', label: 'Correo', can: permissions['users.delete_emailchangerequest'] || permissions['users.change_emailchangerequest'] || permissions['users.add_emailchangerequest'] },
+        { type: 'ImagenPerfil', icon: 'aperture', label: 'Avatar', can: permissions['users.delete_profilepicturejob'] || permissions['users.change_profilepicture'] || permissions['users.add_profilepicture'] }
     ];
 
     const [ userData, setUserData ] = useState({
@@ -180,6 +180,7 @@ export default function ChangeProfileForm(){
                 });
                 setMailData({...mailData, password: ""});
                 await getUserData();
+                await getUserPermissions();
             } catch(error){
                 if(error.response?.status == 401){
                     await refreshAccessToken(handleChangeEmail, e);
@@ -196,7 +197,7 @@ export default function ChangeProfileForm(){
     const handleImageSubmit = async () => {
         setLoading(true);
         let formData = new FormData();
-        formData.append("image", imagen[0]);
+        formData.append("original", imagen[0]);
         try{
             const response = await backendAPI.post('users/me/picture/', formData);
             Swal.fire({
@@ -212,6 +213,7 @@ export default function ChangeProfileForm(){
                 }
             });
             await getUserData();
+            await getUserPermissions();
             setImagen([]);
             setErrorsHandler({});
         } catch(error){
@@ -235,7 +237,8 @@ export default function ChangeProfileForm(){
 
             <div className={styles.formOptions}>
                 {options.map(option => (
-                    <OptionButton 
+                    option.can
+                    && <OptionButton 
                         isBackgroundBlack={true} 
                         key={option.label} 
                         option={option} 

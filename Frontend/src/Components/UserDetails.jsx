@@ -10,7 +10,7 @@ import heart from '/assets/Iconos/heart.svg';
 
 export default function UserDetails({ usuario = null, totalCreados = 0, totalFavoritos = 0 }){
 
-    const { user } = useAuth();
+    const { user, permissions } = useAuth();
     const userData = (usuario != null ? usuario : user);
 
     return(
@@ -42,9 +42,9 @@ export default function UserDetails({ usuario = null, totalCreados = 0, totalFav
                     </div>
                 </div>
                 <div className={styles.userSocialMedia}>
-                    {userData?.redFacebook != "" && <Link target="_blank" to={userData?.redFacebook}><CircleButton top={true} iconSize="3rem" text="Perfil de Facebook" iconName="logo-facebook"/></Link> }
-                    {userData?.redTwitter != "" && <Link  target="_blank" to={userData?.redTwitter}><CircleButton top={true} iconSize="3rem" text="Perfil de X" iconName="logo-x"/></Link> }
-                    {userData?.redYoutube != "" && <Link  target="_blank" to={userData?.redYoutube}><CircleButton top={true} iconSize="3rem" text="Perfil de Youtube" iconName="logo-youtube"/></Link> }
+                    {userData?.redFacebook != "" && permissions['users.view_usersociallink'] && <Link target="_blank" to={userData?.redFacebook}><CircleButton top={true} iconSize="3rem" text="Perfil de Facebook" iconName="logo-facebook"/></Link> }
+                    {userData?.redTwitter != "" && permissions['users.view_usersociallink'] && <Link  target="_blank" to={userData?.redTwitter}><CircleButton top={true} iconSize="3rem" text="Perfil de X" iconName="logo-x"/></Link> }
+                    {userData?.redYoutube != "" && permissions['users.view_usersociallink'] && <Link  target="_blank" to={userData?.redYoutube}><CircleButton top={true} iconSize="3rem" text="Perfil de Youtube" iconName="logo-youtube"/></Link> }
                 </div>
             </div>
         </div>

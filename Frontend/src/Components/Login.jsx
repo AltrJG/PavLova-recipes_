@@ -11,7 +11,7 @@ import { ReactSVG } from 'react-svg';
 export default function Login(){
 
     const navigate = useNavigate();
-    const { login, getUserData } = useAuth();
+    const { login, getUserData, getUserPermissions } = useAuth();
 
     const [ loading, setLoading ] = useState(false);
     const [ loginData, setLoginData ] = useState({
@@ -29,6 +29,8 @@ export default function Login(){
             try{
                 await login(loginData.correo, loginData.password);
                 setTimeout(() => getUserData(), 0);
+                setTimeout(() => getUserPermissions(), 10);
+                console.log("wtf is this");
                 Swal.fire({
                     icon: "success",
                     title: "Sesion Abierta",

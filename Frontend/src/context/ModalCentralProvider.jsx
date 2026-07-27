@@ -3,8 +3,9 @@ import { createContext, useContext, useReducer } from "react";
 const ModalCentralContext = createContext();
 
 const initialState = {
-    isOpen: true,
-    permissionManager: true,
+    isOpen: false,
+    permissionManager: false,
+    userModify: {},
 }
 
 function reducer(state, action){
@@ -14,7 +15,7 @@ function reducer(state, action){
         case 'modalCentral/close':
             return { ...state, isOpen: false }
         case 'modalCentral/openPermissionManager':
-            return { ...state, isOpen: true, permissionManager: true}
+            return { ...state, isOpen: true, permissionManager: true, userModify: action.payload}
         }
 }
 
@@ -32,8 +33,8 @@ const ModalCentralProvider = ({ children }) => {
         dispatch({type: 'modalCentral/close'});
     }
 
-    function openPermissionManager(){
-        dispatch({type: 'modalCentral/openPermissionManager'});
+    function openPermissionManager(user){
+        dispatch({type: 'modalCentral/openPermissionManager', payload: user});
     }
 
     return (

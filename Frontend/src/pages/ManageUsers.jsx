@@ -16,7 +16,7 @@ import { useFilters } from '../context/FiltersProvider';
 export default function ManageUsers(){
 
     const [ searchParams ] = useSearchParams();
-    const { isSuperUser, refreshAccessToken } = useAuth();
+    const { isSuperUser, refreshAccessToken, permissions } = useAuth();
     const { addPavlorficAero } = useBackground();
     const [ users, setUsers ] = useState([]);
     const [ loading, setLoading ] = useState(true);
@@ -43,8 +43,10 @@ export default function ManageUsers(){
 
             const params = new URLSearchParams();
 
-            if (userFilters.nombre.trim() && previous == null && next == null) params.append("name", userFilters.nombre);
-            if (userFilters.tipoUsuario !== "Todos" && previous == null && next == null) params.append("role", userFilters.tipoUsuario);
+            if (userFilters.nombre.trim() && previous == null && next == null) params.append("search", userFilters.nombre);
+            if (userFilters.tipoUsuario == "Usuarios" && previous == null && next == null) params.append("is_active", true);
+            if (userFilters.tipoUsuario == "Moderadores" && previous == null && next == null) params.append("is_staff", true);
+            if (userFilters.tipoUsuario == "Administradores" && previous == null && next == null) params.append("is_superuser", true);
 
             // Append query parameters if they exist
             if (params.toString()) {
@@ -106,7 +108,7 @@ export default function ManageUsers(){
                 ? <p className={styles.usersNotFound}>No se encontraron usuarios con los filtros colocados, prueba modificando los filtros</p>
                 : <>
                 <div className='usersContent'>
-                    { users.map(user => <UserCard key={user.id} user={user} changeUserPermissions={isSuperUser}/>) }
+                    { users.map(user => <UserCard key={user.id} user={user} changeUserPermissions={permissions['users.change_user']}/>) }
                 </div>
                 { loading && <div className='spinnerLoader'><FadeLoader color='rgba(252,115,2,1)'/></div>}
                 <div className='mobileSpace'>

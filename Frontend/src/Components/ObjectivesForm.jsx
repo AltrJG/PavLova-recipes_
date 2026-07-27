@@ -18,7 +18,7 @@ export default function ObjectivesForm(){
     const [ activeOption, setActiveOption ] = useState("automatico");
     const [ errorsHandler, setErrorsHandler ] = useState({});
     const [ personas, setPersonas ] = useState(1);
-    const { user, changeUserData, refreshAccessToken, getUserData } = useAuth();
+    const { refreshAccessToken } = useAuth();
     const { setNewObjectives } = useUpdateData();
     const { nutritionalObjectives: nutritionalObjectivesData } = useRightSidebar();
     const [automaticData, setAutomaticData] = useState({

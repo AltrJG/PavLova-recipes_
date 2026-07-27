@@ -12,6 +12,65 @@ const initialState = {
     isAuthenticated: false,
     isStaff: false,
     isSuperUser: false,
+    permissions: {
+        "admin.add_logentry": false,
+        "admin.change_logentry": false,
+        "admin.delete_logentry": false,
+        "admin.view_logentry": false,
+        "auth.add_group": false,
+        "auth.add_permission": false,
+        "auth.change_group": false,
+        "auth.change_permission": false,
+        "auth.delete_group": false,
+        "auth.delete_permission": false,
+        "auth.view_group": false,
+        "auth.view_permission": false,
+        "contenttypes.add_contenttype": false,
+        "contenttypes.change_contenttype": false,
+        "contenttypes.delete_contenttype": false,
+        "contenttypes.view_contenttype": false,
+        "ingredients.add_ingrediente": false,
+        "ingredients.add_porcioningrediente": false,
+        "ingredients.change_ingrediente": false,
+        "ingredients.change_porcioningrediente": false,
+        "ingredients.delete_ingrediente": false,
+        "ingredients.delete_porcioningrediente": false,
+        "ingredients.view_ingrediente": false,
+        "ingredients.view_porcioningrediente": false,
+        "sessions.add_session": false,
+        "sessions.change_session": false,
+        "sessions.delete_session": false,
+        "sessions.view_session": false,
+        "token_blacklist.add_blacklistedtoken": false,
+        "token_blacklist.add_outstandingtoken": false,
+        "token_blacklist.change_blacklistedtoken": false,
+        "token_blacklist.change_outstandingtoken": false,
+        "token_blacklist.delete_blacklistedtoken": false,
+        "token_blacklist.delete_outstandingtoken": false,
+        "token_blacklist.view_blacklistedtoken": false,
+        "token_blacklist.view_outstandingtoken": false,
+        "users.add_emailchangerequest": false,
+        "users.add_profilepicture": false,
+        "users.add_profilepicturejob": false,
+        "users.add_user": false,
+        "users.add_usersociallink": false,
+        "users.change_emailchangerequest": false,
+        "users.change_profilepicture": false,
+        "users.change_profilepicturejob": false,
+        "users.change_user": false,
+        "users.change_usersociallink": false,
+        "users.delete_emailchangerequest": false,
+        "users.delete_profilepicture": false,
+        "users.delete_profilepicturejob": false,
+        "users.delete_user": false,
+        "users.delete_usersociallink": false,
+        "users.view_admin_fields": false,
+        "users.view_emailchangerequest": false,
+        "users.view_profilepicture": false,
+        "users.view_profilepicturejob": false,
+        "users.view_user": false,
+        "users.view_usersociallink": false
+    },
 }
 
 function reducer(state, action){
@@ -35,6 +94,23 @@ function reducer(state, action){
                     redYoutube: action.payload.social_youtube,
                     redTwitter: action.payload.social_twitter
                 }, isStaff: action.payload.is_staff, isSuperUser: action.payload.is_superuser};
+        case 'auth/addUserPermissions':
+            const userPermissions = action.payload || [];
+            const userPermissionsSet = new Set(userPermissions);
+
+            const updatedPermissions = Object.keys(state.permissions).reduce((acc, permKey) => {
+                acc[permKey] = userPermissionsSet.has(permKey);
+                return acc;
+            }, {});
+
+            console.log()
+
+            return {
+                ...state,
+                accessToken: action.payload.accessToken || action.payload,
+                isAuthenticated: true,
+                permissions: updatedPermissions
+            };
         case 'auth/changeUserData':
             return{ ...state, user: 
                 {
@@ -56,7 +132,7 @@ function reducer(state, action){
 
 const AuthProvider = ({ children }) => {
     const pendingCallback = useRef(null);
-    const [{ user, isLoading, accessToken, isAuthenticated, isStaff, isSuperUser }, dispatch] = useReducer(reducer, initialState);
+    const [{ user, isLoading, accessToken, isAuthenticated, isStaff, isSuperUser, permissions }, dispatch] = useReducer(reducer, initialState);
 
     const login = async (email, password) => {
         try{
@@ -84,7 +160,6 @@ const AuthProvider = ({ children }) => {
         try{
             const response = await backendAPI.get('/users/me/');
             dispatch({type: 'auth/addUserData', payload: response.data});
-            console.log(response.data);
         } catch(error){
             if(error.response?.status == 401){
                 await refreshAccessToken(getUserData);
@@ -92,6 +167,20 @@ const AuthProvider = ({ children }) => {
         } finally{
             dispatch({type: 'auth/loadFinished'});
         }
+    }
+
+    const getUserPermissions = async () => {
+        dispatch({type: 'auth/isLoading'});
+        try{
+            const response = await backendAPI.get('/users/me/context/');
+            dispatch({type: 'auth/addUserPermissions', payload: response.data.permissions ?? []});
+        } catch(error){
+            if(error.response?.status == 401){
+                await refreshAccessToken(getUserPermissions);
+            }
+        } finally{
+            dispatch({type: 'auth/loadFinished'});
+        }    
     }
 
     const changeUserData = async userData => {
@@ -140,6 +229,7 @@ const AuthProvider = ({ children }) => {
         const runRefreshToken = async () => {
             await refreshAccessToken();
             await getUserData();
+            await getUserPermissions();
             dispatch({type: 'auth/loadFinished'});
         }
         runRefreshToken();
@@ -164,11 +254,13 @@ const AuthProvider = ({ children }) => {
             isSuperUser,
             isStaff,
             isLoading,
+            permissions,
             changeUserData,
             logout,
             login,
             register,
             getUserData,
+            getUserPermissions,
             refreshAccessToken
         }}>
             { children }

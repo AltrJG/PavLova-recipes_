@@ -2,10 +2,12 @@ import styles from "./UserCard.module.css";
 import tempUserPic from "../assets/smile.png"
 import { useRightSidebar } from "../context/RightSidebarProvider";
 import { Link } from "react-router-dom";
+import { useModalCentral } from "../context/ModalCentralProvider";
 
 export default function UserCard({ changeUserPermissions, user }){
 
     const { openUpdatePermissions } = useRightSidebar();
+    const { openPermissionManager } = useModalCentral();
 
     return(
         <div className={styles.cardContainer}>
@@ -20,7 +22,7 @@ export default function UserCard({ changeUserPermissions, user }){
                 </div>
             </Link>
             {changeUserPermissions && <div className={styles.userCardActions}>
-                <button onClick={() => openUpdatePermissions(user)} className={styles.userCardButton}>Cambiar Permisos</button>
+                <button onClick={() => openPermissionManager(user)} className={styles.userCardButton}>Cambiar Permisos</button>
             </div> }
         </div>
     )

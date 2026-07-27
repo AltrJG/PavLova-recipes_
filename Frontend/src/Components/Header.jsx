@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthProvider";
 import libreriaLogo from "../assets/logo.png"
 import { ReactSVG } from "react-svg";
 import logOutIcon from '/assets/Iconos/log-out-outline.svg'
+import tempUserPic from "../assets/smile.png"
 
 export default function Header({toggleMenu, isMenuOpen}){
     const { user, logout, isAuthenticated } = useAuth();
@@ -30,7 +31,7 @@ export default function Header({toggleMenu, isMenuOpen}){
                 <Link to={"/mi-perfil"} className={styles.main_content_user} style={{textDecoration: "none"}}>
                     <h3 className={styles.username}>{user?.nombre?.split(' ')[0]}</h3>
                     <div className={styles.user_img}>
-                        <img src={user?.fotoPerfil?.image}/>
+                        <img src={user?.fotoPerfil?.image ?? tempUserPic}/>
                     </div>
                 </Link></>
                 : <Link to={"/auth/iniciar-sesion"} className={styles.main_content_user} style={{textDecoration: "none"}}>
