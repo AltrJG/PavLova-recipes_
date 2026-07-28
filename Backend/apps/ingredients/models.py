@@ -3,7 +3,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from apps.users.models import User
 from decimal import Decimal
 import uuid
-
+from apps.core.models.jobs import AbstractProcessingJob
+from apps.core.models.images import AbstractImageResource
 
 # Create your models here.
 
@@ -41,6 +42,10 @@ class Ingrediente(models.Model):
 
     class Meta:
         ordering = ['-id']
+
+        permissions = [
+                    ("manage_global_ingredients", "Can create, update and delete global ingredients"),
+                ]
 
         constraints = [
             models.UniqueConstraint(
@@ -91,6 +96,8 @@ class PorcionIngrediente(models.Model):
         on_delete=models.CASCADE,
         related_name='porciones'
     )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ['-id']
@@ -99,13 +106,67 @@ class PorcionIngrediente(models.Model):
             models.UniqueConstraint(
                 fields=["ingrediente", "nombre"],
                 name="unique_nombre_porcion_ingrediente",
+            ),
+
+            models.CheckConstraint(
+                check=models.Q(cantidad__gt=Decimal("0.00")),
+                name="porcion_cantidad_positiva",
             )
         ]
 
-        models.CheckConstraint(
-            check=models.Q(cantidad__gt=Decimal("0.00")),
-            name="porcion_cantidad_positiva",
-        )
-
     def __str__(self):
         return self.nombre
+
+
+class IngredientImage(AbstractImageResource):
+
+    ingrediente = models.OneToOneField(
+        Ingrediente,
+        on_delete=models.CASCADE,
+        related_name="ingredient_image",
+    )
+
+    image = models.ImageField(upload_to='ingredient_images/')
+
+    class Meta:
+        verbose_name = 'Ingredient Image'
+        verbose_name_plural = 'Ingredient Images'
+
+    def __str__(self):
+        return f"IngredientImage({self.ingrediente_id})"
+    
+    
+class IngredientImageJob(AbstractProcessingJob):
+
+    ingrediente = models.ForeignKey(
+        Ingrediente,
+        on_delete=models.CASCADE,
+        related_name='ingredient_image_jobs',
+    )
+
+    original = models.ImageField(upload_to='ingredient_images/originals/')
+
+    class Meta:
+        verbose_name = 'Ingredient Image Job'
+        verbose_name_plural = 'Ingredient Image Jobs'
+        indexes = [
+            models.Index(
+                fields=['ingrediente', 'status'],
+                name='ingredient_image_status_idx',
+            ),
+            models.Index(
+                fields=['ingrediente'],
+                condition=models.Q(status__in=['pending', 'processing']),
+                name='ingredient_img_job_active_idx',
+            ),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['ingrediente'],
+                condition=models.Q(status__in=['pending', 'processing']),
+                name='unique_active_ingredient_image_job',
+            )
+        ]
+
+    def __str__(self):
+        return f"IngredientImageJob({self.ingrediente_id}, {self.status})"
