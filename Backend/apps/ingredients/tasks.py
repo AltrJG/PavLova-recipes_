@@ -1,7 +1,7 @@
 from celery import shared_task
 from apps.ingredients.models import IngredientImageJob
 from apps.ingredients.services.ingredient_image import IngredientImageService
-from Backend.apps.core.tasks.images import process_single_image_job, execute_job_cleanup
+from apps.core.tasks.images import process_single_image_job, execute_job_cleanup
 import logging
 
 logger = logging.getLogger(__name__)

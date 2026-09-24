@@ -1,6 +1,6 @@
 from celery import shared_task
-from apps.users.models import ProfilePictureJob
-from apps.users.services.profile_picture import ProfilePictureService
+from apps.authorization.models import GroupImageJob
+from apps.authorization.services.group_image import GroupImageService
 from apps.core.tasks.images import process_single_image_job, execute_job_cleanup
 import logging
 
@@ -17,14 +17,14 @@ logger = logging.getLogger(__name__)
     soft_time_limit=300,
     time_limit=360,
 )
-def process_profile_picture_job(self, job_id: str, trace_id: str | None = None):
+def process_group_image_job(self, job_id: str, trace_id: str | None = None):
 
     process_single_image_job(
         celery_task=self,
-        job_model=ProfilePictureJob,
+        job_model=GroupImageJob,
         job_id=job_id,
         trace_id=trace_id,
-        finish_job_fn=ProfilePictureService.finish_job,
+        finish_job_fn=GroupImageService.finish_job,
         max_width=400,
         max_height=400,
     )
@@ -40,21 +40,11 @@ def process_profile_picture_job(self, job_id: str, trace_id: str | None = None):
     soft_time_limit=300,
     time_limit=360,
 )
-def cleanup_old_profile_picture_jobs(self, batch_size: int = 500):
+def cleanup_old_group_image_jobs(self, batch_size: int = 500):
 
     return execute_job_cleanup(
         celery_task=self,
-        job_model=ProfilePictureJob,
+        job_model=GroupImageJob,
         batch_size=batch_size,
         days_old=30
     )
-
-def send_email_change_confirmation(user_id: str, new_email: str, token: str) -> bool:
-
-    #TODO servicio SMTP conectado
-    logger.info(
-        "Enviando correo de confirmación de email. Usuario: %s, Nuevo Email: %s", 
-        user_id, new_email
-    )
-
-    return True

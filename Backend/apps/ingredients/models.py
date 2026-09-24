@@ -59,18 +59,18 @@ class Ingrediente(models.Model):
                 name='unique_ingrediente_personal_usuario'
             ),
             models.CheckConstraint(
-                check=(
+                condition=(
                     models.Q(tipo=TipoIngrediente.GLOBAL, creador__isnull=True) |
                     models.Q(tipo=TipoIngrediente.PERSONAL, creador__isnull=False)
                 ),
                 name="ingrediente_tipo_creador_consistente",
             ),
             models.CheckConstraint(
-                check=models.Q(escala_agua__gte=Decimal("0.0"), escala_agua__lte=Decimal("5.0")),
+                condition=models.Q(escala_agua__gte=Decimal("0.0"), escala_agua__lte=Decimal("5.0")),
                 name='escala_agua_rango_valido'
             ),
             models.CheckConstraint(
-                check=models.Q(
+                condition=models.Q(
                     calorias__gte=Decimal("0.00"),
                     carbohidratos__gte=Decimal("0.00"),
                     proteinas__gte=Decimal("0.00"),
@@ -109,7 +109,7 @@ class PorcionIngrediente(models.Model):
             ),
 
             models.CheckConstraint(
-                check=models.Q(cantidad__gt=Decimal("0.00")),
+                condition=models.Q(cantidad__gt=Decimal("0.00")),
                 name="porcion_cantidad_positiva",
             )
         ]

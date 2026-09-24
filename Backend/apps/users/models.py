@@ -88,6 +88,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         permissions = [
             ("view_admin_fields", "Can view admin-only user fields"),
+            ("manage_user_groups", "Can assign, remove, and manage user group memberships"),
+            ("manage_staff_status", "Can grant or revoke staff status for users"),
         ]
 
     def __str__(self):

@@ -33,8 +33,6 @@ ENABLE_DEBUG_TOOLBAR = False
 
 ALLOWED_HOSTS = []
 
-RESTRICTED_GROUPS = ['Moderator', 'Content Manager']
-
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",
     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
@@ -62,6 +60,7 @@ INSTALLED_APPS = [
     'apps.core.apps.CoreConfig',
     'apps.users',
     'apps.ingredients',
+    'apps.authorization',
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -170,11 +169,13 @@ CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_ROUTES = {
     'apps.users.tasks.process_profile_picture_job': {'queue': 'images'},
     'apps.users.tasks.cleanup_old_profile_picture_jobs': {'queue': 'maintenance'},
+    'apps.authorization.tasks.process_group_image_job': {'queue': 'images'},
+    'apps.authorization.tasks.cleanup_old_group_image_jobs': {'queue': 'maintenance'},
 }
 
 CELERY_BEAT_SCHEDULE = {
     'limpiar_imagenes_huerfanas': {
-        'task': 'users.tasks.cleanup_old_profile_picture_jobs',
+        'task': 'apps.users.tasks.cleanup_old_profile_picture_jobs',
         'schedule': crontab(hour=3, minute=0, day_of_week=0), 
     },
 }
@@ -271,6 +272,3 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
     'SIGNING_KEY': os.environ.get("JWT_SIGNING_KEY")
 }
-
-AUTH_COOKIE_SECURE   = not DEBUG
-AUTH_COOKIE_SAMESITE = 'Lax'

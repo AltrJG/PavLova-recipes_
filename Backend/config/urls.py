@@ -20,10 +20,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 from debug_toolbar.toolbar import debug_toolbar_urls
 
+api_v1_patterns = [
+    path('', include("apps.users.urls")),
+    path('authorization/', include("apps.authorization.urls")),
+    # path('', include("apps.ingredients.urls")),
+]
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("api/v1/", include("apps.users.urls")),
-    #path("api/v1/", include("apps.ingredients.urls")),
+    path('api/v1/', include(api_v1_patterns)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + debug_toolbar_urls()
 
 if settings.ENABLE_SWAGGER:

@@ -18,13 +18,11 @@ from apps.users.serializers import (
     ChangePasswordSerializer,
     EmailChangeRequestSerializer,
     EmailChangeConfirmSerializer,
-    UserGroupAssignSerializer,
     ProfilePictureUploadSerializer,
     SocialLinkSerializer,
     UserSocialLinksUpdateSerializer,
 )
 from apps.users.permissions import (
-    CanManageGroups,
     IsSelfOrHasUserPermission,
 )
 
@@ -95,9 +93,6 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
 
             case 'destroy':
                 return [StrictDjangoModelPermissions()]
-            
-            case 'assign_groups':
-                return [CanManageGroups()]
 
             case _:
                 return [IsAuthenticated()]
@@ -129,9 +124,6 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
 
             case 'confirm_email_change':
                 return EmailChangeConfirmSerializer
-
-            case 'assign_groups':
-                return UserGroupAssignSerializer
             
             case 'social_links':
                 return UserSocialLinksUpdateSerializer
@@ -200,15 +192,6 @@ class UserViewSet(SelectiveCsrfExemptMixin, viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({'detail': 'Correo actualizado correctamente.'})
-    
-    @action(detail=True, methods=['patch'], url_path='groups', url_name='assign-groups', permission_classes=[CanManageGroups])
-    def assign_groups(self, request, pk=None):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        logger.warning("Usuario %s modificó grupos del usuario %s", request.user.pk, pk)
-        return Response(serializer.data)
 
     @action(detail=False, methods=['post'], url_path='me/picture', url_name='me-picture', permission_classes=[IsAuthenticated])
     def upload_picture(self, request):

@@ -1,5 +1,5 @@
 from apps.users.models import ProfilePicture, ProfilePictureJob
-from Backend.apps.core.services.image_services import create_single_image_job, finish_single_image_job
+from apps.core.services.image_services import create_single_image_job, finish_single_image_job
 import logging
 
 logger = logging.getLogger(__name__)
