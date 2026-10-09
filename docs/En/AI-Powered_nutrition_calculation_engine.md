@@ -13,7 +13,7 @@ To train an initial model without relying on external proprietary scoring APIs, 
    When a user creates or modifies a recipe, ingredient quantities and unit measurements (e.g., grams, tablespoons) are calculated on the frontend. This computes per-serving macronutrient totals (Proteins, Fats, Carbohydrates, Sodium, Calories) in real time, avoiding heavy backend aggregation overhead.
 
 2. **Ground-Truth Labeling (Moderator Bootstrapping):**
-   System administrators and nutrition moderators review a baseline subset of recipes, assigning a verified health score ($y \in [0, 500]$) based on category and macro profiles. Once verified, these recipes are flagged in the database (`Verificado = True`) to serve as our gold-standard training set.
+   System administrators and nutrition moderators review a baseline subset of recipes, assigning a verified health score ([0, 500]) based on category and macro profiles. Once verified, these recipes are flagged in the database (`Verificado = True`) to serve as our gold-standard training set.
 
 ---
 
