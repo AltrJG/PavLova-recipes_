@@ -48,9 +48,13 @@ The client-side engine continuously recalculates daily macro ratios against set 
 
 Plan summaries display nutrient-to-calorie ratios, total ingredient requirements, and day-by-day macro distribution charts, all of which are compiled into the exported PDF document upon creation.
 
-<img width="395" height="732" alt="Nutrient Summary" src="https://github.com/user-attachments/assets/362b2dee-520a-4350-9ed1-fadac97a5d36" />
-<img width="405" height="321" alt="Macro Distribution" src="https://github.com/user-attachments/assets/46bbb21d-d10e-42c4-a114-c55e1e26fc50" />
+<img width="600" height="732" alt="Nutrient Summary" src="https://github.com/user-attachments/assets/362b2dee-520a-4350-9ed1-fadac97a5d36" />
+
+<img width="405" height="731" alt="Macro Distribution" src="https://github.com/user-attachments/assets/46bbb21d-d10e-42c4-a114-c55e1e26fc50" />
+
 <img width="1109" height="622" alt="Ingredient Aggregation" src="https://github.com/user-attachments/assets/13a27a4a-36ba-42e2-b1eb-047fe429f17b" />
+
+*Figure 4: All the metrics displayed when a meal plan is being created.*
 
 ---
 
@@ -60,7 +64,7 @@ The automated planner executes an efficient, **client-side greedy heuristic pipe
 
 <img width="1851" height="910" alt="Automatic Configuration Interface" src="https://github.com/user-attachments/assets/c9be4ba0-4b4b-4413-ab9f-a48aa91f447e" />
 
-*Figure 4: Automated planner configuration panel for meal counts, variety parameters, and nutrient weightings.*
+*Figure 5: Automated planner configuration panel for meal counts, variety parameters, and nutrient weightings.*
 
 ### User Preference Parameters:
 * **Macronutrient Weighting ($0\% \text{ to } 200\%$):** Adjusts scoring priority relative to caloric density. $100\%$ represents neutral weight, $>100\%$ prioritizes higher macro density, and $<100\%$ penalizes recipes rich in that macro.
