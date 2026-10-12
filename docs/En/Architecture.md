@@ -58,4 +58,4 @@ The backend is built as a RESTful monolith using **Django**, providing enterpris
 
 * **Infinite Compute Scalability:** Offloading combinatorial loops and PDF generation to user devices reduces backend CPU usage to near zero.
 * **Strict Separation of Concerns:** Clear boundary between presentation/optimization logic (Frontend) and data governance/AI inference (Backend).
-* **Maintainability:** Standard Django Model-View-Template (MVC) project structure ensures seamless onboarding for external developers.
+* **Maintainability:** Standard Django Model-View-Template (MVT/MVC) project structure ensures seamless onboarding for external developers.
