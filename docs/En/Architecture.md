@@ -1,3 +1,10 @@
+# System Architecture Overview
+
+## Executive Overview
+The application follows a **decoupled Client-Server Architecture** comprising a single-page React frontend and a Django-based REST API backend. 
+
+The architecture intentionally delegates heavy combinatorial calculations—such as real-time recipe nutritional aggregation and multi-day meal plan optimization—to the **Client-Side (Browser Engine)**. This keeps backend operations stateless, fast, and computationally lightweight, restricting server activity to database persistence, authentication, and asynchronous Machine Learning inference.
+
 ## 1. Frontend Architecture (`Client-Side`)
 
 The user interface is built as a Single Page Application (SPA) designed for minimal latency and rich client-side responsiveness.
@@ -29,7 +36,7 @@ The backend is built as a RESTful monolith using **Django**, providing enterpris
 * **Model Serialization & Inference:** Trained Random Forest model artifacts (`.joblib` / `.pkl`) are loaded into memory during application bootstrap. Unverified recipes trigger lightweight inference requests that return predicted health scores ($0–500$) to the client.
 * **Model Training & Bootstrapping Pipeline:** Uses Pandas to aggregate human-verified recipes (`Verificado = True`), execute $K$-fold cross-validation, and evaluate MAE performance metrics.
 * **Security & Access Control (RBAC):** Built-in Django authentication/authorization framework managing role hierarchy across **Regular Users**, **Moderators**, and **Administrators**.
-
+* **Media management:** Stores any images needed that users may upload, such as user profiles, recipe images, and ingredient images.
 ---
 
 ## 3. Data Flow & Communication Patterns
