@@ -40,17 +40,17 @@ Grants access to all end-user functionality required for culinary cataloging and
 * **Social Engagement:** Post comments on public community recipes and delete comments on self-authored recipe posts.
 
 <img width="1836" height="912" alt="image" src="https://github.com/user-attachments/assets/bdaf1f9f-ecc1-4a17-b9a6-f2198c53ab68" />
-*Figure 1. Recipe creation section*
+Figure 1. Recipe creation section
 
 <img width="1836" height="912" alt="image" src="https://github.com/user-attachments/assets/3d574658-d715-417c-bd27-6ce999c9c726" />
-*Figure 2. Recipe view*
+Figure 2. Recipe view
 
 #### Profile & Meal Planning
 * **User Profiles:** Customize personal profile information and inspect public catalogs of other users.
 * **Meal Planning Engine:** Full access to manual metabolic targets (Mifflin-St Jeor TDEE) and the automated greedy heuristic meal plan generator.
 
 <img width="1836" height="912" alt="image" src="https://github.com/user-attachments/assets/fa34aa45-d8eb-40be-8cee-130270e8afb0" />
-*Figure 3. Profile of an user*
+Figure 3. Profile of an user
 
 ---
 
@@ -64,10 +64,10 @@ Inherits all **Regular User** capabilities while adding platform governance and 
 * **Preset Goal Curation:** Design and publish pre-configured nutritional preference presets (e.g., *Hyper-Protein*, *Keto*, *Low-Sodium*) to simplify setup for novice users.
 
 <img width="1836" height="912" alt="image" src="https://github.com/user-attachments/assets/853ed78f-df78-42cd-b27e-eb18e139105e" />
-*Figure 4. Categories and tags view*
+Figure 4. Categories and tags view
 
 <img width="1836" height="912" alt="image" src="https://github.com/user-attachments/assets/4ce1a528-c1ef-4f4e-8909-766e0c39f761" />
-*Figure 5. Recipe score modification*
+Figure 5. Recipe score modification
 
 ---
 
