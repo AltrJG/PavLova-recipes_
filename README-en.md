@@ -33,7 +33,8 @@ grouping recipes based on their nutritional characteristics.
 - Other: Docker
 
 ## Installation
----
+- [Backend](https://github.com/AltrJG/PavLova-recipes_/blob/main/Backend/README.md)
+- [Frontend](https://github.com/AltrJG/PavLova-recipes_/blob/main/Frontend/README.md)
 
 ## Technical details
 - [Architecture](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/En/Architecture.md)
