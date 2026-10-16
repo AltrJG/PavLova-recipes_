@@ -30,11 +30,11 @@ El sistema incluye un motor de cálculo nutricional que gestiona las cantidades 
 - [Frontend](https://github.com/AltrJG/PavLova-recipes_/blob/main/Frontend/README.md)
 
 ## Detalles Técnicos
-- [Arquitectura](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/Es/Arquitectura.md)
-- [Motor de cálculo nutricional impulsado por IA](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/Es/Motor_de_calculo_nutricional_impulsado_por_IA.md)
-- [Creación de planes alimenticios](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/Es/Creacion_de_planes_alimenticios.md)
-- [Roles de usuario y moderación](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/Es/Roles_de_usuario_y_moderacion.md)
-- [Base de datos](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/Es/Base_de_datos.md)
+- [Arquitectura](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/Es/Architecture.md)
+- [Motor de cálculo nutricional impulsado por IA](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/Es/AI-Powered_nutrition_calculation_engine.md)
+- [Creación de planes alimenticios](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/Es/Meal_plan_creation.md)
+- [Roles de usuario y moderación](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/Es/User_roles_and_moderation.md)
+- [Base de datos](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/Es/Database.md)
 
 ## Capturas de Pantalla
 <img width="2560" height="1263" alt="Página de búsqueda de recetas" src="https://github.com/user-attachments/assets/f59882aa-8acc-4ea7-a22a-b1824040ed93" />
