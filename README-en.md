@@ -27,20 +27,20 @@ grouping recipes based on their nutritional characteristics.
 
 
 ## Technologies
-Frontend: React, Javascript, CSS, HTML
-Backend: Python, Django, Pandas.
-Database: MySQL.
-Other: Docker
+- Frontend: React, Javascript, CSS, HTML
+- Backend: Python, Django, Pandas.
+- Database: MySQL.
+- Other: Docker
 
 ## Installation
 ---
 
 ## Technical details
-Architecture - LINK TBA
-AI-Powered nutrition calculation engine - LINK TBA
-Meal plan creation - LINK TBA
-User roles & moderation - LINK TBA
-Database - LINK TBA
+- [Architecture](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/En/Architecture.md)
+- [AI-Powered nutrition calculation engine](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/En/AI-Powered_nutrition_calculation_engine.md)
+- [Meal plan creation](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/En/Meal_plan_creation.md)
+- [User roles & moderation](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/En/User_roles_and_moderation.md)
+- [Database](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/En/Database.md)
 
 
 ## Screenshots
