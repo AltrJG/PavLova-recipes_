@@ -25,6 +25,9 @@ El sistema incluye un motor de cálculo nutricional que gestiona las cantidades 
 - **Base de Datos:** MySQL.
 - **Infraestructura y Otros:** Docker.
 
+## Video demo
+https://www.youtube.com/watch?v=sSovFey5h0Y
+
 ## Instalación
 - [Backend](https://github.com/AltrJG/PavLova-recipes_/blob/main/Backend/README.md)
 - [Frontend](https://github.com/AltrJG/PavLova-recipes_/blob/main/Frontend/README.md)
