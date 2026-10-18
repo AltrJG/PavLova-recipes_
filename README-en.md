@@ -43,6 +43,9 @@ grouping recipes based on their nutritional characteristics.
 - [User roles & moderation](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/En/User_roles_and_moderation.md)
 - [Database](https://github.com/AltrJG/PavLova-recipes_/blob/main/docs/En/Database.md)
 
+## Video demo
+https://www.youtube.com/watch?v=sSovFey5h0Y
+
 
 ## Screenshots
 <img width="2560" height="1263" alt="image" src="https://github.com/user-attachments/assets/f59882aa-8acc-4ea7-a22a-b1824040ed93" />
